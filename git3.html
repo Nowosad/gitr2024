@@ -1,0 +1,900 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="pl" xml:lang="pl"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.5.39">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Tworzenie pakietów R oraz praca z system kontroli wersji Git i platformą GitHub – 7&nbsp; Kontrola wersji (3)</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+  margin-bottom: 0em;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./pakiety4.html" rel="next">
+<link href="./pakiety3.html" rel="prev">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "Brak wyników",
+    "search-matching-documents-text": "dopasowane dokumenty",
+    "search-copy-link-title": "Kopiuj link do wyszukiwania",
+    "search-hide-matches-text": "Ukryj dodatkowe dopasowania",
+    "search-more-match-text": "więcej dopasowań w tym dokumencie",
+    "search-more-matches-text": "więcej dopasowań w tym dokumencie",
+    "search-clear-button-title": "Wyczyść",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Anuluj",
+    "search-submit-button-title": "Zatwierdź",
+    "search-label": "Szukaj"
+  }
+}</script>
+
+
+</head>
+
+<body class="nav-sidebar floating">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Przełącz pasek boczny" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./git3.html"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Kontrola wersji (3)</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Przełącz pasek boczny" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Szukaj" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">Tworzenie pakietów R oraz praca z system kontroli wersji Git i platformą GitHub</a> 
+        <div class="sidebar-tools-main">
+    <a href="./Tworzenie-pakietów-R-oraz-praca-z-system-kontroli-wersji-Git-i-platformą-GitHub.pdf" title="Download PDF" class="quarto-navigation-tool px-1" aria-label="Download PDF"><i class="bi bi-file-pdf"></i></a>
+</div>
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Szukaj"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Wprowadzenie</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./pakiety1.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Tworzenie pakietów R (1)</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./git1.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Kontrola wersji (1)</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./pakiety2.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Tworzenie pakietów R (2)</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./git2.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Kontrola wersji (2)</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./pakiety3.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Tworzenie pakietów R (3)</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./git3.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Kontrola wersji (3)</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./pakiety4.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Tworzenie pakietów R (4)</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./references.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Bibliografia</span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Spis treści</h2>
+   
+  <ul>
+  <li><a href="#github-issues" id="toc-github-issues" class="nav-link active" data-scroll-target="#github-issues"><span class="header-section-number">7.1</span> GitHub issues</a></li>
+  <li><a href="#pull-requests" id="toc-pull-requests" class="nav-link" data-scroll-target="#pull-requests"><span class="header-section-number">7.2</span> Pull requests</a></li>
+  <li><a href="#model-pracy" id="toc-model-pracy" class="nav-link" data-scroll-target="#model-pracy"><span class="header-section-number">7.3</span> Model pracy</a></li>
+  <li><a href="#konflikty-git" id="toc-konflikty-git" class="nav-link" data-scroll-target="#konflikty-git"><span class="header-section-number">7.4</span> Konflikty Git</a></li>
+  <li><a href="#inne-kwestie-związane-z-systemem-git-i-serwisem-github" id="toc-inne-kwestie-związane-z-systemem-git-i-serwisem-github" class="nav-link" data-scroll-target="#inne-kwestie-związane-z-systemem-git-i-serwisem-github"><span class="header-section-number">7.5</span> Inne kwestie związane z systemem Git i serwisem GitHub</a>
+  <ul class="collapse">
+  <li><a href="#identyfikatory" id="toc-identyfikatory" class="nav-link" data-scroll-target="#identyfikatory"><span class="header-section-number">7.5.1</span> Identyfikatory</a></li>
+  <li><a href="#szablony" id="toc-szablony" class="nav-link" data-scroll-target="#szablony"><span class="header-section-number">7.5.2</span> Szablony</a></li>
+  <li><a href="#ograniczenia-wielkości-plików" id="toc-ograniczenia-wielkości-plików" class="nav-link" data-scroll-target="#ograniczenia-wielkości-plików"><span class="header-section-number">7.5.3</span> Ograniczenia wielkości plików</a></li>
+  <li><a href="#github-pages" id="toc-github-pages" class="nav-link" data-scroll-target="#github-pages"><span class="header-section-number">7.5.4</span> GitHub Pages</a></li>
+  </ul></li>
+  <li><a href="#dodatkowe-materiały" id="toc-dodatkowe-materiały" class="nav-link" data-scroll-target="#dodatkowe-materiały"><span class="header-section-number">7.6</span> Dodatkowe materiały</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Kontrola wersji (3)</span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="github-issues" class="level2" data-number="7.1">
+<h2 data-number="7.1" class="anchored" data-anchor-id="github-issues"><span class="header-section-number">7.1</span> GitHub issues</h2>
+<p>Sprawy (ang. <em>issues</em>) to miejsce, gdzie twórcy mogą zapisywać swoje listy zadań dotyczące danej aplikacji, a użytkownicy mogą zgłaszać błędy czy propozycje ulepszeń. To miejsce można znaleźć na stronie głównej repozytorium, w zakładce <em>Issues</em>. Sprawy, po ich utworzeniu, mogą być przypisane do konkretnych osób, które są odpowiedzialne za ich rozwiązanie, a także mogą być oznaczone etykietami, które pomagają w ich kategoryzacji. Sprawy można również komentować, a po ich rozwiązaniu można je zamknąć. Każda sprawa otrzymuje unikalny numer, który może być użyty do odwołania się do niej w innych miejscach.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Komentarz
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Jako osoba zgłaszająca sprawę należy podać jak najwięcej informacji pomagających odtworzyć problem. Najlepiej w takiej sytuacji jest przygotować tzw. powtarzalny przykład (ang. <em>reprex</em>), który zawiera minimalny kod potrzebny do odtworzenia problemu. Krótki opis działania powtarzalnych przykładów można znaleźć pod adresem <a href="https://jakubnowosad.com/elp/debugging.html#reprex" class="uri">https://jakubnowosad.com/elp/debugging.html#reprex</a>.</p>
+</div>
+</div>
+</section>
+<section id="pull-requests" class="level2" data-number="7.2">
+<h2 data-number="7.2" class="anchored" data-anchor-id="pull-requests"><span class="header-section-number">7.2</span> Pull requests</h2>
+<p>Zapytania aktualizacyjne (ang. <em>pull requests</em>) to sposób na zaproponowanie zmian w repozytorium. Co warte podkreślenia, takie zapytania można nanieść&nbsp;zarówno na swoje własne repozytorium, jak i repozytorium innych użytkowników.</p>
+<p>Zapytanie aktualizacyjne we własnym repozytorium wiąże się zazwyczaj z (1) stworzeniem nowej gałęzi, (2) naniesieniem zmian, np. w kodzie, (3) zatwierdzeniem zmian, (4) przesłaniem zmian do zdalnego repozytorium, (5) otworzeniem zapytania aktualizacyjnego do głównej gałęzi repozytorium. Następnie można takie zmiany zaakceptować lub odrzucić.<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a></p>
+<p>Zapytanie aktualizacyjne przydaje się&nbsp;również w przypadku, gdy chcemy zaproponować zmiany w repozytorium innego użytkownika. Może to być zarówno dodanie nowej możliwości, naprawienie błędu w kodzie, czy nawet poprawienie literówki w dokumentacji. W takiej sytuacji często opiera się to o (1) stworzenie rozwidlenia (ang. <em>fork</em>), (2) pobranie rozwidlenia jako lokalne repozytorium, (3) edycja lokalnego repozytorium, (4) zatwierdzenie zmian i wysłanie ich do zdalnego repozytorium (rozwidlenia), (5) zaproponowanie zapytania aktualizacyjnego.</p>
+</section>
+<section id="model-pracy" class="level2" data-number="7.3">
+<h2 data-number="7.3" class="anchored" data-anchor-id="model-pracy"><span class="header-section-number">7.3</span> Model pracy</h2>
+<p>Do tej pory omówiliśmy wiele aspektów pracy z systemem Git i serwisem GitHub. Teraz pora na to, aby zastanowić się, jak to wszystko może wyglądać w praktyce pracy nad projektem.</p>
+<p>Istnieje szereg możliwych modeli pracy z systemem Git i serwisem GitHub. Ich wybór zależy od tego ile osób pracuje nad projektem, skali tego projektu (czy jest to projekt jednorazowy, czy też projekt, który będzie rozwijany przez dłuższy czas), czy projekt jest otwarty na zewnętrzne kontrybucje, czy też&nbsp;od preferencji czy zwyczajów osób pracujących nad projektem. <!-- zewnętrzne kontrybucje: code of conduct, pull requests, issues, templates --></p>
+<p>W przypadku pracy jednej osoby nad krótkim projektem, model pracy może być bardzo prosty. Wystarczy, że osoba ta będzie pracować na głównej gałęzi (ang. <em>main</em>) i będzie regularnie wysyłać lokalne zmiany do zdalnego repozytorium.</p>
+<p>Taki model może jednak nie działać za dobrze w przypadku pracy wielu osób nad projektem. Wiele równoległych zmian wprowadzanych przez różnych twórców może prowadzić do konfliktów<a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a>, a także powoduje, że trudno jest zrozumieć i planować zmiany wprowadzane do projektu. Wraz ze wzrostem liczby osób pracujących nad projektem, a także wraz ze wzrostem skali projektu, warto zastanowić się nad bardziej złożonym modelem pracy.</p>
+<p>Jednym z takich modeli jest model <em>Feature branch</em>. Polega on na tym, że każda potencjalna zmiana wprowadzana do projektu jest tworzona w osobnej gałęzi (ang. <em>branch</em>). Wszystkie gałęzie są tworzone na bazie głównej gałęzi (ang. <em>main</em>). Po zakończeniu pracy nad zmianą tworzone jest zapytanie aktualizacyjne do głównej gałęzi, a następnie (po recenzji i zatwierdzeniu zmian przez inną osobę) zmiany z tej gałęzi są łączone z główną gałęzią. <!-- Należy pamiętać, że zarządzanie wieloma gałęziami funkcji może stać się skomplikowane, łączenie zmian do głównej gałęzi może wymagać rozwiązania konfliktów różnic --></p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Komentarz
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Istnieją też różne inne modele pracy, np. <a href="https://www.atlassian.com/git/tutorials/comparing-workflows/gitflow-workflow">Gitflow</a> w którym główna gałąź zawiera stabilną wersję projektu, a nowe funkcjonalności są dodawane do gałęzi <em>develop</em>.</p>
+</div>
+</div>
+<p>W przypadku stosowania modelu pracy <em>Feature branch</em> warto stosować systemy CI/CD, które pozwalają na automatyczne sprawdzenie czy nowe zmiany nie powodują błędów w kodzie.</p>
+<!-- w przypadku pracy nad projektem otwartym, warto zastanowić się nad dodatkowymi elementami, które mogą pomóc w zarządzaniu projektem: -->
+<!-- issue templates -->
+<!-- [CODEOWNERS File?] -->
+<div class="callout callout-style-simple callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+ZADANIA
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ol type="1">
+<li>Dobierzcie się w dwuosobowe grupy: każda z osób będzie pracowała na repozytorium pakietu drugiej osoby.</li>
+<li>Niech każda z osób otworzy sprawę w repozytorium pakietu drugiej osoby. Sprawa powinna zawierać powtarzalny przykład użycia pakietu.</li>
+<li>Niech każda z osób otworzy zapytanie aktualizacyjne do repozytorium pakietu drugiej osoby poprzez stworzenie rozwidlenia.</li>
+<li>Rolą osoby, która jest właścicielem repozytorium, jest zaakceptowanie zapytania aktualizacyjnego i zamknięcie sprawy.</li>
+</ol>
+</div>
+</div>
+</section>
+<section id="konflikty-git" class="level2" data-number="7.4">
+<h2 data-number="7.4" class="anchored" data-anchor-id="konflikty-git"><span class="header-section-number">7.4</span> Konflikty Git</h2>
+<p>Konflikt Git to sytuacja, w której Git nie jest w stanie samodzielnie rozwiązać konfliktu pomiędzy dwoma wersjami pliku/ów. Może to mieć miejsce w przypadku, gdy dwie osoby pracujące nad tym samym projektem wprowadziły zmiany w tym samym miejscu w pliku. Pierwsza z osób przesłała swoje zmiany do zdalnego repozytorium, a druga próbuje przesłać swoje zmiany do tego samego zdalnego repozytorium (<a href="git1.html#sec-problemy-git1" class="quarto-xref"><span>Sekcja 3.6</span></a>).</p>
+<p>Zawsze warto zacząć od sprawdzenia, które pliki są konfliktowe. Można to zrobić oglądając okno Git w RStudio lub używając polecenia <code>git status</code> w terminalu. Dalej należy otworzyć problematyczny plik i znaleźć&nbsp;miejsce konfliktu. Będzie ono oznaczone specjalnymi znacznikami <code>&lt;&lt;&lt;&lt;&lt;&lt;&lt;</code>, <code>=======</code>, <code>&gt;&gt;&gt;&gt;&gt;&gt;&gt;</code>.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>&lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD:plik.R</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>x = 1 + 2</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">=======</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>y = 1 + 2</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="at">&gt;&gt;&gt;&gt;&gt;&gt;&gt; zmiana:plik.R</span></span></code><button title="Kopiuj do schowka" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Pierwszy znacznik, <code>&lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD:</code>, oznacza treść, która jest w lokalnym repozytorium. Drugi znacznik, <code>=======</code>, oznacza miejsce, w którym następuje rozdzielenie pomiędzy lokalnym repozytorium a zdalnym repozytorium. Po nim jest nowa treść, która jest w zdalnym repozytorium. Trzeci znacznik, <code>&gt;&gt;&gt;&gt;&gt;&gt;&gt; zmiana:</code>, oznacza koniec konfliktu.</p>
+<p>Takie konflikty (ang. <em>merge conflicts</em>) mogą być rozwiązywane na różne sposoby. Najczęściej w takiej sytuacji można ręcznie edytować&nbsp;plik, stworzyć spójną&nbsp;wersję, usunąć znaczniki konfliktu, a następnie zatwierdzić zmiany (<code>git add plik.R</code> oraz <code>git commit</code>).</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Komentarz
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Używając komendy <code>git merge --abort</code> można anulować łączenie zmian i wrócić do poprzedniego stanu przed rozpoczęciem scalania.</p>
+</div>
+</div>
+<p>Inna możliwość to <a href="https://phoenixnap.com/kb/how-to-resolve-merge-conflicts-in-git#ftoc-heading-3">zaakceptowanie tylko przychodzących lub obecnych zmian</a>.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Komentarz
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Czasem może się&nbsp;zdarzyć, że pracując nad projektem zapędzimy się&nbsp;w szereg problematycznych zmian, które nie pozwalają nam na proste zatwierdzenie zmian i wysłanie ich do zdalnego repozytorium. W takiej sytuacji popularnym podejście to zrobienie kopii naszych lokalnych zmian w innym folderze komputera, usunięcie lokalnego repozytorium, ponowne sklonowanie zdalnego repozytorium, a następnie wklejenie naszych zmian do sklonowanego (czystego) repozytorium.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="figs/git.png" class="img-fluid figure-img"></p>
+<figcaption><a href="https://xkcd.com/1597/" class="uri">https://xkcd.com/1597/</a></figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>Więcej porad na temat rozwiązywania konfliktów można znaleźć pod łatwym do zapamiętania adresem <a href="https://ohshitgit.com/" class="uri">https://ohshitgit.com/</a>.</p>
+</section>
+<section id="inne-kwestie-związane-z-systemem-git-i-serwisem-github" class="level2" data-number="7.5">
+<h2 data-number="7.5" class="anchored" data-anchor-id="inne-kwestie-związane-z-systemem-git-i-serwisem-github"><span class="header-section-number">7.5</span> Inne kwestie związane z systemem Git i serwisem GitHub</h2>
+<section id="identyfikatory" class="level3" data-number="7.5.1">
+<h3 data-number="7.5.1" class="anchored" data-anchor-id="identyfikatory"><span class="header-section-number">7.5.1</span> Identyfikatory</h3>
+<p>Z Gitem czy GitHubem powiązanych jest wiele różnych identyfikatorów, które mogą być przydatne w różnych sytuacjach. Pierwsze z nich to grupa identyfikatorów nazywanych zbiorczo <a href="https://happygitwithr.com/git-refs"><em>ref</em></a>, np.:</p>
+<ul>
+<li><code>HEAD</code> – wskaźnik na aktualną wersję; <code>HEAD~1</code> – wskaźnik na poprzednią wersję (poprzednie zatwierdzenie zmian)</li>
+<li>Nazwa gałęzi, np. <code>main</code> – wskaźnik na główną gałąź</li>
+<li>Tag, np. <code>v1.0.0</code> – wskaźnik na konkretną wersję projektu</li>
+<li>Identyfikator zatwierdzenia zmian, np. <code>a1b2c3d</code> – wskaźnik na konkretny commit<a href="#fn3" class="footnote-ref" id="fnref3" role="doc-noteref"><sup>3</sup></a></li>
+</ul>
+<p>Kolejnym identyfikatorem jest nazwa użytkownika lub nazwa organizacji, która jest właścicielem repozytorium: <code>github.com/&lt;nazwa_użytkownika&gt;</code> lub <code>github.com/&lt;nazwa_organizacji&gt;</code>. Dalej po nazwie użytkownika lub organizacji podawana jest nazwa repozytorium: <code>github.com/&lt;nazwa_użytkownika&gt;/&lt;nazwa_repozytorium&gt;</code> lub <code>github.com/&lt;nazwa_organizacji&gt;/&lt;nazwa_repozytorium&gt;</code>.</p>
+<p>Wewnątrz każdego repozytorium można tworzyć sprawy oraz zapytania aktualizacyjne. Każda sprawa i zapytanie aktualizacyjne ma swój unikalny identyfikator, który jest wyliczeniem: <code>github.com/&lt;nazwa_użytkownika&gt;/&lt;nazwa_repozytorium&gt;/issues/&lt;numer_sprawy&gt;</code> lub <code>github.com/&lt;nazwa_użytkownika&gt;/&lt;nazwa_repozytorium&gt;/pull/&lt;numer_zapytania&gt;</code>.<a href="#fn4" class="footnote-ref" id="fnref4" role="doc-noteref"><sup>4</sup></a> Takie identyfikatory pozwalają na odwoływanie się do konkretnych spraw i zapytań aktualizacyjnych w różnych miejscach za pomocą znaku <code>#</code> i numeru identyfikatora, np. <code>#1</code> lub <code>#2</code>.</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>Mój komentarz dotyczy sprawy #1.</span></code><button title="Kopiuj do schowka" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Do danej sprawy można odnieść się w tekście innej sprawy, w zapytaniu aktualizacyjnym, w komentarzu, w kodzie, w dokumentacji, a nawet w tekście zatwierdzenia zmian.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Komentarz
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>W tekście zatwierdzenia zmian czy zapytaniu aktualizacyjnym można nawet użyć jednego ze słów kluczowych, które automatycznie zamknie sprawę, takich jak <a href="https://docs.github.com/en/get-started/writing-on-github/working-with-advanced-formatting/using-keywords-in-issues-and-pull-requests"><code>closes</code>, <code>fixes</code>, <code>resolves</code></a></p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>Naprawiono błąd, closes #1.</span></code><button title="Kopiuj do schowka" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+</section>
+<section id="szablony" class="level3" data-number="7.5.2">
+<h3 data-number="7.5.2" class="anchored" data-anchor-id="szablony"><span class="header-section-number">7.5.2</span> Szablony</h3>
+<p>GitHub pozwala także na tworzenie, a następnie korzystanie z różnych szablonów. Możliwe przykładowo jest stworzenie szablonu całego repozytorium. Polega to tylko na zbudowaniu repozytorium z odpowiednimi plikami, które będą stanowić szablon, a następnie <a href="https://docs.github.com/en/repositories/creating-and-managing-repositories/creating-a-template-repository">wybranie w opcjach repozytorium</a>. Następnie każde nowe repozytorium będzie można utworzyć na podstawie tego szablonu.</p>
+<p>Możliwe jest również stworzenie <a href="https://docs.github.com/en/communities/using-templates-to-encourage-useful-issues-and-pull-requests/configuring-issue-templates-for-your-repository">szablonu sprawy</a> (często stosowane do pokazania użytkownikom w jaki sposób zgłaszać błędy czy problemy) lub <a href="https://docs.github.com/en/communities/using-templates-to-encourage-useful-issues-and-pull-requests/creating-a-pull-request-template-for-your-repository">zapytania aktualizacyjnego</a>.</p>
+</section>
+<section id="ograniczenia-wielkości-plików" class="level3" data-number="7.5.3">
+<h3 data-number="7.5.3" class="anchored" data-anchor-id="ograniczenia-wielkości-plików"><span class="header-section-number">7.5.3</span> Ograniczenia wielkości plików</h3>
+<p>Głównym celem systemu Git jest przechowywanie kodu źródłowego, a nie dużych plików. GitHub pozwala na przechowywanie plików o maksymalnej wielkości 100 MB, ale zaleca, aby pliki były mniejsze niż 50 MB. Dodatkowo, wielokrotne nadpisywanie dużych plików w repozytorium może prowadzić do jego nadmiernego rozrostu.<a href="#fn5" class="footnote-ref" id="fnref5" role="doc-noteref"><sup>5</sup></a></p>
+<p>Co zrobić w przypadku, gdy nasz kod używa dużych plików, np. plików z danymi? Pierwsza strategia to kompresja takich plików oraz unikanie ich częstej aktualizacji. Drugą strategią jest przechowywanie takich plików w innym miejscu, np. na własnym serwerze lub w serwisie <a href="https://zenodo.org/">Zenodo</a>, a następnie w kodzie wewnątrz repozytorium umieszczenie jedynie odnośnika do takiego pliku. Kolejna strategia to użycie Git LFS (ang. <em>Large File Storage</em>), który pozwala na przechowywanie dużych plików w innym miejscu, a następnie w repozytorium umieszczenie jedynie odnośnika do takiego pliku. Więcej o tej ostatniej strategii można przeczytać pod adresem <a href="https://docs.github.com/en/repositories/working-with-files/managing-large-files" class="uri">https://docs.github.com/en/repositories/working-with-files/managing-large-files</a>.</p>
+</section>
+<section id="github-pages" class="level3" data-number="7.5.4">
+<h3 data-number="7.5.4" class="anchored" data-anchor-id="github-pages"><span class="header-section-number">7.5.4</span> GitHub Pages</h3>
+<p>GitHub, jak już wcześniej wspomnieliśmy, nie tylko pozwala na przechowywanie i dzielenie się kodem, ale również na wiele innych rzeczy, takich jak dzielenie się małymi danymi czy przechowywanie (statycznych) stron internetowych. Każde repozytorium może mieć przypisaną stronę internetową, która jest dostępna pod adresem <code>https://&lt;nazwa_użytkownika&gt;.github.io/&lt;nazwa_repozytorium&gt;</code> – <a href="https://doi.org/10.5446/63363">taka strona może być nawet prostym dokumentem HTML</a>. Co więcej, możliwe jest również posiadanie głównej strony internetowej użytkownika, która jest dostępna pod adresem <code>https://&lt;nazwa_użytkownika&gt;.github.io</code>.<a href="#fn6" class="footnote-ref" id="fnref6" role="doc-noteref"><sup>6</sup></a> Taka strona jest tworzona w oparciu o repozytorium o nazwie <code>&lt;nazwa_użytkownika&gt;.github.io</code>. Więcej na temat tworzenia różnorodnych dokumentów HTML w oparciu o język R można znaleźć na stronie <a href="https://quarto.org/" class="uri">https://quarto.org/</a>, a na temat tworzenia stron internetowych w serwisie GitHub można znaleźć na stronie <a href="https://pages.github.com/">GitHub Pages</a>.</p>
+<!-- windows lineending -->
+<!-- one line per sentence -->
+<!-- git user page -->
+</section>
+</section>
+<section id="dodatkowe-materiały" class="level2" data-number="7.6">
+<h2 data-number="7.6" class="anchored" data-anchor-id="dodatkowe-materiały"><span class="header-section-number">7.6</span> Dodatkowe materiały</h2>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="figs/gitbork.png" class="img-fluid figure-img"></p>
+<figcaption><a href="https://social.jvns.ca/@b0rk/111460966674032287" class="uri">https://social.jvns.ca/@b0rk/111460966674032287</a></figcaption>
+</figure>
+</div>
+<p>Z racji popularności (i złożoności) systemu Git istnieje ogromna liczba materiałów pomagających w jego nauce i zrozumieniu oraz wiele stron zawierających pytania i odpowiedzi dotyczące napotkanych problemów. W przypadku łączenia możliwości języka R z systemem Git warto poczytać materiały zawarte na stronie <a href="https://happygitwithr.com/" class="uri">https://happygitwithr.com/</a> <span class="citation" data-cites="bryanHappyGitGitHub2019">(<a href="references.html#ref-bryanHappyGitGitHub2019" role="doc-biblioref">Bryan, the STAT 545 TAs, i Hester 2019</a>)</span> oraz rozdział <a href="https://r-pkgs.org/git.html">Software development practices</a> książki R packages <span class="citation" data-cites="wickham2015r">(<a href="references.html#ref-wickham2015r" role="doc-biblioref">Wickham 2015</a>)</span>. Do ogólnego wprowadzenia do systemu Git może posłużyć darmowa książka online <a href="https://git-scm.com/book/pl/v2">Pro Git</a> <span class="citation" data-cites="chacon2014pro">(<a href="references.html#ref-chacon2014pro" role="doc-biblioref">Chacon 2014</a>)</span>, której kilka pierwszych rozdziałów jest również dostępna w języku polskim czy też&nbsp;dokument <a href="https://randomseed.pl/pub/git-system-kontroli-wersji/01-wprowadzenie">System kontroli wersji Git</a>. Git jest również bardzo popularnym tematem na serwisie stackoverflow, gdzie można znaleźć <a href="https://stackoverflow.com/questions/tagged/git">pytania i odpowiedzi na różnorodne tematy z nim związane</a>. Więcej odnośników do materiałów związanych z systemem Git i serwisem GitHub można znaleźć na stronach <a href="https://help.github.com/en/articles/git-and-github-learning-resources">pomocy GitHub</a>.</p>
+
+
+<div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list" style="display: none">
+<div id="ref-bryanHappyGitGitHub2019" class="csl-entry" role="listitem">
+Bryan, Jenny, the STAT 545 TAs, i Jim Hester. 2019. <em>Happy <span>Git</span> and <span>GitHub</span> for the <span>useR</span></em>.
+</div>
+<div id="ref-chacon2014pro" class="csl-entry" role="listitem">
+Chacon, Scott. 2014. <em>Pro Git</em>. <span>Apress</span>.
+</div>
+<div id="ref-wickham2015r" class="csl-entry" role="listitem">
+Wickham, Hadley. 2015. <em>R Packages: Organize, Test, Document, and Share Your Code</em>. <span>" O’Reilly Media, Inc."</span>.
+</div>
+</div>
+</section>
+<section id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes">
+<hr>
+<ol>
+<li id="fn1"><p>Lub zignorować…<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn2"><p>technicznych i nie tylko<a href="#fnref2" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn3"><p>To jest skrótowy identyfikator, pełny identyfikator to 40-znakowy ciąg znaków.<a href="#fnref3" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn4"><p>Traktowane są&nbsp;one łącznie, więc przykładowo po sprawie numer jeden będzie zapytanie aktualizacyjne numer dwa.<a href="#fnref4" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn5"><p>Możliwe jest <a href="https://docs.github.com/en/repositories/working-with-files/managing-large-files/about-large-files-on-github#removing-files-from-a-repositorys-history">usunięcie dużych plików z historii zmian Git</a>.<a href="#fnref5" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn6"><p>Możliwe jest powiązanie jej z własną domeną.<a href="#fnref6" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Skopiowano!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Skopiowano!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    // For code content inside modals, clipBoardJS needs to be initialized with a container option
+    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./pakiety3.html" class="pagination-link" aria-label="Tworzenie pakietów R (3)">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Tworzenie pakietów R (3)</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./pakiety4.html" class="pagination-link" aria-label="Tworzenie pakietów R (4)">
+        <span class="nav-page-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Tworzenie pakietów R (4)</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

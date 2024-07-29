@@ -1,0 +1,1143 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="pl" xml:lang="pl"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.5.39">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Tworzenie pakietów R oraz praca z system kontroli wersji Git i platformą GitHub – 6&nbsp; Tworzenie pakietów R (3)</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+  margin-bottom: 0em;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./git3.html" rel="next">
+<link href="./git2.html" rel="prev">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "Brak wyników",
+    "search-matching-documents-text": "dopasowane dokumenty",
+    "search-copy-link-title": "Kopiuj link do wyszukiwania",
+    "search-hide-matches-text": "Ukryj dodatkowe dopasowania",
+    "search-more-match-text": "więcej dopasowań w tym dokumencie",
+    "search-more-matches-text": "więcej dopasowań w tym dokumencie",
+    "search-clear-button-title": "Wyczyść",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Anuluj",
+    "search-submit-button-title": "Zatwierdź",
+    "search-label": "Szukaj"
+  }
+}</script>
+
+
+</head>
+
+<body class="nav-sidebar floating">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Przełącz pasek boczny" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./pakiety3.html"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Tworzenie pakietów R (3)</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Przełącz pasek boczny" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Szukaj" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">Tworzenie pakietów R oraz praca z system kontroli wersji Git i platformą GitHub</a> 
+        <div class="sidebar-tools-main">
+    <a href="./Tworzenie-pakietów-R-oraz-praca-z-system-kontroli-wersji-Git-i-platformą-GitHub.pdf" title="Download PDF" class="quarto-navigation-tool px-1" aria-label="Download PDF"><i class="bi bi-file-pdf"></i></a>
+</div>
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Szukaj"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Wprowadzenie</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./pakiety1.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Tworzenie pakietów R (1)</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./git1.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Kontrola wersji (1)</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./pakiety2.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Tworzenie pakietów R (2)</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./git2.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Kontrola wersji (2)</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./pakiety3.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Tworzenie pakietów R (3)</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./git3.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Kontrola wersji (3)</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./pakiety4.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Tworzenie pakietów R (4)</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./references.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Bibliografia</span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Spis treści</h2>
+   
+  <ul>
+  <li><a href="#dane-w-pakietach-r" id="toc-dane-w-pakietach-r" class="nav-link active" data-scroll-target="#dane-w-pakietach-r"><span class="header-section-number">6.1</span> Dane w pakietach R</a>
+  <ul class="collapse">
+  <li><a href="#dane-w-postaci-binarnej-w-folderze-data" id="toc-dane-w-postaci-binarnej-w-folderze-data" class="nav-link" data-scroll-target="#dane-w-postaci-binarnej-w-folderze-data"><span class="header-section-number">6.1.1</span> Dane w postaci binarnej w folderze <code>data/</code></a></li>
+  <li><a href="#dane-w-postaci-oryginalnej-w-podfolderze-folderu-inst" id="toc-dane-w-postaci-oryginalnej-w-podfolderze-folderu-inst" class="nav-link" data-scroll-target="#dane-w-postaci-oryginalnej-w-podfolderze-folderu-inst"><span class="header-section-number">6.1.2</span> Dane w postaci oryginalnej w podfolderze folderu <code>inst/</code></a></li>
+  <li><a href="#dane-w-postaci-binarnej-w-pliku-rsysdata.rda" id="toc-dane-w-postaci-binarnej-w-pliku-rsysdata.rda" class="nav-link" data-scroll-target="#dane-w-postaci-binarnej-w-pliku-rsysdata.rda"><span class="header-section-number">6.1.3</span> Dane w postaci binarnej w pliku <code>R/sysdata.rda</code></a></li>
+  <li><a href="#dane-stworzone-wewnątrz-kodu-r" id="toc-dane-stworzone-wewnątrz-kodu-r" class="nav-link" data-scroll-target="#dane-stworzone-wewnątrz-kodu-r"><span class="header-section-number">6.1.4</span> Dane stworzone wewnątrz kodu R</a></li>
+  </ul></li>
+  <li><a href="#sec-testy-jednostkowe" id="toc-sec-testy-jednostkowe" class="nav-link" data-scroll-target="#sec-testy-jednostkowe"><span class="header-section-number">6.2</span> Testy jednostkowe</a></li>
+  <li><a href="#wbudowane-testy" id="toc-wbudowane-testy" class="nav-link" data-scroll-target="#wbudowane-testy"><span class="header-section-number">6.3</span> Wbudowane testy</a></li>
+  <li><a href="#pokrycie-kodu-testami-jednostkowymi" id="toc-pokrycie-kodu-testami-jednostkowymi" class="nav-link" data-scroll-target="#pokrycie-kodu-testami-jednostkowymi"><span class="header-section-number">6.4</span> Pokrycie kodu testami jednostkowymi</a></li>
+  <li><a href="#strona-internetowa-pakietu" id="toc-strona-internetowa-pakietu" class="nav-link" data-scroll-target="#strona-internetowa-pakietu"><span class="header-section-number">6.5</span> Strona internetowa pakietu</a></li>
+  <li><a href="#cicd" id="toc-cicd" class="nav-link" data-scroll-target="#cicd"><span class="header-section-number">6.6</span> CI/CD</a></li>
+  <li><a href="#cran" id="toc-cran" class="nav-link" data-scroll-target="#cran"><span class="header-section-number">6.7</span> CRAN</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Tworzenie pakietów R (3)</span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="dane-w-pakietach-r" class="level2" data-number="6.1">
+<h2 data-number="6.1" class="anchored" data-anchor-id="dane-w-pakietach-r"><span class="header-section-number">6.1</span> Dane w pakietach R</h2>
+<p>Pakiety R mogą również zawierać dane. Zazwyczaj takie dane służą do trzech celów: (1) do przechowywania danych, które są używane wewnątrz pakietu, (2) do użycia w przykładach i innych formach dokumentacji, oraz (3) do testowania funkcji.</p>
+<p>Istnieje kilka mechanizmów do przechowywania danych w pakietach R:</p>
+<ol type="1">
+<li>Dane w postaci binarnej w folderze <code>data/</code></li>
+<li>Dane w postaci oryginalnej w podfolderze folderu <code>inst/</code></li>
+<li>Dane w postaci binarnej w pliku <code>R/sysdata.rda</code></li>
+<li>Dane stworzone wewnątrz kodu R, np. kodu przykładu czy kodu testu</li>
+</ol>
+<p>Każdy z nich ma swoje wady i zalety, szczególnie widoczne w przypadku wykorzystywania danych przestrzennych.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Komentarz
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>CRAN z reguły nie pozwala na umieszczanie w pakietach danych o rozmiarze większym niż ok. 5 MB. W związku z tym, jeżeli dane są większe niż 5 MB, to należy je umieścić w innym miejscu, np. na GitHubie, a wewnątrz pakietu umieścić tylko kod do ich pobrania.</p>
+</div>
+</div>
+<section id="dane-w-postaci-binarnej-w-folderze-data" class="level3" data-number="6.1.1">
+<h3 data-number="6.1.1" class="anchored" data-anchor-id="dane-w-postaci-binarnej-w-folderze-data"><span class="header-section-number">6.1.1</span> Dane w postaci binarnej w folderze <code>data/</code></h3>
+<p>Niemal każdy obiekt R można zapisać wewnątrz pakietu jako plik binarny (<code>.rda</code>) w folderze <code>data/</code>. Najprościej dodać taki obiekt używając funkcji <code>usethis::use_data()</code>:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>moj_df <span class="ot">=</span> <span class="fu">data.frame</span>(<span class="at">x =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>, <span class="at">y =</span> <span class="dv">11</span><span class="sc">:</span><span class="dv">20</span>)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>usethis<span class="sc">::</span><span class="fu">use_data</span>(moj_df, <span class="at">overwrite =</span> <span class="cn">TRUE</span>)</span></code><button title="Kopiuj do schowka" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Powyższy kod stworzy plik <code>data/moj_df.rda</code> zawierający obiekt <code>moj_df</code>. Teraz ten obiekt jest dostępny wewnątrz pakietu i można go użyć wewnątrz funkcji, przykładów, czy testów jednostkowych.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Komentarz
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Jeden z możliwych elementów opisu pakietu w pliku <code>DESCRIPTION</code> to <code>LazyData</code>. Przyjmuje on wartość <code>true</code> lub <code>false</code> i określa czy dane w folderze <code>data/</code> są ładowane do pamięci podczas ładowania pakietu. W przypadku <code>LazyData: true</code> dane są ładowane do środowiska pracy podczas ładowania pakietu i są od razu dostępne. W przypadku <code>LazyData: false</code> dane są ładowane do środowiska pracy dopiero w momencie ich wywołania, np. poprzez funkcję <code>data()</code>.</p>
+</div>
+</div>
+<p>Warto kod R użyty do stworzenia takich danych umieścić w folderze <code>data-raw/</code>. A sam folder <code>data-raw/</code> należy dodać do pliku <code>.Rbuildignore</code>.<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a> Dzięki temu możliwe będzie odtworzenie budowy takich danych w przyszłości, jeżeli zajdzie taka konieczność.</p>
+<p>Dane załączone w ten sposób muszą być udokumentowane. Taka dokumentacja to plik o rozszerzeniu <code>.R</code> w folderze <code>R/</code> zawierający funkcję <code>roxygen2</code> z odpowiednimi tagami. Przykładowo, dla obiektu <code>moj_df</code> można stworzyć plik <code>R/moj_df.R</code> zawierający:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co">#' Example data</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="co">#' </span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="co">#' Example data created manually for the purpose of this package.</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="co">#' </span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="co">#' @format ## `moj_df`</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="co">#' A data frame with 10 observations on 2 variables.</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="co">#' \describe{</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="co">#'  \item{x}{numeric vector}</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="co">#'  \item{y}{numeric vector}</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="co">#' }</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a><span class="co">#' @source Manually created.</span></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a><span class="st">"moj_df"</span></span></code><button title="Kopiuj do schowka" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="dane-w-postaci-oryginalnej-w-podfolderze-folderu-inst" class="level3" data-number="6.1.2">
+<h3 data-number="6.1.2" class="anchored" data-anchor-id="dane-w-postaci-oryginalnej-w-podfolderze-folderu-inst"><span class="header-section-number">6.1.2</span> Dane w postaci oryginalnej w podfolderze folderu <code>inst/</code></h3>
+<p>Wewnątrz podfolderu folderu <code>inst/</code> (np. <code>inst/data/</code>) można umieścić dowolne pliki, które będą dostępne po zainstalowaniu pakietu. Dotyczy to, np., plików <code>.csv</code> ale także różnorodnych formatów GIS, <code>.gpkg</code> czy <code>.tif</code>.</p>
+<p>Po instalacji pakietu, folder <code>inst/</code> nie jest dostępny, a jego zawartość znajduje się&nbsp;bezpośrednio w folderze instalacyjnym pakietu. Dostępne foldery można sprawdzić używając funkcji <code>system.file()</code> oraz <code>dir()</code>.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">system.file</span>(<span class="at">package =</span> <span class="st">"spData"</span>) <span class="sc">|&gt;</span> <span class="fu">dir</span>()</span></code><button title="Kopiuj do schowka" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> [1] "data"        "DESCRIPTION" "help"        "html"        "INDEX"      
+ [6] "Meta"        "misc"        "NAMESPACE"   "R"           "raster"     
+[11] "README"      "shapes"      "weights"    </code></pre>
+</div>
+</div>
+<p>W tym przypadku mamy kilka folderów z danymi: <code>data/</code>, <code>misc/</code>, <code>raster/</code>, <code>shapes/</code>, oraz <code>weights/</code>. Sprawdzenie zawartości danego folderu jest możliwe poprzez podanie jego nazwy jako argumentu funkcji <code>system.file()</code>.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">system.file</span>(<span class="st">"raster"</span>, <span class="at">package =</span> <span class="st">"spData"</span>) <span class="sc">|&gt;</span> <span class="fu">dir</span>()</span></code><button title="Kopiuj do schowka" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "elev.tif"          "grain.tif"         "grain.tif.aux.xml"</code></pre>
+</div>
+</div>
+<p>Następnie można użyć funkcji <code>system.file()</code> do określenia ścieżki do wybranego pliku na danym komputerze.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">system.file</span>(<span class="st">"raster/elev.tif"</span>, <span class="at">package =</span> <span class="st">"spData"</span>)</span></code><button title="Kopiuj do schowka" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "/home/jn/R/x86_64-redhat-linux-gnu-library/4.4/spData/raster/elev.tif"</code></pre>
+</div>
+</div>
+<p>Znajomość tej ścieżki pozwala na wczytanie pliku do R.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(terra)</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>elev <span class="ot">=</span> <span class="fu">rast</span>(<span class="fu">system.file</span>(<span class="st">"raster/elev.tif"</span>, <span class="at">package =</span> <span class="st">"spData"</span>))</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(elev)</span></code><button title="Kopiuj do schowka" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="pakiety3_files/figure-html/unnamed-chunk-6-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Komentarz
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Przechowywanie danych w postaci binarnej jest szczególnie dobrym rozwiązaniem w przypadku, gdy przechowywane obiekty mają jedną z klas wbudowanych w język R (np. ramka danych czy macierz).</p>
+<p>Podejście oparte na przechowywaniu danych w postaci oryginalnej jest szczególnie dobre w kontekście danych przestrzennych:</p>
+<ol type="1">
+<li>Interpretacja elementów obiektów przestrzennych (np. układu współrzędnych przez bibliotekę PROJ) zmienia się&nbsp;w czasie. W związku z tym, dane przestrzenne zapisane w postaci binarnej mogą być niepoprawne w przyszłości.</li>
+<li>Główna klasa obiektów w pakiecie <strong>terra</strong> nie przechowuje wartości, ale tylko wskaźnik (ang. <em>pointer</em>) C++ do pliku na dysku. W związku z tym, obiekty <strong>terra</strong> zapisane w postaci binarnej mogą nie być poprawie załadowane do pamięci podczas ładowania pakietu.</li>
+<li>Dane są dostępne w oryginalnym formacie, co umożliwia ich użycie poza R.</li>
+</ol>
+</div>
+</div>
+</section>
+<section id="dane-w-postaci-binarnej-w-pliku-rsysdata.rda" class="level3" data-number="6.1.3">
+<h3 data-number="6.1.3" class="anchored" data-anchor-id="dane-w-postaci-binarnej-w-pliku-rsysdata.rda"><span class="header-section-number">6.1.3</span> Dane w postaci binarnej w pliku <code>R/sysdata.rda</code></h3>
+<p>Wewnątrz pakietu można umieścić dane w postaci binarnej w pliku <code>R/sysdata.rda</code>. Takie dane są dostępne tylko wewnątrz pakietu i nie są ładowane do środowiska pracy. Nie wymagają też dodatkowej dokumentacji.</p>
+<p>Do stworzenia takiego pliku użyć funkcji <code>usethis::use_data()</code> z argumentem <code>internal = TRUE</code>. Należy tylko pamiętać, że plik <code>R/sysdata.rda</code> może zawierać więcej niż&nbsp;jeden obiekt i wówczas te obiekty należy zapisać w poniższy sposób.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>moj_df <span class="ot">=</span> <span class="fu">data.frame</span>(<span class="at">x =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>, <span class="at">y =</span> <span class="dv">11</span><span class="sc">:</span><span class="dv">20</span>)</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>moj_df2 <span class="ot">=</span> <span class="fu">data.frame</span>(<span class="at">x =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>, <span class="at">y =</span> <span class="dv">11</span><span class="sc">:</span><span class="dv">20</span>)</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>usethis<span class="sc">::</span><span class="fu">use_data</span>(moj_df, moj_df2, <span class="at">internal =</span> <span class="cn">TRUE</span>)</span></code><button title="Kopiuj do schowka" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="dane-stworzone-wewnątrz-kodu-r" class="level3" data-number="6.1.4">
+<h3 data-number="6.1.4" class="anchored" data-anchor-id="dane-stworzone-wewnątrz-kodu-r"><span class="header-section-number">6.1.4</span> Dane stworzone wewnątrz kodu R</h3>
+<p>Małe dane można stworzyć bezpośrednio wewnątrz kodu R. Może to mieć miejsce przed przykładem użycia danej funkcji czy też przed testem jednostkowym.</p>
+<div class="callout callout-style-simple callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+ZADANIA
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ol type="1">
+<li>Stwórz nowy obiekt zawierający dane przykładowe, które będzie można użyć w przykładach twojego pakietu.</li>
+<li>Zapisz kod tworzący ten obiekt do folderu <code>data-raw/</code>.</li>
+<li>Dodaj ten obiekt do folderu <code>data/</code> używając funkcji <code>usethis::use_data()</code>.</li>
+<li>Dodaj dokumentację dla tego obiektu do folderu <code>R/</code>.</li>
+<li>Zapisz ten obiekt do zewnętrznego formatu (np. <code>.csv</code>) i umieść go wewnątrz podfolderu folderu <code>inst/</code>.</li>
+<li>Użyj zarówno wewnętrznych jak i zewnętrznych danych wewnątrz przykładu jakieś funkcji z twojego pakietu.</li>
+<li>Uruchom <code>devtools::document()</code> a następnie <code>devtools::check()</code> i sprawdź czy wszystko działa poprawnie.</li>
+</ol>
+</div>
+</div>
+</section>
+</section>
+<section id="sec-testy-jednostkowe" class="level2" data-number="6.2">
+<h2 data-number="6.2" class="anchored" data-anchor-id="sec-testy-jednostkowe"><span class="header-section-number">6.2</span> Testy jednostkowe</h2>
+<p>Testy jednostkowe (ang. <em>unit tests</em>) to sposób sprawdzania czy stworzona przez nas funkcja działa w sposób jaki oczekujemy. Tworzenie takich testów wymusza także myślenie na temat odpowiedniego działania funkcji i jej API. Testy jednostkowe są najczęściej stosowane w przypadku budowania pakietów, gdzie możliwe jest automatyczne sprawdzenie wielu testów na raz. Przykładowo, napisaliśmy nową funkcję, która wykonuje złożone operacje i, po wielu sprawdzeniach, wiemy, że daje poprawne wyniki. Po kilku miesiącach wpadliśmy na pomysł jak zwiększyć wydajność naszej funkcji. W tym momencie wystarczy już tylko stworzyć nową implementację i użyć wcześniej zbudowanych testów. Dadzą one informację, czy efekt działania jest taki jaki oczekujemy, a w przeciwnym razie wskażą gdzie pojawił się&nbsp;błąd. Istnieje też dodatkowa reguła - jeżeli znajdziesz błąd w kodzie od razu napisz test jednostkowy.</p>
+<p>Zobaczmy jak działają testy jednostkowe na przykładzie funkcji <code>powierzchnia()</code>, która oblicza powierzchnię prostokąta na podstawie macierzy zawierającej współrzędne jego wierzchołków.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>powierzchnia <span class="ot">=</span> <span class="cf">function</span>(x){</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  a <span class="ot">=</span> x[<span class="dv">1</span>, <span class="dv">2</span>] <span class="sc">-</span> x[<span class="dv">1</span>, <span class="dv">1</span>]</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  b <span class="ot">=</span> x[<span class="dv">2</span>, <span class="dv">2</span>] <span class="sc">-</span> x[<span class="dv">2</span>, <span class="dv">1</span>]</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>  a <span class="sc">*</span> b</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Kopiuj do schowka" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Jednym z możliwych narzędzi do testów jednostkowych w R jest pakiet <strong>testthat</strong> <span class="citation" data-cites="R-testthat">(<a href="references.html#ref-R-testthat" role="doc-biblioref">Wickham 2020</a>)</span>.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(testthat)</span></code><button title="Kopiuj do schowka" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Zawiera on szereg funkcji sprawdzających czy działanie naszych funkcji jest zgodne z oczekiwaniem. Funkcje w tym pakiecie rozpoczynają się od prefiksu <code>expect_</code> (oczekuj).</p>
+<p>W przypadku funkcji <code>powierzchnia()</code> oczekujemy, że wynik będzie zawierał tylko jeden element. Możemy to sprawdzić za pomocą funkcji <code>expect_length()</code>.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>nowy_p <span class="ot">=</span> <span class="fu">matrix</span>(<span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">6</span>, <span class="dv">5</span>), <span class="at">ncol =</span> <span class="dv">2</span>)</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="fu">expect_length</span>(<span class="fu">powierzchnia</span>(nowy_p), <span class="dv">1</span>)</span></code><button title="Kopiuj do schowka" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Jeżeli wynik ma długość jeden to wówczas nic się nie stane. W przeciwnym razie pojawi się komunikat błędu.</p>
+<p>Wiemy, że powierzchnia naszego przykładowego obiektu <code>nowy_p</code> to 30. Do sprawdzenia, czy nasza funkcja daje na tym obiekcie dokładnie taki wynik możemy użyć <code>expect_equal()</code>.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">expect_equal</span>(<span class="fu">powierzchnia</span>(nowy_p), <span class="dv">30</span>)</span></code><button title="Kopiuj do schowka" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>W momencie, gdy wynik jest zgodny to nie nastąpi żadna reakcja, a w przeciwnym razie wystąpi błąd. W pakiecie <strong>testthat</strong> istnieją inne funkcje podobne do <code>expect_equal()</code>. Przykładowo, funkcja <code>expect_identical()</code> sprawdza nie tylko podobieństwo wartości, ale też to czy klasa wyników jest taka sama.</p>
+<p>Aby sprawdzić czy nasza funkcja na pewno zwróci błąd w przypadku podania niepoprawnych danych wejściowych możemy użyć funkcji <code>expect_error()</code>. Jej działanie jest przedstawione poniżej.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">expect_error</span>(<span class="fu">powierzchnia</span>(<span class="dv">3</span>, <span class="dv">5</span>, <span class="dv">2</span>, <span class="st">"a"</span>))</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="fu">expect_error</span>(<span class="fu">powierzchnia</span>(<span class="fu">matrix</span>(<span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">6</span>, <span class="dv">5</span>), <span class="at">ncol =</span> <span class="dv">2</span>)))</span></code><button title="Kopiuj do schowka" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-error">
+<pre><code>Error: `powierzchnia(matrix(c(0, 0, 6, 5), ncol = 2))` did not throw an error.</code></pre>
+</div>
+</div>
+<p>W przypadku, gdy wywołanie funkcji zwróci błąd, <code>expect_error()</code> nic nie zwróci. Natomiast, jeżeli wywołania funkcji nie zwróci błędu, <code>expect_error()</code> zatrzyma swoje działanie i zwróci komunikat. Odpowiednikami <code>expect_error()</code> dla ostrzeżeń jest <code>expect_warning()</code>, a dla wiadomości <code>expect_message()</code>.</p>
+<p>Pozostałe funkcje z tego pakietu są wymienione i opisane na stronie <a href="https://testthat.r-lib.org/reference/index.html" class="uri">https://testthat.r-lib.org/reference/index.html</a>.</p>
+<div class="callout callout-style-simple callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+ZADANIA
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ol type="1">
+<li>Stwórz nowy plik <code>temp.R</code>.</li>
+<li>Wewnątrz tego pliku dodaj kilka testów sprawdzających funkcję ze swojego pakietu.</li>
+<li>Upewnij się, że wszystkie testy działają poprawnie (nie zwracają błędów).</li>
+</ol>
+</div>
+</div>
+</section>
+<section id="wbudowane-testy" class="level2" data-number="6.3">
+<h2 data-number="6.3" class="anchored" data-anchor-id="wbudowane-testy"><span class="header-section-number">6.3</span> Wbudowane testy</h2>
+<p>Testy jednostkowe można również wbudować wewnątrz pakietu - w efekcie, gdy naniesiemy w nim jakieś zmiany możemy sprawdzić czy otrzymujemy takie same wyniki.</p>
+<p>Pierwszym krokiem do używania wbudowanych testów jest ustawienie odpowiedniej infrastruktury używając funkcji <code>use_testthat()</code>. Powoduje ona dodanie pakietu <strong>testthat</strong> do wpisu <code>Suggests:</code>, stworzenie folderów <code>tests/</code> i <code>tests/testthat/</code> oraz pliku <code>tests/testthat.R</code>.</p>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">use_testthat</span>()</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ✔ Adding 'testthat' to Suggests field in DESCRIPTION</span></span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ✔ Creating 'tests/testthat/'</span></span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ✔ Writing 'tests/testthat.R'</span></span></code><button title="Kopiuj do schowka" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Teraz możliwe jest napisanie testów jednostkowych. Zazwyczaj polega to na stworzeniu oddzielnego pliku dla każdej funkcji z naszego pakietu. Przykładowo, nasz pakiet zawiera funkcję <code>powierzchnia()</code>, dlatego też do jego testowania możemy stworzyć nowy plik <code>tests/testthat/test-powierzchnia.R</code>. Wewnątrz tego pliku należy sprawdzać kolejne aspekty działania kodu używając funkcji <code>test_that()</code>, gdzie należy podać (1) opis tego co jest sprawdzane i (2) testy wewnątrz nawiasów klamrowych. Przykładowy plik <code>tests/testthat/test-powierzchnia.R</code> może wyglądać w ten sposób:</p>
+<div class="sourceCode" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>nowy_p <span class="ot">=</span> <span class="fu">matrix</span>(<span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">6</span>, <span class="dv">5</span>), <span class="at">ncol =</span> <span class="dv">2</span>)</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a><span class="fu">test_that</span>(<span class="st">"struktura wyniku jest poprawna"</span>, {</span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">expect_length</span>(<span class="fu">powierzchnia</span>(nowy_p), <span class="dv">1</span>)</span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>})</span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a><span class="fu">test_that</span>(<span class="st">"wartosc wyniku jest poprawna"</span>, {</span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">expect_equal</span>(<span class="fu">powierzchnia</span>(nowy_p), <span class="dv">30</span>)</span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a>})</span>
+<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a><span class="fu">test_that</span>(<span class="st">"wystepuja odpowiednie bledy"</span>, {</span>
+<span id="cb18-12"><a href="#cb18-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">expect_error</span>(<span class="fu">powierzchnia</span>(<span class="dv">3</span>, <span class="dv">5</span>, <span class="dv">2</span>, <span class="st">"a"</span>))</span>
+<span id="cb18-13"><a href="#cb18-13" aria-hidden="true" tabindex="-1"></a>})</span></code><button title="Kopiuj do schowka" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Po napisaniu testów można sprawdzić czy wszystkie z nich dają odpowiedni wynik używając <code>devtools::test()</code><a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a>. W efekcie wyświetlone zostaną wszystkie testy i zostanie wskazane, które z nich się nie powiodły i należy je poprawić.</p>
+</section>
+<section id="pokrycie-kodu-testami-jednostkowymi" class="level2" data-number="6.4">
+<h2 data-number="6.4" class="anchored" data-anchor-id="pokrycie-kodu-testami-jednostkowymi"><span class="header-section-number">6.4</span> Pokrycie kodu testami jednostkowymi</h2>
+<p>W przypadku testów jednostkowych możliwe jest sprawdzenie pokrycia kodu testami. Pokrycie kodu to procent kodu, który jest wykonywany podczas uruchamiania testów. W przypadku, gdy pokrycie kodu jest niskie, oznacza to, że testy nie sprawdzają wszystkich możliwych przypadków działania funkcji. Inaczej mówiąc, może to oznaczać, że pewne części kodu nie są testowane i mogą zawierać błędy lub działać niepoprawnie.</p>
+<p>Pokrycie kodu testami można sprawdzić lokalnie używając funkcji <code>devtools::test_coverage()</code> lub też można użyć systemu CI/CD (o tym później), żeby sprawdzić pokrycie testami na zewnętrznym serwerze.</p>
+<div class="callout callout-style-simple callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+ZADANIA
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ol type="1">
+<li>Przenieś testy z pliku <code>temp.R</code> do odpowiedniego pliku wewnątrz folderu <code>tests/testthat/</code>.</li>
+<li>Usuń plik <code>temp.R</code>.</li>
+<li>Uruchom testy używając <code>devtools::test()</code>. Czy wszystkie z nich działają poprawnie?</li>
+<li>Spróbuj użyć danych wbudowanych w pakiet do testów.</li>
+<li>Uruchom <code>devtools::test_coverage()</code> i sprawdź pokrycie kodu testami.</li>
+</ol>
+</div>
+</div>
+</section>
+<section id="strona-internetowa-pakietu" class="level2" data-number="6.5">
+<h2 data-number="6.5" class="anchored" data-anchor-id="strona-internetowa-pakietu"><span class="header-section-number">6.5</span> Strona internetowa pakietu</h2>
+<p>Dodatkowo w R istnieje możliwość prostego stworzenia stron internetowych dla wybranego pakietu używając pakietu <strong>pkgdown</strong> <span class="citation" data-cites="R-pkgdown">(<a href="references.html#ref-R-pkgdown" role="doc-biblioref">Wickham i Hesselberth 2020</a>)</span>. Przykład takiej strony można zobaczyć pod adresem <a href="https://pkgdown.r-lib.org/index.html" class="uri">https://pkgdown.r-lib.org/index.html</a>.</p>
+<p>Stworzenie strony pakietu wymaga jedynie wywołania funkcji <code>usethis::use_pkgdown()</code> oraz <code>pkgdown::build_site()</code> wewnątrz pakietu R. W efekcie działania tych funkcji zostanie utworzony folder <code>docs/</code> zawierający stronę internetową reprezentującą pakiet i jego dokumentację. W przypadku, gdy pakiet znajduje się na GitHubie możliwe jest wyświetlenie tej strony pod adresem <code>https://&lt;nazwauzytkownika&gt;.github.io/&lt;nazwapakietu&gt;/</code>. Aby ta strona była dostępna w internecie należy na platformie GitHub wejść w zakładkę Settings, następnie znaleźć część określoną jako Pages, i określić Source jako “main branch /docs folder”.</p>
+<p>Alternatywą dla powyższej funkcji jest <code>usethis::use_pkgdown_github_pages()</code>. Wykonuje ona więcej kroków automatycznie: tworzy nową gałąź Git oraz dodaje nowy plik konfiguracji GitHub Action (więcej o tym w kolejnej sekcji), który będzie starał się&nbsp;automatycznie budować stronę internetową pakietu w chmurze po każdej zmianie w kodzie.</p>
+<!-- podsumowanie podstawowych narzedzi budowania pakietow R -->
+</section>
+<section id="cicd" class="level2" data-number="6.6">
+<h2 data-number="6.6" class="anchored" data-anchor-id="cicd"><span class="header-section-number">6.6</span> CI/CD</h2>
+<p>Ciągła integracja i wdrażanie (ang. <em>continuous integration and deployment</em>, CI/CD) to podejście do tworzenia oprogramowania, które polega na łączeniu zmian w kodzie, a następnie automatycznym testowaniu tych zmian. Jest to szerokie podejście, które może być realizowane na wiele sposobów.</p>
+<p>Tutaj skupimy się&nbsp;na paru przykładach CI/CD powiązanych z pracą nad pakietami R. Ten temat jest również mocno powiązany z kontrolą wersji oraz platformami do hostowania kodu, takimi jak GitHub, GitLab, czy Bitbucket.</p>
+<p>Platforma GitHub oferuje CI/CD poprzez system o nazwie <a href="https://docs.github.com/en/actions">GitHub Actions</a>. Przykłady działania GitHub Actions można znaleźć w zakładce Actions na stronie każdego repozytorium. W dużym skrócie, GitHub Actions pozwala na uruchamianie kodu w chmurze po przesłaniu zmiany w kodzie na platformę GitHub.<a href="#fn3" class="footnote-ref" id="fnref3" role="doc-noteref"><sup>3</sup></a> Najprościej można wyobrazić sobie ten proces jako przesłanie kodu na chmurę&nbsp;należącą do GitHuba, gdzie zostaje on uruchomiony i przetestowany.<a href="#fn4" class="footnote-ref" id="fnref4" role="doc-noteref"><sup>4</sup></a></p>
+<p>W przypadku pakietów R, GitHub Actions może być używany do automatycznego budowania i sprawdzania pakietu (na różnych systemach operacyjnych), wykonywania testów jednostkowych, sprawdzania pokrycia kodu testami, oraz do automatycznego budowania strony internetowej pakietu. Samo używanie GitHub Actions jest możliwe poprzez dodanie pliku konfiguracyjnego do repozytorium. Taki plik (lub pliki) musi znajdować się w folderze <code>.github/workflows/</code> i mieć rozszerzenie <code>.yaml</code>.</p>
+<p>Przykładowy plik konfiguracyjny dla GitHub Actions może wyglądać w ten sposób:</p>
+<div class="sourceCode" id="cb19"><pre class="sourceCode yaml code-with-copy"><code class="sourceCode yaml"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">on</span><span class="kw">:</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">push</span><span class="kw">:</span></span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">branches</span><span class="kw">:</span><span class="at"> </span><span class="kw">[</span><span class="at">main</span><span class="kw">]</span></span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a><span class="fu">name</span><span class="kw">:</span><span class="at"> R-CMD-check</span></span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a><span class="fu">jobs</span><span class="kw">:</span></span>
+<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">R-CMD-check</span><span class="kw">:</span></span>
+<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">runs-on</span><span class="kw">:</span><span class="at"> ubuntu-latest</span></span>
+<span id="cb19-10"><a href="#cb19-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-11"><a href="#cb19-11" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">name</span><span class="kw">:</span><span class="at"> ubuntu-latest release</span></span>
+<span id="cb19-12"><a href="#cb19-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-13"><a href="#cb19-13" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">env</span><span class="kw">:</span></span>
+<span id="cb19-14"><a href="#cb19-14" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">GITHUB_PAT</span><span class="kw">:</span><span class="at"> ${{ secrets.GITHUB_TOKEN }}</span></span>
+<span id="cb19-15"><a href="#cb19-15" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">R_KEEP_PKG_SOURCE</span><span class="kw">:</span><span class="at"> </span><span class="ch">yes</span></span>
+<span id="cb19-16"><a href="#cb19-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-17"><a href="#cb19-17" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">steps</span><span class="kw">:</span></span>
+<span id="cb19-18"><a href="#cb19-18" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> </span><span class="fu">uses</span><span class="kw">:</span><span class="at"> actions/checkout@v3</span></span>
+<span id="cb19-19"><a href="#cb19-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-20"><a href="#cb19-20" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> </span><span class="fu">uses</span><span class="kw">:</span><span class="at"> r-lib/actions/setup-pandoc@v2</span></span>
+<span id="cb19-21"><a href="#cb19-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-22"><a href="#cb19-22" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> </span><span class="fu">uses</span><span class="kw">:</span><span class="at"> r-lib/actions/setup-r@v2</span></span>
+<span id="cb19-23"><a href="#cb19-23" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">with</span><span class="kw">:</span></span>
+<span id="cb19-24"><a href="#cb19-24" aria-hidden="true" tabindex="-1"></a><span class="at">          </span><span class="fu">r-version</span><span class="kw">:</span><span class="at"> release</span></span>
+<span id="cb19-25"><a href="#cb19-25" aria-hidden="true" tabindex="-1"></a><span class="at">          </span><span class="fu">http-user-agent</span><span class="kw">:</span><span class="at"> ubuntu-latest</span></span>
+<span id="cb19-26"><a href="#cb19-26" aria-hidden="true" tabindex="-1"></a><span class="at">          </span><span class="fu">use-public-rspm</span><span class="kw">:</span><span class="at"> </span><span class="ch">true</span></span>
+<span id="cb19-27"><a href="#cb19-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-28"><a href="#cb19-28" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> </span><span class="fu">uses</span><span class="kw">:</span><span class="at"> r-lib/actions/setup-r-dependencies@v2</span></span>
+<span id="cb19-29"><a href="#cb19-29" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">with</span><span class="kw">:</span></span>
+<span id="cb19-30"><a href="#cb19-30" aria-hidden="true" tabindex="-1"></a><span class="at">          </span><span class="fu">extra-packages</span><span class="kw">:</span><span class="at"> any::rcmdcheck</span></span>
+<span id="cb19-31"><a href="#cb19-31" aria-hidden="true" tabindex="-1"></a><span class="at">          </span><span class="fu">needs</span><span class="kw">:</span><span class="at"> check</span></span>
+<span id="cb19-32"><a href="#cb19-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-33"><a href="#cb19-33" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> </span><span class="fu">uses</span><span class="kw">:</span><span class="at"> r-lib/actions/check-r-package@v2</span></span>
+<span id="cb19-34"><a href="#cb19-34" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">with</span><span class="kw">:</span></span>
+<span id="cb19-35"><a href="#cb19-35" aria-hidden="true" tabindex="-1"></a><span class="at">          </span><span class="fu">upload-snapshots</span><span class="kw">:</span><span class="at"> </span><span class="ch">true</span></span></code><button title="Kopiuj do schowka" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Dodania pliku konfiguracyjnego można wykonać ręcznie lub przy pomocy funkcji <code>usethis::use_github_action()</code>, która pozwala na wybranie jednego z kilku szablonów. Warto zacząć od wyboru jednego z szablonów i dostosowania go do własnych potrzeb.</p>
+<p>Powyższy plik konfiguracyjny ma na celu sprawdzenie pakietu na systemie Ubuntu. Możliwe jest także użycie systemu GitHub Actions do, np. określenia pokrycia kodu testami czy też&nbsp;automatycznego budowania strony internetowej pakietu. Przykłady różnych plików konfiguracyjnych związanych z pakietami R można znaleźć w repozytorium <a href="https://github.com/r-lib/actions/tree/v2/examples" class="uri">https://github.com/r-lib/actions/tree/v2/examples</a>. W kontekście tworzenia pakietów R związanych z danymi przestrzennymi, warto sprawdzić pliki konfiguracyjne GitHub Actions już istniejących pakietów R opartych o biblioteki GDAL czy PROJ.</p>
+<!-- styler, lintr -->
+<div class="callout callout-style-simple callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+ZADANIA
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ol type="1">
+<li>Dodaj do swojego pakietu plik konfiguracyjny dla GitHub Actions, który będzie sprawdzał pakiet na systemie Ubuntu.</li>
+<li>Prześlij zmiany na GitHuba i sprawdź czy GitHub Actions działa poprawnie.</li>
+<li>Dodaj do swojego pakietu plik konfiguracyjny dla GitHub Actions, który będzie sprawdzał pokrycie kodu testami. Możesz to zrobić albo rozszerzając plik konfiguracyjny z poprzedniego zadania, albo tworząc nowy plik konfiguracyjny.</li>
+<li>Prześlij zmiany na GitHuba i sprawdź czy GitHub Actions działa poprawnie.</li>
+<li>Dodaj do swojego pakietu plik konfiguracyjny dla GitHub Actions, który będzie budował stronę internetową pakietu. Możesz to zrobić albo rozszerzając plik konfiguracyjny z poprzedniego zadania, albo tworząc nowy plik konfiguracyjny.</li>
+<li>Prześlij zmiany na GitHuba i sprawdź czy GitHub Actions działa poprawnie oraz czy strona internetowa pakietu istnieje.</li>
+<li>W przypadku, gdy wszystko działa poprawnie, dodaj dwie nowe linie do pliku <code>DESCRIPTION</code> zawierające linki do strony internetowej pakietu oraz do repozytorium pakietu:</li>
+</ol>
+<div class="sourceCode" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>URL<span class="sc">:</span> https<span class="sc">:</span><span class="er">//</span>ja.github.io<span class="sc">/</span>mojpakiet<span class="sc">/</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>BugReports<span class="sc">:</span> https<span class="sc">:</span><span class="er">//</span>github.com<span class="sc">/</span>ja<span class="sc">/</span>mojpakiet<span class="sc">/</span>issues</span></code><button title="Kopiuj do schowka" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+</section>
+<section id="cran" class="level2" data-number="6.7">
+<h2 data-number="6.7" class="anchored" data-anchor-id="cran"><span class="header-section-number">6.7</span> CRAN</h2>
+<p>CRAN (<em>Comprehensive R Archive Network</em>) to repozytorium zawierające pakiety R. Wszystkie pakiety znajdujące się w tym repozytorium są sprawdzane pod kątem zgodności z wymaganiami na kilku systemach operacyjnych. Wymagania można znaleźć pod adresami <a href="https://cran.r-project.org/web/packages/policies.html" class="uri">https://cran.r-project.org/web/packages/policies.html</a> oraz <a href="https://cran.r-project.org/web/packages/submission_checklist.html" class="uri">https://cran.r-project.org/web/packages/submission_checklist.html</a>. Co ważne, wymagania te zmieniają się w czasie.<a href="#fn5" class="footnote-ref" id="fnref5" role="doc-noteref"><sup>5</sup></a></p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Komentarz
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Tworzenie nowych narzędzi daje często satysfakcję. Należy jednak pamiętać, że narzędzia komputerowe są zależne od innych narzędzi, które mogą się zmieniać w czasie. W związku z tym, narzędzia komputerowe wymagają stałej uwagi oraz konserwacji (ang. <em>maintenance</em>).</p>
+</div>
+</div>
+<p>Podejście stosowane przez CRAN kładzie odpowiedzialność za poprawność działania pakietu na jego autorach. W zamian, potencjalni użytkownicy mogą mieć pewność, że pakiet jest zgodny z wymaganiami CRAN, działa poprawnie i jest możliwy do zainstalowania na różnych systemach operacyjnych. Dodatkowo, CRAN tworzy wersje binarne pakietów dla systemów Windows i Mac OS, co znacznie ułatwia i przyspiesza ich instalację.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Komentarz
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Wcześniej przedstawiona funkcja <code>devtools::check()</code> sprawdza pakiet pod kątem różnych testów, ale nie sprawdza czy jest on w pełni zgodny z wymaganiami CRAN. Wynika to z kilku kwestii. Trzy najważniejsze to: 1. Niektóre z wymagań są sprawdzane manualnie przez CRAN team. 2. Niektóre z wymagań nie są w pełni znane. 3. CRAN sprawdza pakiety na różnych systemach operacyjnych, a <code>devtools::check()</code> sprawdza pakiet tylko na systemie, na którym jest uruchomiony.</p>
+</div>
+</div>
+<p>W momencie gdy uważam, że pakiet jest w wersji stabilnej i gotowy do wysłania na CRAN, wykonuję następujące kroki:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 1 dodaję dokumentację</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>devtools<span class="sc">::</span><span class="fu">document</span>()</span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a><span class="co"># 2 testuję pakiet</span></span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>devtools<span class="sc">::</span><span class="fu">check</span>()</span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a><span class="co"># 3 sprawdzam czy pakiet jest zgodny z wymaganiami CRAN</span></span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>rcmdcheck<span class="sc">::</span><span class="fu">rcmdcheck</span>(<span class="at">args =</span> <span class="fu">c</span>(<span class="st">"--no-manual"</span>, <span class="st">"--as-cran"</span>))</span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a><span class="co"># 4 sprawdzam czy wszystkie linki w dokumentacji działają</span></span>
+<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a><span class="co"># install.packages("urlchecker", repos = "https://r-lib.r-universe.dev")</span></span>
+<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a>urlchecker<span class="sc">::</span><span class="fu">url_check</span>()</span>
+<span id="cb21-10"><a href="#cb21-10" aria-hidden="true" tabindex="-1"></a>urlchecker<span class="sc">::</span><span class="fu">url_update</span>()</span>
+<span id="cb21-11"><a href="#cb21-11" aria-hidden="true" tabindex="-1"></a><span class="co"># 5 aktualizuję NEWS i wersję pakietu</span></span>
+<span id="cb21-12"><a href="#cb21-12" aria-hidden="true" tabindex="-1"></a><span class="co"># 6 wysyłam pakiet do CRAN</span></span>
+<span id="cb21-13"><a href="#cb21-13" aria-hidden="true" tabindex="-1"></a>devtools<span class="sc">::</span><span class="fu">submit_cran</span>()</span></code><button title="Kopiuj do schowka" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Bardziej złożone (i kompletne) podejście do przygotowania pakietu do CRAN jest opisane na stronie <a href="https://github.com/ThinkR-open/prepare-for-cran" class="uri">https://github.com/ThinkR-open/prepare-for-cran</a>. <!-- use_release_issue --></p>
+<p>Po wywołaniu ostatniej z funkcji należy potwierdzić swój adres email, a następnie kliknąć w otrzymany mailowo link. W efekcie pakiet zostanie wysłany do CRAN, gdzie zostanie sprawdzony przez automatyczne narzędzia.</p>
+<p>W przypadku wysłania pakietu do CRAN po raz pierwszy, jest on sprawdzony manualnie przez jedną z osób w tzw. CRAN team. Taka osoba może albo zaakceptować pakiet, albo poprosić o poprawienie błędów i przesłanie pakietu ponownie.</p>
+<p>Aktualizowanie pakietu przebiega w ten sam sposób – poprzez wywołanie <code>devtools::submit_cran()</code>.<a href="#fn6" class="footnote-ref" id="fnref6" role="doc-noteref"><sup>6</sup></a> Wtedy pakiet zostanie sprawdzony przez automatyczne narzędzia. W przypadku, gdy automatyczne testy zwrócą jakieś problemy (ostrzeżenia lub notatki), zostanie on również obejrzany przez CRAN team. Warto pamiętać, że nie należy aktualizować&nbsp;wersji CRAN pakietu częściej niż&nbsp;raz na miesiąc.</p>
+<!-- revdeps -->
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Komentarz
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Możliwe jest sprawdzenie statusu pakietu przesłanego na CRAN na stronie <a href="https://r-hub.github.io/cransays/articles/dashboard.html" class="uri">https://r-hub.github.io/cransays/articles/dashboard.html</a>.</p>
+</div>
+</div>
+<p>Gdy pakiet jest już na CRAN, ale nie jest zgodny z nowymi wymaganiami, otrzyma się prośbę o jego naprawę, a w przypadku nie naniesienie poprawek, zostanie on usunięty z CRAN (<em>archived</em>).</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Komentarz
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Wysyłanie pakietu na CRAN nie jest jedynym sposobem na jego udostępnienie. W różnych sytuacjach możliwe jest też udostępnienie pakietu na innych repozytoriach, np. na GitHubie, GitLabie, Bitbucket, lub na własnym serwerze. Inne możliwości to np. użycie systemu <a href="https://github.com/eddelbuettel/drat"><strong>drat</strong></a> lub <a href="https://r-universe.dev/">r-universe</a>. Powyższe rozwiązania nie mają takich samych wymagań jak CRAN, ale wymagają więcej od potencjalnego użytkownika. Dodatkowo, <a href="https://www.bioconductor.org/">bioconductor</a> to repozytorium zawierające pakiety R związane z bioinformatyką.</p>
+</div>
+</div>
+
+
+<div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list" style="display: none">
+<div id="ref-R-testthat" class="csl-entry" role="listitem">
+Wickham, Hadley. 2020. <em>testthat: Unit Testing for R</em>. <a href="https://CRAN.R-project.org/package=testthat">https://CRAN.R-project.org/package=testthat</a>.
+</div>
+<div id="ref-R-pkgdown" class="csl-entry" role="listitem">
+Wickham, Hadley, i Jay Hesselberth. 2020. <em>pkgdown: Make Static HTML Documentation for a Package</em>. <a href="https://CRAN.R-project.org/package=pkgdown">https://CRAN.R-project.org/package=pkgdown</a>.
+</div>
+</div>
+</section>
+<section id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes">
+<hr>
+<ol>
+<li id="fn1"><p>Można też użyć funkcji <code>usethis::use_data_raw()</code>.<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn2"><p>Testy są też automatycznie uruchamiane podczas sprawdzania pakietu<a href="#fnref2" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn3"><p>Możliwe jest też&nbsp;uruchamianie kodu co zadany czas.<a href="#fnref3" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn4"><p>Należy pamiętać, że GitHub Actions nie jest w pełni darmowy.<a href="#fnref4" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn5"><p>Niektóre zasady działania CRAN są krytykowane, co można przeczytać pod adresem <a href="https://github.com/cranchange/cran_change.org" class="uri">https://github.com/cranchange/cran_change.org</a>.<a href="#fnref5" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn6"><p>Możliwe jest też wysłanie pakietu do CRAN za pomocą strony <a href="https://cran.r-project.org/submit.html" class="uri">https://cran.r-project.org/submit.html</a>.<a href="#fnref6" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Skopiowano!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Skopiowano!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    // For code content inside modals, clipBoardJS needs to be initialized with a container option
+    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./git2.html" class="pagination-link" aria-label="Kontrola wersji (2)">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Kontrola wersji (2)</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./git3.html" class="pagination-link" aria-label="Kontrola wersji (3)">
+        <span class="nav-page-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Kontrola wersji (3)</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

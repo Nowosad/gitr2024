@@ -1,0 +1,830 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="pl" xml:lang="pl"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.5.39">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Tworzenie pakietów R oraz praca z system kontroli wersji Git i platformą GitHub – 8&nbsp; Tworzenie pakietów R (4)</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+  margin-bottom: 0em;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./references.html" rel="next">
+<link href="./git3.html" rel="prev">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "Brak wyników",
+    "search-matching-documents-text": "dopasowane dokumenty",
+    "search-copy-link-title": "Kopiuj link do wyszukiwania",
+    "search-hide-matches-text": "Ukryj dodatkowe dopasowania",
+    "search-more-match-text": "więcej dopasowań w tym dokumencie",
+    "search-more-matches-text": "więcej dopasowań w tym dokumencie",
+    "search-clear-button-title": "Wyczyść",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Anuluj",
+    "search-submit-button-title": "Zatwierdź",
+    "search-label": "Szukaj"
+  }
+}</script>
+
+
+</head>
+
+<body class="nav-sidebar floating">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Przełącz pasek boczny" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./pakiety4.html"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Tworzenie pakietów R (4)</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Przełącz pasek boczny" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Szukaj" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">Tworzenie pakietów R oraz praca z system kontroli wersji Git i platformą GitHub</a> 
+        <div class="sidebar-tools-main">
+    <a href="./Tworzenie-pakietów-R-oraz-praca-z-system-kontroli-wersji-Git-i-platformą-GitHub.pdf" title="Download PDF" class="quarto-navigation-tool px-1" aria-label="Download PDF"><i class="bi bi-file-pdf"></i></a>
+</div>
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Szukaj"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Wprowadzenie</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./pakiety1.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Tworzenie pakietów R (1)</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./git1.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Kontrola wersji (1)</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./pakiety2.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Tworzenie pakietów R (2)</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./git2.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Kontrola wersji (2)</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./pakiety3.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Tworzenie pakietów R (3)</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./git3.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Kontrola wersji (3)</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./pakiety4.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Tworzenie pakietów R (4)</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./references.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Bibliografia</span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Spis treści</h2>
+   
+  <ul>
+  <li><a href="#zaawansowane-dokumentowanie-funkcji" id="toc-zaawansowane-dokumentowanie-funkcji" class="nav-link active" data-scroll-target="#zaawansowane-dokumentowanie-funkcji"><span class="header-section-number">8.1</span> Zaawansowane dokumentowanie funkcji</a></li>
+  <li><a href="#dodatkowe-możliwości-pakietu-usethis" id="toc-dodatkowe-możliwości-pakietu-usethis" class="nav-link" data-scroll-target="#dodatkowe-możliwości-pakietu-usethis"><span class="header-section-number">8.2</span> Dodatkowe możliwości pakietu <strong>usethis</strong></a></li>
+  <li><a href="#inne-kwestie-związane-z-tworzeniem-pakietów-r" id="toc-inne-kwestie-związane-z-tworzeniem-pakietów-r" class="nav-link" data-scroll-target="#inne-kwestie-związane-z-tworzeniem-pakietów-r"><span class="header-section-number">8.3</span> Inne kwestie związane z tworzeniem pakietów R</a></li>
+  <li><a href="#dodatkowe-materiały" id="toc-dodatkowe-materiały" class="nav-link" data-scroll-target="#dodatkowe-materiały"><span class="header-section-number">8.4</span> Dodatkowe materiały</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Tworzenie pakietów R (4)</span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="zaawansowane-dokumentowanie-funkcji" class="level2" data-number="8.1">
+<h2 data-number="8.1" class="anchored" data-anchor-id="zaawansowane-dokumentowanie-funkcji"><span class="header-section-number">8.1</span> Zaawansowane dokumentowanie funkcji</h2>
+<p>Sekcje <a href="pakiety1.html#sec-opis-pakietu" class="quarto-xref"><span>2.5</span></a> oraz <a href="pakiety2.html#sec-metadane-pakietu" class="quarto-xref"><span>4.2</span></a> omawiały plik <code>DESCRIPTION</code> oraz jego zawartość. Jedną z kwestii, która nie została tam poruszona jest dodanie do pakietu możliwości dokumentowania funkcji <a href="https://roxygen2.r-lib.org/articles/markdown.html">używając języka Markdown</a>. <!-- why? --> W tym celu należy w pliku <code>DESCRIPTION</code> dodać linię <code>Roxygen: list(markdown = TRUE)</code>.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode yaml code-with-copy"><code class="sourceCode yaml"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">Package</span><span class="kw">:</span><span class="at"> mojpakiet</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">Title</span><span class="kw">:</span><span class="at"> Moje Funkcje Robiace Wszystko</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">Version</span><span class="kw">:</span><span class="at"> </span><span class="fl">0.0.1</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">Authors@R</span><span class="kw">:</span><span class="at"> </span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="at">    person(given = "Imie",</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="at">           family = "Nazwisko",</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="at">           role = c("cre", "aut"),</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="at">           email = "imie.nazwisko@example.com")</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="fu">Description</span><span class="kw">:</span><span class="at"> Tworzenie, przeliczanie i wyliczanie wszystkiego. </span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="at">    Czasami nawet więcej.</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="fu">License</span><span class="kw">:</span><span class="at"> CC0</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="fu">Encoding</span><span class="kw">:</span><span class="at"> UTF-8</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="fu">LazyData</span><span class="kw">:</span><span class="at"> </span><span class="ch">true</span></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="fu">RoxygenNote</span><span class="kw">:</span><span class="at"> </span><span class="fl">7.2.3</span></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="fu">Roxygen</span><span class="kw">:</span><span class="at"> list(markdown = TRUE)</span></span></code><button title="Kopiuj do schowka" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Teraz możliwe jest stosowanie znaczników Markdown w dokumentacji funkcji. Poniżej pokażę ich użycie oraz inne, wcześniej nie omówione, możliwości pakietu <strong>roxygen2</strong> (<a href="pakiety1.html#sec-dok-fun1" class="quarto-xref"><span>Sekcja 2.7</span></a>).</p>
+<!-- test this doc!! -->
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co">#' Konwersja odleglosci</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="co">#'</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="co">#' @description Funkcja sluzaca do konwersji odleglosci z mil na kilometry</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="co">#'</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="co">#' @param mil wektor zawierajacy wartosci odleglosci w milach</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="co">#' </span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="co">#' @details Funkcja `konwersja_odl()` konwertuje odleglosci z </span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="co">#'     [mil](https://en.wikipedia.org/wiki/Mile) na kilometry używając wzoru</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="co">#'     przelicznika: 1 mila = 1.609344 km</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="co">#' </span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a><span class="co">#' Ta funkcja jest:</span></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a><span class="co">#' * Niezwykle przydatna</span></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a><span class="co">#' * Bardzo prosta</span></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a><span class="co">#'</span></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a><span class="co">#' @return wektor numeryczny</span></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a><span class="co">#' @export</span></span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a><span class="co">#' </span></span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a><span class="co">#' @references Tobler, W. R. (1970). "A Computer Movie Simulating Urban Growth </span></span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a><span class="co">#'     in the Detroit Region". Economic Geography. 46: 234–240</span></span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a><span class="co">#' </span></span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a><span class="co">#' @seealso [konwersja_temp()], [units::set_units()]</span></span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a><span class="co">#'</span></span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a><span class="co">#' @examples</span></span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a><span class="co">#' konwersja_odl(75)</span></span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a><span class="co">#' konwersja_odl(110)</span></span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a><span class="co">#' konwersja_odl(0)</span></span>
+<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a><span class="co">#' \dontrun{</span></span>
+<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a><span class="co">#' konwersja_odl(c(0, 75, 110))</span></span>
+<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a><span class="co">#' }</span></span>
+<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a>konwersja_odl <span class="ot">=</span> <span class="cf">function</span>(mil){</span>
+<span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a>    mil <span class="sc">*</span> <span class="fl">1.609344</span></span>
+<span id="cb2-32"><a href="#cb2-32" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Kopiuj do schowka" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Język Markdown ma kilka zastosowań w dokumentacji funkcji. Po pierwsze pozwala na stylizowanie tekstu, np. pogrubienie, pochylenie, itp. Przykładowo,</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="in">`konwersja_odl()`</span> </span></code><button title="Kopiuj do schowka" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>zamieni się w <code>konwersja_odl()</code>. Po drugie, Markdown pozwala na dodanie linków do innych stron internetowych, które mogą być przydatne w kontekście funkcji. Używa się&nbsp;wtedy składni <code>[mil](https://en.wikipedia.org/wiki/Mile)</code>, gdzie <code>mil</code> to tekst, który będzie wyświetlany, a <code>https://en.wikipedia.org/wiki/Mile</code> to link do strony internetowej.</p>
+<p>Markdown pozwala również na odnoszenie się&nbsp;do dokumentacji innych funkcji, zarówno wewnątrz pakietu, jak i zewnętrznych. Wewnętrzne funkcje odwołuje się&nbsp;za pomocą <code>[konwersja_temp()]</code>, gdzie <code>konwersja_temp()</code> to nazwa funkcji, do której chcemy się odwołać, a zewnętrzne za pomocą <code>[units::set_units()]</code>, gdzie <code>set_units()</code> to nazwa funkcji, do której chcemy się odwołać, a <code>units</code> to nazwa pakietu, w którym ta funkcja się znajduje. Kolejną możliwością jest proste wstawianie list używając znacznika <code>*</code>.<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a></p>
+<p>Dokumentacja funkcji może zawierać także inne znaczniki, które nie zostały omówione w poprzednich sekcjach. Obejmuje to takie znaczniki jak:</p>
+<ul>
+<li><code>@details</code>: dodatkowe informacje o funkcji, w tym jej zastosowanie, ograniczenia, specjalne przypadki, itp.</li>
+<li><code>@seealso</code>: odnośniki do innych funkcji, które mogą&nbsp;być podobne lub powiązane z funkcją, której dokumentacja jest tworzona</li>
+<li><code>@references</code>: odnośniki do literatury (np. artykułu naukowego), na podstawie której powstała funkcja</li>
+</ul>
+<p>Znacznik <code>@examples</code> pozwala na dodanie przykładów użycia funkcji. Część z tych przykładów można powstrzymać przed uruchomieniem używając znacznika <code>\dontrun{}</code>. Może się&nbsp;to przydać w kwestii, np. gdy chcemy pokazać przykład wystąpienia błędu.</p>
+<p>Więcej informacji na temat dokumentowania funkcji można znaleźć na stronie <a href="https://r-pkgs.org/man.html#roxygen2-basics" class="uri">https://r-pkgs.org/man.html#roxygen2-basics</a>.</p>
+</section>
+<section id="dodatkowe-możliwości-pakietu-usethis" class="level2" data-number="8.2">
+<h2 data-number="8.2" class="anchored" data-anchor-id="dodatkowe-możliwości-pakietu-usethis"><span class="header-section-number">8.2</span> Dodatkowe możliwości pakietu <strong>usethis</strong></h2>
+<p>Pakiet <strong>usethis</strong> także oferuje inne możliwości, które nie zostały omówione w poprzednich sekcjach. Nie są one niezbędne do tworzenia pakietów, ale mogą być przydatne w niektórych przypadkach. Tutaj pokrótce omówię kilka z nich:</p>
+<ul>
+<li><code>use_citation()</code>: dodaje <a href="https://r-pkgs.org/misc.html#sec-misc-inst-citation">plik <code>inst/CITATION</code></a> do pakietu, który zawiera informacje w jaki sposób cytować dany pakiet. Zazwyczaj warto dodać&nbsp;ten plik, gdy dany pakiet powiązany jest z publikacją&nbsp;naukową.</li>
+<li><code>use_package_doc()</code>: tworzy on plik <code>R/{nazwapakietu}-package.R</code>, który jest ogólną dokumentacją pakietu. Można go później wywołać poprzez <code>?{nazwapakietu}</code>.</li>
+<li><code>use_cran_badge()</code>: dodaje plakietkę (ang. <em>badge</em>) z odnośnikiem do strony pakietu na CRAN do pliku README. Możliwe jest także dodanie innych plakietek używając funkcji <code>use_badge()</code>, w której należy podać nazwę i odnośnik do plakietki.<a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a></li>
+</ul>
+<p>Dodatkowo, pakiet <strong>usethis</strong> pozwala na dodawanie informacji do pakietu z poziomu R, np. przy użyciu funkcji <code>use_author()</code> czy <code>use_version()</code>.</p>
+<div class="callout callout-style-simple callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+ZADANIA
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ol type="1">
+<li>Dodaj do swojego pakietu możliwość dokumentowania funkcji używając Markdown.</li>
+<li>Dodaj do jednej z funkcji dodatkowe informacje używając znaczników Markdown: odnośniki do innych funkcji, odnośniki do literatury, listę, itp.</li>
+<li>Dodaj do swojego pakietu plik <code>inst/CITATION</code> używając funkcji <code>use_citation()</code>.</li>
+<li>Dodaj do swojego pakietu plik <code>R/{nazwapakietu}-package.R</code> używając funkcji <code>use_package_doc()</code>.</li>
+<li>Dodaj do swojego pakietu plakietkę z odnośnikiem do strony pakietu na CRAN używając funkcji <code>use_cran_badge()</code>.</li>
+<li>Zaktualizuj dokumentację używając funkcji <code>devtools::document()</code>, a następnie załaduj pakiet używając funkcji <code>devtools::load_all()</code>. Sprawdź jakie zaszły zmiany w dokumentacji.</li>
+<li>Prześlij wszystkie zmiany do repozytorium zdalnego na GitHubie.</li>
+</ol>
+</div>
+</div>
+</section>
+<section id="inne-kwestie-związane-z-tworzeniem-pakietów-r" class="level2" data-number="8.3">
+<h2 data-number="8.3" class="anchored" data-anchor-id="inne-kwestie-związane-z-tworzeniem-pakietów-r"><span class="header-section-number">8.3</span> Inne kwestie związane z tworzeniem pakietów R</h2>
+<p>Do tej pory omówiliśmy najważniejsze kwestie związane z tworzeniem pakietów R. Jednakże, istnieje wiele innych aspektów, które nie zostały tutaj poruszone, ale warto zdawać sobie z nich sprawę.</p>
+<p>Jednym z nich jest plik <code>NAMESPACE</code>, który jest generowany automatycznie przez pakiet <strong>roxygen2</strong>. Plik ten zawiera informacje o funkcjach, które są eksportowane z pakietu, a także o funkcjach, które są importowane z innych pakietów. Tego pliku nie należy edytować ręcznie.</p>
+<p>Innym aspektem jest plik <code>.Rbuildignore</code>, który zawiera informacje o plikach, które mają być ignorowane podczas budowania pakietu. Warto dodać do tego pliku pliki, które nie są niezbędne do działania pakietu, ale są&nbsp;powiązane z jego tworzeniem. Przykładowo, obejmuje to plik projektu RStudio <code>^{nazwapakietu}.Rproj$</code>, pliki czt folder związane z CI/CD (np. <code>^\.github$</code>), czy folder z surowymi danymi i kodem (np. <code>^data-raw$</code>).</p>
+<p>Kolejnym aspektem są&nbsp;zależności pakietów (ang. <em>dependencies</em>). Z jednej strony, nasz pakiet może wymagać innych pakietów do działania, a z drugiej natomiast, nasz pakiet może być wymagany przez inne pakiety. Obie te kwestie są&nbsp;złożone i decyzje o nich mają różne konsekwencje.</p>
+<p>W przypadku zależności naszego pakietu od innych pakietów, możemy określić je w pliku <code>DESCRIPTION</code> w sekcji <code>Imports</code> lub <code>Suggests</code>. W efekcie, nasz pakiet staje się&nbsp;zależny od innych pakietów, które są wymienione w tych sekcjach. Zmiany w tych pakietach (i ich zależnościach) mogą mieć wpływ na nasz pakiet. Pełne drzewo zależności pakietu można wyświetlić używając funkcji <code>pak::pkg_deps_tree()</code>.</p>
+<p>Istnieją&nbsp;różne podejścia do określania tego jakie pakiety powinny być wymagane przez nasz pakiet. Jednym z podejść jest używanie minimalnej liczby zależności, inne natomiast obejmuje stosowanie zależności co do autorów których mamy zaufanie. Jakiekolwiek założenie jest przyjęte, nie warto przesadzać z liczbą zależności, gdyż może to mieć&nbsp;negatywny wpływ na czas budowania pakietu, a także na jago stabilność.</p>
+<p>Nasz pakiet R może być&nbsp;również wymagany przez inne pakiety—taka sytuacja nazywana jest&nbsp;zależnością wsteczną (ang. <em>reverse dependency</em>). W tym przypadku, zmiany w naszym pakiecie mogą mieć wpływ na inne pakiety. Chcemy, aby wprowadzane przez nas zmiany nie powodowały szerokich konsekwencji w innych pakietach. Wykonanie sprawdzenia wpływu zmian na zależności wsteczne może być&nbsp;wykonane używając funkcji <code>usethis::use_revdep()</code>.</p>
+</section>
+<section id="dodatkowe-materiały" class="level2" data-number="8.4">
+<h2 data-number="8.4" class="anchored" data-anchor-id="dodatkowe-materiały"><span class="header-section-number">8.4</span> Dodatkowe materiały</h2>
+<p>W celu poznania i zrozumienia złożonych aspektów tworzenia pakietów R cennymi źródłami wiedzy może być książki <a href="https://r-pkgs.org">R packages</a> <span class="citation" data-cites="wickham2015r">(<a href="references.html#ref-wickham2015r" role="doc-biblioref">Wickham 2015</a>)</span> oraz <a href="https://ropensci.github.io/dev_guide/">rOpenSci Packages: Development, Maintenance, and Peer Review</a> <span class="citation" data-cites="ropensci_2019_2554759">(<a href="references.html#ref-ropensci_2019_2554759" role="doc-biblioref">rOpenSci i in. 2019</a>)</span>. Dodatkowo, w niektórych przypadkach pomocna może być oficjalna dokumentacja <a href="https://cran.r-project.org/doc/manuals/R-exts.html#Creating-R-packages">Writing R Extensions</a> <span class="citation" data-cites="team1999writing">(<a href="references.html#ref-team1999writing" role="doc-biblioref">R Core Team 2019</a>)</span>. Niezastąpione jest także czytanie kodu źródłowego innych pakietów R na GitHubie.</p>
+
+
+<div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list" style="display: none">
+<div id="ref-team1999writing" class="csl-entry" role="listitem">
+R Core Team. 2019. <em>Writing <span>R</span> Extensions</em>. <span>R Foundation for Statistical Computing</span>.
+</div>
+<div id="ref-ropensci_2019_2554759" class="csl-entry" role="listitem">
+rOpenSci, Brooke Anderson, Scott Chamberlain, Anna Krystalli, Lincoln Mullen, Karthik Ram, Noam Ross, Maëlle Salmon, i Melina Vidoni. 2019. <span>„<span>rOpenSci Packages</span>: <span>Development</span>, <span>Maintenance</span>, and <span>Peer Review</span>”</span>, styczeń. <a href="https://doi.org/10.5281/zenodo.2554759">https://doi.org/10.5281/zenodo.2554759</a>.
+</div>
+<div id="ref-wickham2015r" class="csl-entry" role="listitem">
+Wickham, Hadley. 2015. <em>R Packages: Organize, Test, Document, and Share Your Code</em>. <span>" O’Reilly Media, Inc."</span>.
+</div>
+</div>
+</section>
+<section id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes">
+<hr>
+<ol>
+<li id="fn1"><p>Markdown umożliwia także inne kwestie, takie jak wstawianie obrazków, tabel, itp.<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn2"><p>Polecam obejrzeć repozytoria GitHub innych pakietów po inspiracje.<a href="#fnref2" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Skopiowano!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Skopiowano!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    // For code content inside modals, clipBoardJS needs to be initialized with a container option
+    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./git3.html" class="pagination-link" aria-label="Kontrola wersji (3)">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Kontrola wersji (3)</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./references.html" class="pagination-link" aria-label="Bibliografia">
+        <span class="nav-page-text">Bibliografia</span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

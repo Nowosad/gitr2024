@@ -1,0 +1,905 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="pl" xml:lang="pl"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.5.39">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Tworzenie pakietów R oraz praca z system kontroli wersji Git i platformą GitHub – 4&nbsp; Tworzenie pakietów R (2)</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./git2.html" rel="next">
+<link href="./git1.html" rel="prev">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "Brak wyników",
+    "search-matching-documents-text": "dopasowane dokumenty",
+    "search-copy-link-title": "Kopiuj link do wyszukiwania",
+    "search-hide-matches-text": "Ukryj dodatkowe dopasowania",
+    "search-more-match-text": "więcej dopasowań w tym dokumencie",
+    "search-more-matches-text": "więcej dopasowań w tym dokumencie",
+    "search-clear-button-title": "Wyczyść",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Anuluj",
+    "search-submit-button-title": "Zatwierdź",
+    "search-label": "Szukaj"
+  }
+}</script>
+
+
+</head>
+
+<body class="nav-sidebar floating">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Przełącz pasek boczny" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./pakiety2.html"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Tworzenie pakietów R (2)</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Przełącz pasek boczny" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Szukaj" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">Tworzenie pakietów R oraz praca z system kontroli wersji Git i platformą GitHub</a> 
+        <div class="sidebar-tools-main">
+    <a href="./Tworzenie-pakietów-R-oraz-praca-z-system-kontroli-wersji-Git-i-platformą-GitHub.pdf" title="Download PDF" class="quarto-navigation-tool px-1" aria-label="Download PDF"><i class="bi bi-file-pdf"></i></a>
+</div>
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Szukaj"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Wprowadzenie</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./pakiety1.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Tworzenie pakietów R (1)</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./git1.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Kontrola wersji (1)</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./pakiety2.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Tworzenie pakietów R (2)</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./git2.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Kontrola wersji (2)</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./pakiety3.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Tworzenie pakietów R (3)</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./git3.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Kontrola wersji (3)</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./pakiety4.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Tworzenie pakietów R (4)</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./references.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Bibliografia</span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Spis treści</h2>
+   
+  <ul>
+  <li><a href="#publikowanie-pakietów" id="toc-publikowanie-pakietów" class="nav-link active" data-scroll-target="#publikowanie-pakietów"><span class="header-section-number">4.1</span> Publikowanie pakietów</a></li>
+  <li><a href="#sec-metadane-pakietu" id="toc-sec-metadane-pakietu" class="nav-link" data-scroll-target="#sec-metadane-pakietu"><span class="header-section-number">4.2</span> Metadane pakietu</a>
+  <ul class="collapse">
+  <li><a href="#tytuł-pakietu" id="toc-tytuł-pakietu" class="nav-link" data-scroll-target="#tytuł-pakietu"><span class="header-section-number">4.2.1</span> Tytuł pakietu</a></li>
+  <li><a href="#wersja-pakietu" id="toc-wersja-pakietu" class="nav-link" data-scroll-target="#wersja-pakietu"><span class="header-section-number">4.2.2</span> Wersja pakietu</a></li>
+  <li><a href="#autorzy" id="toc-autorzy" class="nav-link" data-scroll-target="#autorzy"><span class="header-section-number">4.2.3</span> Autorzy</a></li>
+  <li><a href="#opis-pakietu" id="toc-opis-pakietu" class="nav-link" data-scroll-target="#opis-pakietu"><span class="header-section-number">4.2.4</span> Opis pakietu</a></li>
+  <li><a href="#licencja" id="toc-licencja" class="nav-link" data-scroll-target="#licencja"><span class="header-section-number">4.2.5</span> Licencja</a></li>
+  <li><a href="#inne-pola" id="toc-inne-pola" class="nav-link" data-scroll-target="#inne-pola"><span class="header-section-number">4.2.6</span> Inne pola</a></li>
+  </ul></li>
+  <li><a href="#dokumentacja-pakietu" id="toc-dokumentacja-pakietu" class="nav-link" data-scroll-target="#dokumentacja-pakietu"><span class="header-section-number">4.3</span> Dokumentacja pakietu</a>
+  <ul class="collapse">
+  <li><a href="#readme" id="toc-readme" class="nav-link" data-scroll-target="#readme"><span class="header-section-number">4.3.1</span> README</a></li>
+  <li><a href="#winiety" id="toc-winiety" class="nav-link" data-scroll-target="#winiety"><span class="header-section-number">4.3.2</span> Winiety</a></li>
+  <li><a href="#news" id="toc-news" class="nav-link" data-scroll-target="#news"><span class="header-section-number">4.3.3</span> NEWS</a></li>
+  </ul></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Tworzenie pakietów R (2)</span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="publikowanie-pakietów" class="level2" data-number="4.1">
+<h2 data-number="4.1" class="anchored" data-anchor-id="publikowanie-pakietów"><span class="header-section-number">4.1</span> Publikowanie pakietów</h2>
+<p>Nowo utworzony pakiet w R można od razu umieścić na wybranym serwisie internetowym wspierającym kontrolę wersji takim jak GitHub, GitLab, czy BitBucket, gdzie nazwa repozytorium będzie identyczna jak nazwa pakietu.</p>
+<p>Można to zrobić na kilka sposobów, na przykład:</p>
+<ol type="1">
+<li>Poprzez stworzenie nowego, pustego repozytorium na wybranym serwisie internetowym i sklonowanie go na swój komputer, a następnie przesłanie plików pakietu do tego repozytorium (zobacz <a href="git1.html#sec-nowy-projekt" class="quarto-xref"><span>Sekcja 3.5.1</span></a>)</li>
+<li>Poprzez zainicjowanie repozytorium Git używając <code>usethis::use_git()</code>, a następnie wysłanie pakietu do repozytorium GitHub poprzez <code>usethis::use_github()</code><a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a>.</li>
+</ol>
+<div class="callout callout-style-simple callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+ZADANIA
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ol type="1">
+<li>Opublikuj wcześniej stworzony pakiet na platformie GitHub używając jednej z powyższych metod.</li>
+<li>Z poziomu RStudio stwórz nowy plik <code>README.md</code> zawierający nazwę oraz krótki opis tego pakietu.</li>
+<li>Dodaj nowy plik <code>README.md</code> do repozytorium i opublikuj go na GitHubie.</li>
+</ol>
+</div>
+</div>
+<!-- Dodatkowo, gdy napisaliśmy plik `README.md` użytkownicy mogą dowiedzieć się do czego ten pakiet służy, jak go zainstalować i użyć w podstawowy sposób.
+Teraz konieczna jest promocja tego pakietu w sytuacji, gdy chcemy zainteresować inne osoby jego użyciem. 
+Taka promocja może odbywać się poprzez ogłoszenie stworzenia tego pakietu na Twitterze używając hasztagu `#rstats`, czy też napisaniu wpisu na blogu opisującego ten pakiet. -->
+<!-- https://ropensci.github.io/dev_guide/marketing.html -->
+</section>
+<section id="sec-metadane-pakietu" class="level2" data-number="4.2">
+<h2 data-number="4.2" class="anchored" data-anchor-id="sec-metadane-pakietu"><span class="header-section-number">4.2</span> Metadane pakietu</h2>
+<p><a href="pakiety1.html#sec-opis-pakietu" class="quarto-xref"><span>Sekcja 2.5</span></a> pokazała przykładowy plik <code>DESCRIPTION</code> zawierający metadane pakietu. Poniżej rozwiniemy kwestie kolejnych elementów opisu pakietu.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode yaml code-with-copy"><code class="sourceCode yaml"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">Package</span><span class="kw">:</span><span class="at"> mojpakiet</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">Title</span><span class="kw">:</span><span class="at"> Moje Funkcje Robiace Wszystko</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">Version</span><span class="kw">:</span><span class="at"> </span><span class="fl">0.0.1</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">Authors@R</span><span class="kw">:</span><span class="at"> </span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="at">    person(given = "Imie",</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="at">           family = "Nazwisko",</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="at">           role = c("cre", "aut"),</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="at">           email = "imie.nazwisko@example.com")</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="fu">Description</span><span class="kw">:</span><span class="at"> Tworzenie, przeliczanie i wyliczanie wszystkiego. </span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="at">    Czasami nawet więcej.</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="fu">License</span><span class="kw">:</span><span class="at"> CC0</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="fu">Encoding</span><span class="kw">:</span><span class="at"> UTF-8</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="fu">LazyData</span><span class="kw">:</span><span class="at"> </span><span class="ch">true</span></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="fu">RoxygenNote</span><span class="kw">:</span><span class="at"> </span><span class="fl">7.2.3</span></span></code><button title="Kopiuj do schowka" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<section id="tytuł-pakietu" class="level3" data-number="4.2.1">
+<h3 data-number="4.2.1" class="anchored" data-anchor-id="tytuł-pakietu"><span class="header-section-number">4.2.1</span> Tytuł pakietu</h3>
+<p>Tytuł pakietu (<code>Title:</code>) w jednym krótkim zdaniu (sloganie) określa do czego służy ten pakiet.<a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a> Składa się on ze słów rozpoczynających się z dużej litery.</p>
+</section>
+<section id="wersja-pakietu" class="level3" data-number="4.2.2">
+<h3 data-number="4.2.2" class="anchored" data-anchor-id="wersja-pakietu"><span class="header-section-number">4.2.2</span> Wersja pakietu</h3>
+<p>Wersja pakietu (<code>Version:</code>) pozwala jego użytkownikom na zobaczenie, czy korzystają z aktualnej wersji pakietu. Zalecanym sposobem określania wersji pakietu jest stosowanie trzech liczb <code>pierwsza.druga.trzecia</code>, np. <code>0.9.1</code>. Zmiana trzeciej liczby służy do pokazania, że zaszła niewielka zmiana w kodzie, zazwyczaj wiążąca się z naprawą małego błędu, np. <code>0.9.2</code>. Druga liczba jest zmieniana podczas wydania nowej wersji pakietu, która zawiera większe zmiany w kodzie, jak naprawy poważnych błędów, czy dodanie nowych możliwości, np. <code>0.10.0</code>. Zmiana pierwszej liczby sugeruje poważne zmiany w kodzie, które ale też sugeruje pewną stabilizację działania, np. <code>1.0.0</code>.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Komentarz
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Więcej o innych sposobach określania wersji pakietu można znaleźć pod adresami <a href="https://semver.org/" class="uri">https://semver.org/</a>, <a href="https://www.x.org/releases/X11R7.7/doc/xorg-docs/Versions.html" class="uri">https://www.x.org/releases/X11R7.7/doc/xorg-docs/Versions.html</a>, <a href="https://r-pkgs.org/lifecycle.html#sec-lifecycle-version-number" class="uri">https://r-pkgs.org/lifecycle.html#sec-lifecycle-version-number</a>.</p>
+</div>
+</div>
+</section>
+<section id="autorzy" class="level3" data-number="4.2.3">
+<h3 data-number="4.2.3" class="anchored" data-anchor-id="autorzy"><span class="header-section-number">4.2.3</span> Autorzy</h3>
+<p><code>Authors@R:</code> określa kolejne osoby zaangażowane w budowę tego pakietu. W powyższym przykładzie mamy wymienioną jedną osobę <code>"Imie"</code> <code>"Nazwisko"</code>, której adres mailowy to <code>"imie.nazwisko@example.com"</code>. Dodatkowo ta osoba posiada dwie role przy tworzeniu tego pakietu <code>"cre"</code> oraz <code>"aut"</code>. Pierwsza rola, <code>"cre"</code>, informuje że ta osoba jest twórcą i konserwatorem tego pakietu. Ona jest odpowiedzialna za pracę pakietu. Druga rola, <code>"aut"</code>, jest nadawana osom, które wniosły bardzo duży wkład w kod zawarty w pakiecie. Inne często używane role to <code>"ctb"</code> określająca osoby, które wniosły mniejszy wkład w kod (np. drobne zmiany) oraz <code>"cph"</code> określająca osoby czy instytucje będące posiadaczami praw autorskich (np. firma zatrudniająca autora kodu albo autor biblioteki, która została wewnętrznie użyta).<a href="#fn3" class="footnote-ref" id="fnref3" role="doc-noteref"><sup>3</sup></a> Dodanie kolejnych osób odbywa się poprzez łączenie ich funkcją <code>c()</code>.</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode yaml code-with-copy"><code class="sourceCode yaml"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">Authors@R</span><span class="kw">:</span><span class="at"> c(</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="at">    person("Imie", "Nazwisko", role = c("cre", "aut"), </span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="at">           email = "email1@example.com"),</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="at">    person("Imie2", "Nazwisko2", role = "aut", email = "email2@example.com")</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="at">)</span></span></code><button title="Kopiuj do schowka" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="opis-pakietu" class="level3" data-number="4.2.4">
+<h3 data-number="4.2.4" class="anchored" data-anchor-id="opis-pakietu"><span class="header-section-number">4.2.4</span> Opis pakietu</h3>
+<p>Opis pakietu (<code>Description:</code>) jest dłuższym (co najmniej dwuzdaniowym) opisem tego do czego służy pakiet. Powinien on też, jeżeli to możliwe, odnosić się do publikacji naukowej, która opisuje metodę używaną w pakiecie.</p>
+<p>Przykładowy <a href="https://cran.r-project.org/package=supercells">opis pakietu</a>:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode yaml code-with-copy"><code class="sourceCode yaml"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">Description</span><span class="kw">:</span><span class="at"> Creates superpixels based on input spatial data. </span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="at">    This package works on spatial data with one variable</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="at">    (e.g., continuous raster), many variables (e.g., RGB rasters), </span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="at">    and spatial patterns (e.g., areas in categorical rasters). </span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="at">    It is based on the SLIC algorithm (Achanta et al. (2012) </span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="at">    &lt;doi:10.1109/TPAMI.2012.120&gt;), and readapts it to work with arbitrary</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="at">    dissimilarity measures. </span></span></code><button title="Kopiuj do schowka" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="licencja" class="level3" data-number="4.2.5">
+<h3 data-number="4.2.5" class="anchored" data-anchor-id="licencja"><span class="header-section-number">4.2.5</span> Licencja</h3>
+<p>Licencja (<code>License:</code>) określa warunki korzystania z pakietu przez inne osoby. W bardzo dużym skrócie licencje oprogramowania można podzielić na licencje otwarte (<em>open-source</em>) oraz zamknięte (<em>proprietary</em>). Najpopularniejsze licencje otwarte używane w pakietach R to licencja <code>CC0</code>, <code>MIT</code> oraz <code>GPL</code>. Pierwsza z nich, <code>CC0</code> oznacza przekazanie <a href="https://creativecommons.org/publicdomain/zero/1.0/deed.pl">zawartości pakietu do domeny publicznej</a> i najczęściej stosowana jest do pakietów zawierających tylko zbiory danych. Licencja <code>MIT</code> daje nieograniczone prawo do używania, modyfikowania i rozpowszechniania kodu, pod warunkiem zachowania informacji o autorze. Dodanie licencji <code>MIT</code> do pakietu R można wykonać podając swoje imię i nazwisko w funkcji <code>usethis::use_mit_license("Imie Nazwisko")</code>. W ten sposób informacja o tej licencji zostanie dodana do pliku <code>DESCRIPTION</code> (<code>License: MIT + file LICENSE</code>) oraz zostaną utworzone specjalne pliki z treścią licencji. Trzecia z licencji otwartych, <code>GPL</code> (ang. <em>GNU General Public License</em>) pozwala użytkownikom na uruchamianie, dostosowywanie, rozpowszechnianie i udoskonalanie kodu. Ważną cechą tej licencji jest wymaganie, że wszelkie prace oparte o kod w licencji <code>GPL</code> również muszą mieć licencję <code>GPL</code> Oprogramowanie zamknięte może również przyjmować wiele form (np. freeware czy też oprogramowanie komercyjne). Określenie pakietu jako oprogramowania zamkniętego odbywa się poprzez dodanie informacji, że licencja znajduje się w pliku <code>LICENSE</code> (<code>License: file LICENSE</code>), a następnie stworzenie pliku tekstowego o tej nazwie zawierającego odpowiednią modyfikację poniższego tekstu:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode yaml code-with-copy"><code class="sourceCode yaml"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="at">Proprietary </span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="at">Do not distribute outside of NAZWA MOJEJ FIRMY.</span></span></code><button title="Kopiuj do schowka" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Komentarz
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Więcej o licencjach można przeczytać na stronach <a href="http://choosealicense.com/licenses/" class="uri">http://choosealicense.com/licenses/</a> oraz <a href="https://tldrlegal.com/" class="uri">https://tldrlegal.com/</a>.</p>
+</div>
+</div>
+<!-- http://cran.r-project.org/doc/manuals/R-exts.html#The-DESCRIPTION-file -->
+</section>
+<section id="inne-pola" class="level3" data-number="4.2.6">
+<h3 data-number="4.2.6" class="anchored" data-anchor-id="inne-pola"><span class="header-section-number">4.2.6</span> Inne pola</h3>
+<p>W pliku <code>DESCRIPTION</code> można również określić inne pola, np. <code>LazyData</code> czy <code>SystemRequirements</code>. Możliwe jest nawet dodawanie własnych pól. Więcej na ten temat można przeczytać pod adresem <a href="https://r-pkgs.org/description.html#other-fields" class="uri">https://r-pkgs.org/description.html#other-fields</a>.</p>
+<div class="callout callout-style-simple callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+ZADANIA
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ol type="1">
+<li>Uzupełnij opis swojego pakietu poprzez dodanie informacji o tytule, wersji, autorach, opisie i licencji w pliku <code>DESCRIPTION</code>.</li>
+<li>Prześlij zmiany do repozytorium na GitHubie.</li>
+</ol>
+</div>
+</div>
+</section>
+</section>
+<section id="dokumentacja-pakietu" class="level2" data-number="4.3">
+<h2 data-number="4.3" class="anchored" data-anchor-id="dokumentacja-pakietu"><span class="header-section-number">4.3</span> Dokumentacja pakietu</h2>
+<p>Po wykonaniu poprzednich kroków posiadamy działający pakiet, którego funkcje posiadają odpowiednią dokumentację. Teraz konieczne jest stworzenie dokumentacji pakietu - ma ona na celu poinformować potencjalnych użytkowników do czego pakiet służy, jak go zainstalować, czy też pokazać przykłady jego użycia. Pakiety mogą być dokumentowane używając kilku różnych rodzajów plików, np. za pomocą pliku <code>README.Rmd</code>, tzw. winiety (ang. <em>vignette</em>), czy pliku <code>NEWS.md</code>. Każdy z nich ma swój cel.</p>
+<section id="readme" class="level3" data-number="4.3.1">
+<h3 data-number="4.3.1" class="anchored" data-anchor-id="readme"><span class="header-section-number">4.3.1</span> README</h3>
+<p>Plik <code>README.Rmd</code> można stworzyć za pomocą funkcji <code>usethis::use_readme_rmd()</code>. W efekcie będzie się on znajdować się w głównym folderze pakietu. Ten plik powinien zawierać:<a href="#fn4" class="footnote-ref" id="fnref4" role="doc-noteref"><sup>4</sup></a></p>
+<ol type="1">
+<li>Nazwę pakietu</li>
+<li>Opis do czego pakiet służy</li>
+<li>Instrukcje jak go zainstalować</li>
+<li>Prosty przykład użycia</li>
+<li>Odnośniki do podobnych prac, programów, czy artykułów naukowych</li>
+</ol>
+<p>Warto tutaj zrozumieć różnicę między plikami <code>README.md</code> i <code>README.Rmd</code>. <code>README.md</code> jest plikiem w formacie Markdown, który jest automatycznie wyświetlany na stronie repozytorium na GitHubie. <code>README.Rmd</code> jest plikiem w formacie RMarkdown, który może być przetworzony do formatu <code>.md</code>. Użycie RMarkdown pozwala na dodanie kodu R, który zostanie automatycznie przetworzony do wyników jego działania – w efekcie konwersji pliku <code>.Rmd</code> otrzymamy plik <code>.md</code>. Typowe użycie pliku <code>README.Rmd</code> polega na dodaniu do niego zmian, a następnie przetworzeniu go do formatu <code>.md</code> (ikona <code>knit</code>) i przesłaniu na GitHuba.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Komentarz
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Markdown to prosty język znaczników służący do formatowania tekstu. Jego idea polega na tym, że w dokumencie tekstowym używamy specjalnych znaków, które po przetworzeniu dokumentu wyświetlają się w odpowiedni sposób. Przykładowo jedna gwiazdka przed tekstem i jedna po tekście oznacza pochylony tekst (<code>*pochylony tekst*</code>), a dwie gwiazdki przed i po oznaczają pogrubiony tekst (<code>**pogrubiony tekst**</code>). Innym przykładem są nagłówki określane poprzez jeden lub więcej symboli kratki.</p>
+<pre><code># Nagłówek
+
+## Nagłówek drugiego poziomu (mniejsza czcionka)</code></pre>
+<p>Zestawienie pokazujące podstawy składni RMarkdown jest wbudowane w RStudio i można je wyświetlić za pomocą <code>Help -&gt; Markdown Quick Reference</code> lub pod adresem <a href="https://rmarkdown.rstudio.com/authoring_basics.html" class="uri">https://rmarkdown.rstudio.com/authoring_basics.html</a>.</p>
+</div>
+</div>
+</section>
+<section id="winiety" class="level3" data-number="4.3.2">
+<h3 data-number="4.3.2" class="anchored" data-anchor-id="winiety"><span class="header-section-number">4.3.2</span> Winiety</h3>
+<p>Winiety mają na celu pokazanie bardziej złożonego przykładu użycia pakietu. Nową winietę można stworzyć za pomocą funkcji <code>usethis::use_vignette("nazwa-winiety")</code>. W tym momencie zostanie stworzony nowy plik <code>nazwa-winiety.Rmd</code> w folderze <code>vignettes</code>. Teraz możliwe jest jego edytowanie i dodawanie nowej treści. Pakiety mogą posiadać wiele różnych winiet, zawierających coraz bardziej zaawansowane przykłady lub też opis różnych grup funkcji z pakietu.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Komentarz
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Pliki RMarkdown mogą być przetworzone (ang. <em>render</em>) do wielu różnych formatów plików, między innymi html, pdf, czy word w zależności od określonych opcji w nagłówku pliku. To przetworzenie może odbyć się używając ikony “Knit” w RStudio lub funkcji <code>rmarkdown::render()</code>.</p>
+</div>
+</div>
+</section>
+<section id="news" class="level3" data-number="4.3.3">
+<h3 data-number="4.3.3" class="anchored" data-anchor-id="news"><span class="header-section-number">4.3.3</span> NEWS</h3>
+<p>Elementem dokumentowania pakietu jest również informowanie o tym jakie nowe zmiany zaszły wraz z kolejnymi wersjami pakietu. W pakietach R może mieć to miejsce używając pliku <code>NEWS.md</code> tworzonego poprzez <code>usethis::use_news_md()</code>. Taki plik może zawierać informacje o nowych funkcjach, zmianach istniejących funkcji, naprawionych błędach, itd. Przykład szablonu pliku <code>NEWS.md</code> można znaleźć pod adresem <a href="https://ropensci.github.io/dev_guide/newstemplate.html" class="uri">https://ropensci.github.io/dev_guide/newstemplate.html</a>.</p>
+<div class="callout callout-style-simple callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+ZADANIA
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ol type="1">
+<li>Stwórz plik <code>README.Rmd</code> zawierający opis swojego pakietu, instrukcje instalacji i przykładowe jego użycie.</li>
+<li>Przetwórz ten plik do formatu <code>.md</code> i prześlij go do repozytorium na GitHubie. Obejrzyj go na stronie internetowej repozytorium.</li>
+<li>Stwórz prostą winietę zawierającą jeden przykład użycia swojego pakietu.</li>
+<li>Dodaj pierwsze informacje o zmianach w pakiecie do pliku <code>NEWS.md</code>.</li>
+<li>Wyślij nowe pliki do repozytorium na GitHubie.</li>
+</ol>
+</div>
+</div>
+
+
+</section>
+</section>
+<section id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes">
+<hr>
+<ol>
+<li id="fn1"><p>Wymaga to jednak wygenerowania tokena - opis jak to zrobić można znaleźć pod adresem <a href="https://debruine.github.io/tutorials/packages.html#github-access-token" class="uri">https://debruine.github.io/tutorials/packages.html#github-access-token</a><a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn2"><p>Tytuły pakietów można znaleźć, np. w panelu “Packages” w RStudio.<a href="#fnref2" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn3"><p>Pełną listę dostępnych ról można znaleźć pod adresem <a href="http://www.loc.gov/marc/relators/relaterm.html" class="uri">http://www.loc.gov/marc/relators/relaterm.html</a>.<a href="#fnref3" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn4"><p>Dodatkowe elementy to oznaki (ang. <em>badges</em>) pokazujące, np. status pakietu, liczbę jego pobrań i wiele innych.<a href="#fnref4" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Skopiowano!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Skopiowano!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    // For code content inside modals, clipBoardJS needs to be initialized with a container option
+    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./git1.html" class="pagination-link" aria-label="Kontrola wersji (1)">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Kontrola wersji (1)</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./git2.html" class="pagination-link" aria-label="Kontrola wersji (2)">
+        <span class="nav-page-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Kontrola wersji (2)</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

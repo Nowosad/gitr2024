@@ -1,0 +1,632 @@
+[
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "Tworzenie pakietów R oraz praca z system kontroli wersji Git i platformą GitHub",
+    "section": "",
+    "text": "1 Wprowadzenie",
+    "crumbs": [
+      "<span class='chapter-number'>1</span>  <span class='chapter-title'>Wprowadzenie</span>"
+    ]
+  },
+  {
+    "objectID": "index.html#o-materiałach",
+    "href": "index.html#o-materiałach",
+    "title": "Tworzenie pakietów R oraz praca z system kontroli wersji Git i platformą GitHub",
+    "section": "1.1 O materiałach",
+    "text": "1.1 O materiałach\nNiniejsze materiały online mają na celu zapoznanie użytkowników z możliwościami systemu kontroli wersji Git oraz platformy GitHub, ze szczególnym uwzględnieniem ich zastosowania w tworzeniu pakietów R. Materiały rozpoczynają się od przedstawienia podstaw tworzenia pakietów R, a następnie pokazują, jak umieścić stworzone pakiety na platformie GitHub przy użyciu podstawowych komend systemu Git. W kolejnych sekcjach omówione zostaną możliwości i ograniczenia platformy GitHub, ze szczególnym uwzględnieniem specyfiki pracy badawczej. Materiały obejmują również średnio-zaawansowane kwestie związane z tworzeniem pakietów R, w tym dostosowanie ich do wymagań repozytorium CRAN. Istotną część materiałów stanowi omówienie aspektów współpracy wielu osób na platformie GitHub, wraz z analizą często spotykanych problemów i sposobów ich rozwiązywania. Na zakończenie przedstawione zostaną zaawansowane zagadnienia dotyczące tworzenia pakietów i używania systemów kontroli wersji.\nMateriały zawierają praktyczne wskazówki, przykłady i studia przypadków, które pomogą w rozwiązywaniu problemów związanych ze współpracą przy użyciu systemu kontroli wersji Git oraz z tworzeniem pakietów R. Zostały one przygotowane z myślą o zapewnieniu wiedzy i praktycznych umiejętności w zakresie omawianych tematów.\nTe materiały są dostępne na licencji Creative Commons Uznanie autorstwa 4.0 Międzynarodowe.",
+    "crumbs": [
+      "<span class='chapter-number'>1</span>  <span class='chapter-title'>Wprowadzenie</span>"
+    ]
+  },
+  {
+    "objectID": "index.html#wsparcie-autora",
+    "href": "index.html#wsparcie-autora",
+    "title": "Tworzenie pakietów R oraz praca z system kontroli wersji Git i platformą GitHub",
+    "section": "1.2 Wsparcie autora",
+    "text": "1.2 Wsparcie autora\nJeśli znajdujesz te materiały przydatne, rozważ wsparcie autora przez Ko-fi: .",
+    "crumbs": [
+      "<span class='chapter-number'>1</span>  <span class='chapter-title'>Wprowadzenie</span>"
+    ]
+  },
+  {
+    "objectID": "index.html#wymagania-wstępne",
+    "href": "index.html#wymagania-wstępne",
+    "title": "Tworzenie pakietów R oraz praca z system kontroli wersji Git i platformą GitHub",
+    "section": "1.3 Wymagania wstępne",
+    "text": "1.3 Wymagania wstępne\nDo odtworzenia przykładów oraz do wykonania zadań zawartych w tym dokumencie konieczne jest posiadanie aktualnej wersji R. Pod adresem https://cloud.r-project.org/ można znaleźć instrukcje instalacji R dla systemów Windows, Mac OS i Linux.\nW niektórych rozdziałach użyte zostanie zintegrowane środowisko programistyczne RStudio. Można je zainstalować korzystając ze strony https://posit.co/download/rstudio-desktop/#download.\nAspekty dotyczące kontroli wersji zostaną omówione używając oprogramowania Git. Zalecanym sposobem instalacji Git na Windows jest wersja ze strony https://gitforwindows.org/. Instrukcja instalacji na system Mac OS znajduje się pod adresem https://happygitwithr.com/install-git.html#macos. Wersję Linuxową można zainstalować używając poniższej linii kodu:\n# Ubuntu\nsudo apt install git\n# Fedora\nsudo dnf install git\nNależy również posiadać konto na platformie GitHub. Warto wtedy zastanowić się nad wyborem nazwy użytkownika, ponieważ jest ona sposobem identyfikacji oraz kontaktu z innymi użytkownikami na GitHubie.1",
+    "crumbs": [
+      "<span class='chapter-number'>1</span>  <span class='chapter-title'>Wprowadzenie</span>"
+    ]
+  },
+  {
+    "objectID": "index.html#footnotes",
+    "href": "index.html#footnotes",
+    "title": "Tworzenie pakietów R oraz praca z system kontroli wersji Git i platformą GitHub",
+    "section": "",
+    "text": "Zmiana nazwy jest możliwa później.↩︎",
+    "crumbs": [
+      "<span class='chapter-number'>1</span>  <span class='chapter-title'>Wprowadzenie</span>"
+    ]
+  },
+  {
+    "objectID": "pakiety1.html",
+    "href": "pakiety1.html",
+    "title": "2  Tworzenie pakietów R (1)",
+    "section": "",
+    "text": "2.1 Pakiety R\nPakiet to zorganizowany zbiór funkcji, który rozszerza możliwości R. Pakiety oprócz kodu zawierają szereg dodatkowych istotnych elementów, takich jak:\nPakiety R mogą być przechowywane i instalowane z wielu miejsc w internecie. Istnieje jednak centralne repozytorium (CRAN, ang. the Comprehensive R Archive Network), które zawiera oficjalne wersje pakietów R, np. https://cran.r-project.org/package=stringr. Wersje deweloperskie (rozwojowe) często można znaleźć na platformie GitHub, np. https://github.com/tidyverse/stringr/.\nDo instalacji pakietu w R z repozytorium CRAN służy wbudowana funkcja install.packages(), np:\ninstall.packages(\"stringr\") #instalacja pakietu stringr\nZainstalowanie pakietu w R z platformy GitHub jest możliwe używając, np. funkcji install_github() z pakietu remotes.\n# install.packages(\"remotes\")\nremotes::install_github(\"tidyverse/stringr\")\nW przypadku instalacji pakietu w R z platformy GitHub należy podać nazwę użytkownika lub organizacji, która tworzy ten pakiet (np. powyżej tidyverse) oraz nazwę pakietu (np. powyżej stringr) oddzielone znakiem /.\nPodobnie jak instalowanie programów na komputerze - zainstalowanie pakietu odbywa się tylko jeden raz.\nUżycie wybranego pakietu wymaga dołączenia go do R za pomocą funkcji library(). Dołączenie wybranych pakietów do R robimy po każdym uruchomieniu R.\nlibrary(stringr)\nW przypadku, gdy chcemy użyć zewnętrznej funkcji, ale nie dołączyliśmy odpowiedniego pakietu, pojawi się błąd o treści could not find function \"nazwa_funkcji\".\nstr_sub(\"chronologia\", start = 1, end = 6)\n#&gt; Error in str_sub(\"chronologia\", start = 1, end = 6) : \n#&gt;  could not find function \"str_sub\"\nIstnieją dwa możliwe rozwiązania powyższego problemu. Po pierwsze możliwe jest dołączenie pakietu poprzez library(stringr). Po drugie można bezpośrednio zdefiniować z jakiego pakietu pochodzi konkretna funkcja używając nazwy pakietu i operatora ::.\nstringr::str_sub(\"chronologia\", start = 1, end = 6)\n\n[1] \"chrono\"",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>Tworzenie pakietów R (1)</span>"
+    ]
+  },
+  {
+    "objectID": "pakiety1.html#pakiety-r",
+    "href": "pakiety1.html#pakiety-r",
+    "title": "2  Tworzenie pakietów R (1)",
+    "section": "",
+    "text": "Informacja o wersji pakietu, jego twórcach, zależnościach, czy licencji\nDokumentacja\nPrzykładowe dane\nTesty kodu\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nKomentarz\n\n\n\nIstnieją dwa główne formy, w których rozpowszechniane są pakiety R - postać źródłowa (ang. source packages) i postać binarna (ang. binary packages). Postać źródłowa zawiera kod źródłowy pakietu, który musi zostać następnie skompilowany na komputerze użytkownika. Skompilowanie pakietu na podstawie kodu źródłowego może wymagać posiadania odpowiednich bibliotek na komputerze, np. Rtools dla systemu Windows. Dodatkowo, instalacja w ten sposób zabiera więcej czasu. Postać binarna została już wcześniej skompilowana na zewnętrznym komputerze (np. w repozytorium CRAN) Jest ona dostępna dla systemów Windows i Mac OS. Niestety, nie wszystkie pakiety (lub ich wersje) posiadają postać binarną i wymagana jest ich kompilacja.\n\n\n\n\n\n\n\n\n\n\nKomentarz\n\n\n\nPakiet (ang. package) to zbiór funkcji, biblioteka (ang. library) to miejsce na dysku, w którym znajdują się pakiety.\n\n\n\n\n\n\n\n\n\n\n\n\nKomentarz\n\n\n\nOperator :: może być też pomocny w przypadku, gdy kilka pakietów ma funkcję o tej samej nazwie. Wówczas, aby kod został poprawnie wykonany, warto podać nie tylko nazwę funkcji ale też nazwę pakietu z jakiego ona pochodzi.",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>Tworzenie pakietów R (1)</span>"
+    ]
+  },
+  {
+    "objectID": "pakiety1.html#nazwa-pakietu",
+    "href": "pakiety1.html#nazwa-pakietu",
+    "title": "2  Tworzenie pakietów R (1)",
+    "section": "2.2 Nazwa pakietu",
+    "text": "2.2 Nazwa pakietu\nNazwa nowego pakietu musi spełniać kilka wymagań: składać się tylko ze znaków ASCII, cyfr i kropek, mieć co najmniej dwa znaki oraz zaczynać się od litery i nie kończyć się kropką (R Core Team 2019). Ważne jest również myślenie o nazwie pakietu tak jak o nazwach funkcji – nazwy pakietów powinny ułatwiać zrozumienie ich zawartości. Dodatkowo, z uwagi na istnienie wielu pakietów, warto najpierw sprawdzić czy pakiet o wymyślonej przez nas nazwie już nie istnieje. Można to przykładowo zrobić używając pakietu available (Ganz i in. 2019), który sprawdza przy wybrana nazwa nie jest już zajęta oraz czy nie ma ona jakiegoś niepożądanego przez nas znaczenia.\n\n# install.packages(\"available\")\navailable::available(\"mojpakiet\", browse = FALSE)",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>Tworzenie pakietów R (1)</span>"
+    ]
+  },
+  {
+    "objectID": "pakiety1.html#tworzenie-szkieletu-pakietu",
+    "href": "pakiety1.html#tworzenie-szkieletu-pakietu",
+    "title": "2  Tworzenie pakietów R (1)",
+    "section": "2.3 Tworzenie szkieletu pakietu",
+    "text": "2.3 Tworzenie szkieletu pakietu\nKolejnym krokiem jest stworzenie szkieletu pakietu, czyli zorganizowanego zbioru plików i folderów, do których później należy dodać odpowiednie informacje i funkcje. Znacznie w tym może pomóc pakiet usethis (Wickham i Bryan 2020), który zawiera szereg funkcji ułatwiających budowanie pakietów R.\n\nlibrary(usethis)\n\nDo stworzenia szkieletu pakietu służy funkcja create_packages(), w której należy podać ścieżkę do nowego pakietu.  W tej ścieżce ostatnia nazwa folderu określa również nazwę pakietu.1\n\nusethis::create_package(\"~/Documents/mojpakiet\")\n\nW efekcie działania powyższej funkcji stworzony zostanie nowy folder mojpakiet zawierający kilka plików oraz otwarty zostanie nowy projekt RStudio zawierający ten pakiet. Najważniejsze nowe pliki to:\n\nmojpakiet.Rproj - plik projektu RStudio\nDESCRIPTION - plik zawierający podstawowe informacje o pakiecie\nR/ - w tym pustym folderze konieczne będzie umieszczenie nowych funkcji R\nNAMESPACE - ten plik określa, między innymi, jakie funkcje są dostępne w tym pakiecie. Ten plik i jego zawartość jest tworzona automatycznie\n\nDodatkowo w prawym górnym panelu RStudio pojawi się nowy panel “Build”.",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>Tworzenie pakietów R (1)</span>"
+    ]
+  },
+  {
+    "objectID": "pakiety1.html#dokumentacja-pakietu",
+    "href": "pakiety1.html#dokumentacja-pakietu",
+    "title": "2  Tworzenie pakietów R (1)",
+    "section": "2.4 Dokumentacja pakietu",
+    "text": "2.4 Dokumentacja pakietu\nDokumentowanie pakietu ma miejsce na wielu poziomach, począwszy od opisu pakietu w pliku DESCRIPTION, poprzez komentowanie kodu, dokumentację funkcji wraz z przykładami jej użycia, dokumentację danych, plik README, winiety, aż po stronę internetową pakietu.",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>Tworzenie pakietów R (1)</span>"
+    ]
+  },
+  {
+    "objectID": "pakiety1.html#sec-opis-pakietu",
+    "href": "pakiety1.html#sec-opis-pakietu",
+    "title": "2  Tworzenie pakietów R (1)",
+    "section": "2.5 Opis pakietu",
+    "text": "2.5 Opis pakietu\nPlik DESCRIPTION zawiera opis (metadane) pakietu, w tym jego nazwę, tytuł, wersję, autorów, opis, czy licencję.\nPackage: mojpakiet\nTitle: Moje Funkcje Robiace Wszystko\nVersion: 0.0.1\nAuthors@R: \n    person(given = \"Imie\",\n           family = \"Nazwisko\",\n           role = c(\"cre\", \"aut\"),\n           email = \"imie.nazwisko@example.com\")\nDescription: Tworzenie, przeliczanie i wyliczanie wszystkiego. \n    Czasami nawet więcej.\nLicense: CC0\nEncoding: UTF-8\nLazyData: true\nRoxygenNote: 7.2.3\nPlik DESCRIPTION należy regularnie uaktualniać, np. zmieniać numer wersji po naniesionych zmianach w kodzie, czy dodawać nowych autorów, jeżeli tacy się pojawili.\nWięcej o tym później (Sekcja 4.2).",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>Tworzenie pakietów R (1)</span>"
+    ]
+  },
+  {
+    "objectID": "pakiety1.html#rozwijanie-pakietu",
+    "href": "pakiety1.html#rozwijanie-pakietu",
+    "title": "2  Tworzenie pakietów R (1)",
+    "section": "2.6 Rozwijanie pakietu",
+    "text": "2.6 Rozwijanie pakietu\n\nRozwój pakietu R może opierać się na kilku poniższych krokach:\n\nTworzenie/modyfikowanie kodu w folderze R/\nUżywanie funkcji devtools::load_all(), która dodaje nowe/zmodyfikowane funkcje do środowiska R\nSprawdzenie czy funkcja działa zgodnie z oczekiwaniami na kilku przykładach\nDodanie testów jednostkowych na podstawie stworzonych przykładów (o tym więcej w Sekcja 6.2)\nUaktualnienie dokumentacji tworzonego/modyfkowanego kodu\nWygenerowanie plików z dokumentacją używając devtools::document()\nSprawdzenie czy pakiet nie posiada żadnych problemów używając devtools::test() oraz devtools::check()\nModyfikacja wersji oprogramowania w pliku DESCRIPTION\nZapisanie zmian w kodzie w repozytorium (np. GitHub)\nPowtórzenie powyższych czynności przy kolejnych zmianach w kodzie\n\n\n\n\n\n\n\nZADANIA\n\n\n\n\nStwórz nowy pakiet R o wybranej przez siebie nazwie: zacznij od sprawdzenia czy nazwa pakietu nie jest już zajęta.\nStwórz szkielet pakietu oraz uzupełnij najważniejsze informacje w pliku DESCRIPTION.",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>Tworzenie pakietów R (1)</span>"
+    ]
+  },
+  {
+    "objectID": "pakiety1.html#sec-dok-fun1",
+    "href": "pakiety1.html#sec-dok-fun1",
+    "title": "2  Tworzenie pakietów R (1)",
+    "section": "2.7 Tworzenie i dokumentacja funkcji",
+    "text": "2.7 Tworzenie i dokumentacja funkcji\n\nkonwersja_temp = function(temperatura_f){\n    (temperatura_f - 32) / 1.8\n}\n\nUmieszczenie tej funkcji w nowym pakiecie R odbywa się poprzez zapisanie tego kodu jako skrypt R (np. konwersja_temp.R) w folderze R/.\nFunkcje zawarte w pakietach muszą także posiadać odpowiednią dokumentację, zawierającą, między innymi, tytuł funkcji, opis jej działania, wyjaśnienie kolejnych argumentów funkcji, oraz przykłady jej działania. Linie obejmujące dokumentację funkcji rozpoczynają się od znaków #', a tworzenie dokumentacji funkcji odbywa się poprzez wypełnianie treści dla kolejnych znaczników (np. @example określa występowanie przykładu).\nPrzykładowy plik R/konwersja_temp.R może wyglądać następująco:\n\n#' Konwersja temperatur\n#'\n#' @description Funkcja sluzaca do konwersji temperatury \n#'   ze stopni Fahrenheita do stopni Celsjusza.\n#'\n#' @param temperatura_f wektor zawierajacy wartosci temperatury \n#'   w stopniach Fahrenheita\n#'\n#' @return wektor numeryczny\n#' @export\n#'\n#' @examples\n#' konwersja_temp(75)\n#' konwersja_temp(110)\n#' konwersja_temp(0)\n#' konwersja_temp(c(0, 75, 110))\nkonwersja_temp = function(temperatura_f){\n  (temperatura_f - 32) / 1.8\n}\n\nPierwsza linia w tym pliku określa tytuł danej funkcji. Kolejny element rozpoczynający się od znacznika @description zawiera krótki opis tego, co funkcja robi. Następnie zazwyczaj wypisane są wszystkie argumenty danej funkcji używając kolejnych znaczników @param. Znacznik @return pozwala na przekazanie informacji o tym co jest zwracane jako efekt działania funkcji. Przedostatnim znacznikiem w powyższym przypadku jest @export. Oznacza on, że ta funkcja będzie widoczna dla każdego użytkownika tego pakietu po użyciu library(mojpakiet). Bez tego znacznika funkcja byłaby tylko widoczna wewnątrz pakietu. Ostatni znacznik, @examples, wypisuje kolejne przykłady działania funkcji.\n\n\n\n\n\n\nKomentarz\n\n\n\nPowyższy przykład nie wykorzystuje wszystkich możliwych znaczników. Więcej z nich można znaleźć w dyskusji na stronie https://github.com/r-lib/roxygen2/issues/792#issuecomment-705071228.\n\n\nWybór More -&gt; Document w panelu “Build” (inaczej wywołanie funkcji devtools::document() lub użycie skrótu CTRL+SHIFT+D) spowoduje zbudowanie pliku dokumentacji w folderze man, np. man/konwersja_temp.Rd. Pliki dokumentacji będą zawsze tworzone w ten sposób - nie należy ich modyfikować ręcznie. Zbudowanie pliku dokumentacji pozwala teraz na jej podejrzenie poprzez wywołanie pliku pomocy naszej funkcji:\n\n?konwersja_temp",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>Tworzenie pakietów R (1)</span>"
+    ]
+  },
+  {
+    "objectID": "pakiety1.html#zależności",
+    "href": "pakiety1.html#zależności",
+    "title": "2  Tworzenie pakietów R (1)",
+    "section": "2.8 Zależności",
+    "text": "2.8 Zależności\nIstnieje jedna ważna różnica pomiędzy tworzeniem funkcji w skryptach a tworzeniem jej wewnątrz pakietu - w pakietach nie można używać dołączania pakietów za pomocą funkcji library(). Zamiast tego możliwe jest definiowanie każdej zewnętrznej funkcji używając operatora ::.2\nDodatkowo każda zależność z zewnętrznym pakietem musi być określona w pliku DESCRIPTION. Jest to możliwe używając wpisów Imports: oraz Suggests:, przykładowo:3\nImports:\n  stringr,\n  readr\nSuggests:\n  readxl\nImports: określa pakiety, które muszą być zainstalowane, aby tworzony pakiet mógł zadziałać. Jeżeli wymienione tutaj pakiety nie będą znajdować się na komputerze użytkownika to zostaną one automatycznie doinstalowane podczas instalacji naszego pakietu. Suggests: wymienia pakiety, które pomagają w użytkowaniu naszego pakietu, np. takie które zawierają testowe dane. Wymienione tutaj pakiety nie będą automatycznie doinstalowane podczas instalacji naszego pakietu.",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>Tworzenie pakietów R (1)</span>"
+    ]
+  },
+  {
+    "objectID": "pakiety1.html#sprawdzanie-pakietu",
+    "href": "pakiety1.html#sprawdzanie-pakietu",
+    "title": "2  Tworzenie pakietów R (1)",
+    "section": "2.9 Sprawdzanie pakietu",
+    "text": "2.9 Sprawdzanie pakietu\nW momencie, gdy pakiet posiada już swoje podstawowe elementy, tj. pierwsze udokumentowane funkcje oraz uzupełniony opis wraz z zależnościami warto sprawdzić czy te wszystkie elementy pakietu dobrze współgrają ze sobą. Można to zrobić używając funkcji devtools::check() (inaczej wybór Check w panelu “Build” RStudio lub skrót CTRL+SHIFT+E). W efekcie tego wywołania zostanie uruchomiony szereg sprawdzeń i testów dotyczących pakietu, jego funkcji czy opisu. Na końcu zwrócone zostanie wypisanie liczby błędów (error), ostrzeżeń (warnings) i notatek (notes), poprzedzone wymienieniem każdego ich wystąpienia. Błędy oznaczają, że z jakiegoś powodu pakietu nie można zbudować, ostrzeżenia natomiast sugerują sytuację w której jakieś ważne elementy funkcji mogą wymagać poprawy. Notatki natomiast wskazują na kwestie, które użytkownik może, ale nie musi poprawić.\n\n\n\n\n\n\nZADANIA\n\n\n\n\nDodaj do swojego pakietu twoją funkcję jako plik o rozszerzeniu .R w folderze R\\.\nDodaj dokumentację do swojej funkcji, w tym jej tytuł, opis, argumenty, zwracane wartości i przykłady jej użycia.\nWygeneruj dokumentację dla swojego pakietu.\nSprawdź czy twój pakiet nie posiada żadnych błędów, ostrzeżeń i notatek. W przypadku, gdy masz jakieś błędy lub ostrzeżenia, spróbuj je naprawić.\n\nPo wykonaniu zadań będziemy mieć czas na dyskusję i pomoc w rozwiązywaniu problemów.",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>Tworzenie pakietów R (1)</span>"
+    ]
+  },
+  {
+    "objectID": "pakiety1.html#instalowanie-pakietu",
+    "href": "pakiety1.html#instalowanie-pakietu",
+    "title": "2  Tworzenie pakietów R (1)",
+    "section": "2.10 Instalowanie pakietu",
+    "text": "2.10 Instalowanie pakietu\nSprawdzony pakiet, który nie zwraca błędów można zainstalować na własnym komputerze używając funkcji devtools::install() (inaczej wybór Install and restart w panelu “Build” RStudio lub skrót CTRL+SHIFT+B). W przypadku, gdy kod źródłowy tego pakietu znajduje się na platformie GitHub, inni użytkownicy mogą go zainstalować za pomocą funkcji remotes::install_github(\"nazwa_uzytkownika_github/nazwa_pakietu\") (Hester i in. 2020).\n\n\n\n\nGanz, Carl, Gábor Csárdi, Jim Hester, Molly Lewis, i Rachael Tatman. 2019. available: Check if the Title of a Package is Available, Appropriate and Interesting. https://CRAN.R-project.org/package=available.\n\n\nHester, Jim, Gábor Csárdi, Hadley Wickham, Winston Chang, Martin Morgan, i Dan Tenenbaum. 2020. remotes: R Package Installation from Remote Repositories, Including ’GitHub’. https://CRAN.R-project.org/package=remotes.\n\n\nR Core Team. 2019. Writing R Extensions. R Foundation for Statistical Computing.\n\n\nWickham, Hadley, i Jennifer Bryan. 2020. usethis: Automate Package and Project Setup. https://CRAN.R-project.org/package=usethis.",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>Tworzenie pakietów R (1)</span>"
+    ]
+  },
+  {
+    "objectID": "pakiety1.html#footnotes",
+    "href": "pakiety1.html#footnotes",
+    "title": "2  Tworzenie pakietów R (1)",
+    "section": "",
+    "text": "Funkcja również create_packages() sama tworzy nowy folder, jeżeli on wcześniej nie istniał.↩︎\nIstnieją również inne możliwości, np. użycie znaczników @import lub @importFrom.↩︎\nIstnieją również inne wpisy, takie jak Depends:, LinkingTo:, czy Enhances:.↩︎",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>Tworzenie pakietów R (1)</span>"
+    ]
+  },
+  {
+    "objectID": "git1.html",
+    "href": "git1.html",
+    "title": "3  Kontrola wersji (1)",
+    "section": "",
+    "text": "3.1 System Git\nSystem Git jest niezależny od języka (lub języków) programowania, które używamy. Jego działanie oparte jest o system komend rozpoczynających się od słowa git, które należy wykonać w systemowym oknie konsoli.2 Zrozumienie działania systemu Git wymaga także poznania kilku nowych terminów.\nSystem Git został zaprojektowany i jest używany głównie do kontroli wersji plików tekstowych. Dzięki temu możemy w prosty sposób zobaczyć, co do linii kodu, w którym miejscu zaszła zmiana. Dodatkowo przechowywanie plików tekstowych i ich zmian nie zajmuje dużo miejsca. Możliwe w systemie Git jest również przechowywanie kolejnych wersji plików binarnych (np. pliki dokumentów, arkusze kalkulacyjne, obrazki, itd.). W ich przypadku niestety nie można liczyć na dokładne sprawdzanie miejsc zmian, a także ich wielkość może powodować znaczne powiększanie się repozytorium.3",
+    "crumbs": [
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Kontrola wersji (1)</span>"
+    ]
+  },
+  {
+    "objectID": "git1.html#github",
+    "href": "git1.html#github",
+    "title": "3  Kontrola wersji (1)",
+    "section": "3.2 GitHub",
+    "text": "3.2 GitHub\nGitHub jest serwisem internetowym pozwalającym na przechowywanie i interakcję z repozytoriami w systemie kontroli wersji Git. Posiada on dwa rodzaje repozytoriów - publiczne (ang. public), które może każdy zobaczyć oraz prywatne (ang. private) dostępne tylko dla osób z odpowiednimi uprawnieniami.\nRepozytoria połączone są z kontami użytkowników (np. https://github.com/Nowosad to moje konto, gdzie “Nowosad” oznacza nazwę użytkownika) lub organizacjami (np. https://github.com/r-spatialecology to konto organizacji “r-spatialecology”). Pod adresem https://github.com/join można założyć nowe konto użytkownika.\nGitHub może być używany do wielu celów, między innymi:\n\nPrzechowywanie kodu źródłowego\nTworzenie kopii zapasowych różnych wersji oprogramowania i innych plików tekstowych\nDzielnie się kodem z innymi\nWspółpraca nad kodem\nHosting statycznych stron internetowych i innych dokumentów\nHosting pakietów R\nOdkrywanie i wykorzystywanie istniejących projektów\nŚledzenie zmian w kodzie innych osób\n\nMożliwe jest również łączenie możliwości serwisu GitHub z innymi serwisami internetowymi, takimi jak Codecov, Gitter i wiele innych.\n\n3.2.1 Tworzenie zdanego repo\nPosiadanie konta użytkownika pozwala na, między innymi, tworzenie nowych repozytoriów i zarządzanie nimi. Stworzenie nowego repozytorium odbywa się poprzez naciśnięcie zielonej ikony.\n\n\n\n\n\n\n\n\nRysunek 3.1: Ikona tworzenia nowego repozytorium GitHub.\n\n\n\n\n\nW kolejnym oknie należy podać nazwę nowego repozytorium oraz wybrać czy będzie ono publiczne czy prywatne. Dodatkowo możliwe jest dodanie opisu repozytorium (ang. description), pliku README, czy licencji.\n\n\n\n\n\n\n\n\nRysunek 3.2: Okno tworzenia nowego repozytorium GitHub.\n\n\n\n\n\nPo wybraniu potwierdzenia (Create repository) utworzone zostanie nowe, puste repozytorium.\n\n\n\n\n\n\n\n\nRysunek 3.3: Nowe, puste repozytorium GitHub.\n\n\n\n\n\nOkno pustego repozytorium przedstawia cztery główne drogi pozwalające na dodanie zawartości:\n\nSzybka konfiguracja - tutaj podane są dwie możliwe ścieżki do zdalnego repozytorium. Pierwsza z nich to adres HTTPS a druga to adres SSH. W sekcji zostanie wyjaśnione jak korzystać z szybkiej konfiguracji.\nStworzenie nowego repozytorium używając linii komend. Jest to używane w sytuacjach, gdy lokalna wersja repozytorium jeszcze nie istnieje. W tej sytuacji (1) tworzony jest nowy plik tekstowy README.md, (2) obecny katalog jest określany jako repozytorium Git, (3) plik README.md jest dodawany do repozytorium, (4) dodanie tego pliku jest zatwierdzone wraz z wiadomością `“first commit”, (5) dodana jest ścieżka do zdalnego repozytorium, (6) następuje wysłanie zmian z lokalnego do zdalnego repozytorium.\nWysłanie zmian z istniejącego repozytorium. Ta opcja przydaje się, gdy mamy już istniejące lokalne repozytorium, ale do którego nie ma jeszcze zdalnego repozytorium. Tutaj następuje tylko (1) dodanie ścieżki do zdalnego repozytorium oraz (2) wysłanie zmian z lokalnego do zdalnego repozytorium.\nImport kodu z innego systemu kontroli wersji niż Git.\n\n\n\n3.2.2 Repozytorium GitHub\nWygląd okna repozytorium zmienia się po dodaniu pierwszej zawartości.\n\n\n\n\n\n\n\n\nRysunek 3.4: Repozytorium GitHub po dodaniu zawartości.\n\n\n\n\n\nTeraz możliwe jest podejrzenie występujących tam plików (w tym momencie jedynie plik README.md), zmian jakie zaszły w repozytorium (klikając na commit), istniejących rozgałęzień (klikając na branch) oraz wiele innych. Pod zieloną ikoną Clone or download można dodatkowo znaleźć ścieżkę do tego zdalnego repozytorium.\n\n\n3.2.3 Dodatkowe możliwości GitHub\nW prawym górnym rogu okna repozytorium znajdują się trzy ikony - Watch, Star, Fork. Pierwsza z nich pozwala na określenie czy chcemy dostawać powiadomienia na temat dyskusji prowadzonych wewnątrz danego repozytorium, takich jak utworzenie nowej sprawy. Druga ikona pozwala na oznaczanie interesujących repozytoriów i przez to ułatwiająca znajdowania podobnych projektów. Ostatnia ikona Fork oznacza w tym kontekście rozwidlenie. Po jej kliknięciu następuje utworzenie kopii repozytorium innego użytkownika do naszego konta.\nOprócz dostępu do kodu i jego zmian, GitHub oferuje także szereg dodatkowych możliwości. Obejmuje to, między innymi, automatyczne wyświetlanie plików README, śledzenie spraw (ang. issue tracking), zapytania aktualizacyjne (ang. pull request), wizualizacje zmian, czy nawet tworzenie stron internetowych. Więcej o tych możliwościach dowiecie się później.\n\n\n\n\n\n\nZADANIA\n\n\n\n\nZaloguj się platformy GitHub. Przejrzyj jej interfejs – czy rozumiesz co tam się znajduje? W razie wątpliwości – pytaj.\nZałóż nowe repozytorium na GitHubie o dowolnej nazwie.\nZ poziomu platformy GitHub dodaj nowy plik README.md do repozytorium, w którym podasz nazwę repozytorium oraz swoje imię i nazwisko.\nPobierz wersję .zip repozytorium i rozpakuj ją na swoim komputerze.",
+    "crumbs": [
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Kontrola wersji (1)</span>"
+    ]
+  },
+  {
+    "objectID": "git1.html#konfiguracja-systemu-git",
+    "href": "git1.html#konfiguracja-systemu-git",
+    "title": "3  Kontrola wersji (1)",
+    "section": "3.3 Konfiguracja systemu Git",
+    "text": "3.3 Konfiguracja systemu Git\nKolejnym krokiem po instalacji systemu Git4 jest jego konfiguracja. Można ją wykonać używając wbudowanego terminala (Mac OS i Linux) lub terminala dodanego podczas instalacji systemu Git (Windows). Polega ona na podaniu nazwy użytkownika (np. \"Imie Nazwisko\") oraz jego adresu email (\"email@portal.com\").\ngit config --global user.name \"imie nazwisko\"\ngit config --global user.email \"email\"\nPodany adres email powinien być zgodny z tym, który został użyty podczas rejestracji na serwisie GitHub.\nGdy już posiadamy konto na GitHubie oraz repozytorium, przychodzi czas na połączenie go z naszym komputerem. Musimy do tego celu stworzyć a następnie dodać do naszego komputera tzw. GitHub Token. Ma to miejsce na stronie https://github.com/settings/tokens, gdzie należy:\n\nKliknąć przycisk Generate new token.\nNadać nazwę tokenowi.5\nZaznaczyć opcje. Rekomendowane to “repo”, “user” i “workflow”.\nKliknąć przycisk Generate token.\n\nW efekcie zostanie wygenerowany token, który należy skopiować i zapisać w bezpiecznym miejscu.6\nMożliwy jest system pracy, w którym podajemy token za każdym razem, gdy chcemy się połączyć z repozytorium GitHub. Dużo jednak wygodniejszym rozwiązaniem jest dodanie tokena na lokalnym komputerze. W tym celu najlepiej użyć funkcji gitcreds::gitcreds_set().\n\n\n\n\n\n\nKomentarz\n\n\n\nAlternatywnym sposobem połączenia repozytorium z komputerem jest wykorzystanie kluczy SSH. W tym celu należy wygenerować klucze SSH, a następnie dodać klucz publiczny do konta na GitHubie. Więcej informacji można znaleźć na stronie https://help.github.com/en/github/authenticating-to-github/connecting-to-github-with-ssh.",
+    "crumbs": [
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Kontrola wersji (1)</span>"
+    ]
+  },
+  {
+    "objectID": "git1.html#rstudio-git",
+    "href": "git1.html#rstudio-git",
+    "title": "3  Kontrola wersji (1)",
+    "section": "3.4 Kontrola wersji w RStudio",
+    "text": "3.4 Kontrola wersji w RStudio\nRStudio posiada wbudowane, uproszczone graficzne wsparcie dla systemu Git. Istnieje też szereg programów, których głównym celem jest ułatwienie pracy z systemem Git. Nazwane są one klientami Git, wśród których można wymienić GitKraken i Sourcetree.7\nNajprostszym sposobem połączenia RStudio z systemem Git i serwisem GitHub jest stworzenie nowego projektu:\n\nKliknąć File -&gt; New Project.\nWybrać Version Control.\nWybrać Git.\nPodać ścieżkę do zdalnego repozytorium (adres HTTPS lub SSH, w zależności od sposobu wybranego wcześniej) oraz wybrać miejsce na dysku, gdzie ma się ten projekt znajdować.\nKliknąć Create Project.\n\nW efekcie zostanie utworzony nowy projekt RStudio (w tle wykonywane jest pobranie kopii istniejącego zdalnego repo), który jednocześnie jest lokalnym repozytorium Git. Dodatkowo, w RStudio pojawi się nowy panel “Git”.\n\n\n\n\n\nPanel Git w RStudio.\n\n\n\n\nW tym panelu są wyświetlone (1) wszystkie pliki, które są w folderze projektu, ale nie w repozytorium Git (żółte ikony statusu), (2) pliki, które chcemy dodać do repozytorium (zielona ikona statusu), oraz (3) pliki, które są już w repozytorium, ale zostały zmodyfikowane (niebieska ikona statusu).8 Ten panel nie pokazuje plików, które nie zostały ostatnio zmienione. Pierwsza kolumna w tym panelu (Staged) domyślnie zawiera same nieodhaczone białe pola. Wybór tego pola (jego odhaczenie) jest równoznaczne z dodaniem zmian.\nDodatkowo nad listą plików znajduje się szereg ikon. Pierwsze dwie z nich (Diff i Commit) wyświetlają okno, które pozwala sprawdzić jakie zmiany zaszły w plikach od ostatniego ich dodania (dolny panel) oraz zatwierdzić zmiany (prawy panel). Kolejne, strzałki w dół i górę, oznaczają odpowiednio aktualizowanie zmian i wysyłanie zmian. Ikona zegarka otwiera nowe okno, w którym można zobaczyć jakie zmiany zaszły w kolejnych zatwierdzeniach zmian (tak zwanych commitach). Następne ikony pozwalają na określenie plików do ignorowania (ikona koła zębatego) oraz tworzenie nowych rozgałęzień. Przedostatni element tego okna to nazwa obecnie ustawionego rozgałęzienia, a po kliknięciu tej nazwy możliwa jest przejście do innego rozgałęzienia.",
+    "crumbs": [
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Kontrola wersji (1)</span>"
+    ]
+  },
+  {
+    "objectID": "git1.html#sposoby-pracy-z-systemem-git",
+    "href": "git1.html#sposoby-pracy-z-systemem-git",
+    "title": "3  Kontrola wersji (1)",
+    "section": "3.5 Sposoby pracy z systemem Git",
+    "text": "3.5 Sposoby pracy z systemem Git\nIstnieje wiele możliwych sposobów pracy z systemem Git. Zależą one od wielu czynników, takich jak planowany cel repozytorium czy wykorzystywana technologia. Dodatkowo znaczny wpływ na sposób pracy z systemem Git ma czynnik ludzki - przyzwyczajenia osób pracujących nad projektem i ich preferencje. Poniżej pokażę dwa podstawowe sposoby pracy, a bardziej zaawansowane podejścia zostaną omówione w kolejnych rozdziałach.\n\n3.5.1 Nowy projekt\nPreferowanym9 sposobem rozpoczęcia pracy nad nowym zadaniem (projektem) w R jest stworzenie nowego, pustego repozytorium w serwisie GitHub, a następnie połączenie z nim nowego projektu RStudio.\n\n\n\n\n\nflowchart LR\n  A(GitHub) --&gt; B(RStudio -- nowy projekt)\n  B --&gt; C&gt;Naniesienie zmian]\n  C --&gt; D[Staged]\n  D --&gt; E[Commit]\n  E --&gt; F[Push]\n\n\n\n\n\n\nW momencie, gdy posiadamy ustawione zarówno lokalne jak i zdalne repozytorium możliwe jest rozpoczęcie pracy. Teraz można tworzyć nowe oraz edytować istniejące pliki. Tutaj zalecane jest najpierw kliknięcie ikony aktualizowania zmian (strzałka w dół), aby upewnić się, że posiadamy aktualną wersję repozytorium. Po każdej wyraźnej zmianie plików (np. ulepszenie kodu, naprawa błędów, dodanie nowych możliwości) należy dodać zmiany oraz je zatwierdzić. Można to zrobić klikając pole Staged przy wybranych plikach oraz następnie ikonę Commit. Teraz można dodać wiadomość opisująca zmiany jakie zaszły, oraz ją zatwierdzić klikając przycisk Commit.\n\n\n\n\n\n\n\n\n\n\n\n\nEfektem powyższej operacji jest posiadanie zatwierdzonych zmian w lokalnym repozytorium, ale jeszcze ich brak w repozytorium zdalnym. Kolejnym krokiem jest przesłanie zmian na zdalne repozytorium poprzez kliknięcie ikony wysyłania zmian (strzałka w górę). Jeżeli wszystko poszło zgodnie z planem, nowa wersja repozytorium powinna pojawić się na odpowiedniej stronie serwisu GitHub. Tą czynność warto wykonywać rzadziej niż poprzednią, ale też regularnie.\n\n\n\n\n\n\nKomentarz\n\n\n\nCzęsto w folderze projektu możesz posiadać pliki, których nie chcesz dodawać do repozytorium. W takiej sytuacji dodaj ich nazwy do pliku .gitignore i staną się one niewidoczne dla systemu Git.\n\n\nDalej praca polega na powtarzaniu tych czynności:\n\nSprawdzenie czy posiadamy aktualną wersję repozytorium.\nEdycja/dodanie plików czy folderów.\nDodanie zmian.\nZatwierdzenie zmian.\nWysyłanie zmian na zdalne repozytorium.\n\n\n\n\n\n\nflowchart LR\n  A[\"Sprawdzenie&lt;br&gt;aktualności&lt;br&gt;repo&lt;br&gt;(git pull)\"] --&gt; B&gt;Edycja/dodanie&lt;br&gt;plików]\n  B --&gt; C[\"Dodanie&lt;br&gt;zmian&lt;br&gt;(git add)\"]\n  C --&gt; D[\"Zatwierdzenie&lt;br&gt;zmian&lt;br&gt;(git commit)\"]\n  D --&gt; E[\"Wysyłanie&lt;br&gt;zmian&lt;br&gt;na zdalne&lt;br&gt;repozytorium&lt;br&gt;(git push)\"]\n\n\n\n\n\n\n\n\n3.5.2 Istniejący projekt\nCzasami posiadasz już jakiś istniejący projekt (folder z kodem źródłowym, itd.), ale chcesz do niego dodać możliwości kontroli wersji. W takich przypadkach najprostszy sposób to stworzenie nowego repozytorium w serwisie GitHub oraz pustego, połączonego z nim nowego projektu RStudio. Następnie należy przekopiować do tego projektu wszystkie już istniejące pliki, dodać je (pole Staged), zatwierdzić oraz przesłać na zdalne repozytorium. Kolejne etapy pracy wyglądają identycznie jak w poprzedniej sekcji.10\n\n\n\n\n\n\nZADANIA\n\n\n\n\nDobierzcie się w dwuosobowe grupy.\nCelem pierwszej osoby jest stworzenie nowego repozytorium na GitHubie, połączenie go z nowym projektem RStudio, dodanie nowego pliku README.md do repozytorium zawierającego tytuł wiersza “Słoń Trabalski”, oraz przesłanie go na zdalne repozytorium.\nPierwsza osoba następnie dodaje uprawnienia do repozytorium dla drugiej osoby.\nDruga osoba łączy się z repozytorium, dodaje do pliku README.md pierwszą linię wiersza (https://wolnelektury.pl/katalog/lektura/tuwim-slon-trabalski.html), zatwierdza zmiany oraz przesyła je na zdalne repozytorium.",
+    "crumbs": [
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Kontrola wersji (1)</span>"
+    ]
+  },
+  {
+    "objectID": "git1.html#sec-problemy-git1",
+    "href": "git1.html#sec-problemy-git1",
+    "title": "3  Kontrola wersji (1)",
+    "section": "3.6 Problemy z kontrolą wersji",
+    "text": "3.6 Problemy z kontrolą wersji\nW ramach jednego projektu często posiadamy wiele plików z długą historią zmian, do tego nanoszonych przez szereg różnych osób. Jest to sytuacja w której dość prosto o wystąpienie problemów czy nieoczekiwanych (przez użytkownika) zachowań systemu kontroli wersji Git.\nJednym z najczęstszych problemów jest pojawienie się poniższego komunikatu podczas próby wysyłania zmian do zdalnego repozytorium.\n\n\n&gt;&gt;&gt; git push\nTo https://github.com/YOU/REPO.git\n ! [rejected]        main -&gt; main (fetch first)\nerror: failed to push some refs to 'https://github.com/YOU/REPO.git'\nhint: Updates were rejected because the remote contains work that you do\nhint: not have locally. This is usually caused by another repository pushing\nhint: to the same ref. You may want to first integrate the remote changes\nhint: (e.g., 'git pull ...') before pushing again.\nhint: See the 'Note about fast-forwards' in 'git push --help' for details.\n\nOznacza on, że w repozytorium zdalnym są jakieś zmiany, których nie ma lokalnie.  Prawdopodobnie wynikają one z kwestii, że inna osoba przesłała swoje zmiany do zdalnego repozytorium lub też pliki były zmienione i przesłane przez ciebie na innym komputerze. Najczęściej w takiej sytuacji wystarczy aktualizowanie zmian ze zdalnego repo (ikona strzałki w dół), a następnie ponowienie próby wysłania zmian. Czasem jednak mogły zajść zmiany w tym samym pliku edytowanym przez wiele osób. Wówczas konieczne jest ręczne poprawienie problematycznych plików, dodanie zmian i ich zatwierdzenie.\n\n\n\n\n\n\nZADANIA\n\n\n\n\nKontynuujcie pracę w dwuosobowych grupach.\nTym razem zarówno pierwsza, jak i druga osoba mają edytować plik README.md: pierwsza dodaje drugą linię wiersza, a druga trzecią.\nNastępnie najpierw pierwsza osoba przesyła zmiany na zdalne repozytorium, a potem druga osoba próbuje to zrobić.\nRozwiążcie problem, który się pojawił.\n\nPo wykonaniu zadań będziemy mieć czas na dyskusję i pomoc.\n\n\n\n\n\n\n\n\nKomentarz\n\n\n\nGitHub nie jest jedynym serwisem internetowym oferującym hosting repozytoriów Git. Innymi popularnymi serwisami są GitLab i Bitbucket. Każdy z nich oparty jest na podobnych zasadach działania, ale różni się wieloma szczegółami. Dodatkowo możliwe jest stworzenie własnego hostingu repozytoriów Git, ale wymaga to większej wiedzy technicznej.",
+    "crumbs": [
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Kontrola wersji (1)</span>"
+    ]
+  },
+  {
+    "objectID": "git1.html#footnotes",
+    "href": "git1.html#footnotes",
+    "title": "3  Kontrola wersji (1)",
+    "section": "",
+    "text": "https://en.wikipedia.org/wiki/Comparison_of_version-control_software#History_and_adoption↩︎\nNie w oknie konsoli R.↩︎\nMiędzy innymi z tego powodu internetowe serwisy kontroli wersji posiadają ograniczenia dotyczące wielkości plików. Przykładowo, GitHub ogranicza wielkość pojedynczych plików do 100MB.↩︎\nInstrukcje dotyczące instalacji Gita znajdują się we wstępie książki.↩︎\nU mnie to często nazwa komputera na którym pracuję.↩︎\nMożna też użyć funkcji usethis::create_github_token().↩︎\nWięcej klientów Git można znaleźć na stronie https://git-scm.com/downloads/guis.↩︎\nMożliwe są też inne sytuacje, np. czerwona ikona z literą R sugerująca zmianę nazwy pliku.↩︎\nPrzeze mnie↩︎\nMożliwe jest też dodanie systemu kontroli wersji do istniejącego projektu oraz przypisanie do niego zdalnego repozytorium, ale wymaga to większej wiedzy na temat systemu Git.↩︎",
+    "crumbs": [
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Kontrola wersji (1)</span>"
+    ]
+  },
+  {
+    "objectID": "pakiety2.html",
+    "href": "pakiety2.html",
+    "title": "4  Tworzenie pakietów R (2)",
+    "section": "",
+    "text": "4.1 Publikowanie pakietów\nNowo utworzony pakiet w R można od razu umieścić na wybranym serwisie internetowym wspierającym kontrolę wersji takim jak GitHub, GitLab, czy BitBucket, gdzie nazwa repozytorium będzie identyczna jak nazwa pakietu.\nMożna to zrobić na kilka sposobów, na przykład:",
+    "crumbs": [
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>Tworzenie pakietów R (2)</span>"
+    ]
+  },
+  {
+    "objectID": "pakiety2.html#publikowanie-pakietów",
+    "href": "pakiety2.html#publikowanie-pakietów",
+    "title": "4  Tworzenie pakietów R (2)",
+    "section": "",
+    "text": "Poprzez stworzenie nowego, pustego repozytorium na wybranym serwisie internetowym i sklonowanie go na swój komputer, a następnie przesłanie plików pakietu do tego repozytorium (zobacz Sekcja 3.5.1)\nPoprzez zainicjowanie repozytorium Git używając usethis::use_git(), a następnie wysłanie pakietu do repozytorium GitHub poprzez usethis::use_github()1.\n\n\n\n\n\n\n\nZADANIA\n\n\n\n\nOpublikuj wcześniej stworzony pakiet na platformie GitHub używając jednej z powyższych metod.\nZ poziomu RStudio stwórz nowy plik README.md zawierający nazwę oraz krótki opis tego pakietu.\nDodaj nowy plik README.md do repozytorium i opublikuj go na GitHubie.",
+    "crumbs": [
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>Tworzenie pakietów R (2)</span>"
+    ]
+  },
+  {
+    "objectID": "pakiety2.html#sec-metadane-pakietu",
+    "href": "pakiety2.html#sec-metadane-pakietu",
+    "title": "4  Tworzenie pakietów R (2)",
+    "section": "4.2 Metadane pakietu",
+    "text": "4.2 Metadane pakietu\nSekcja 2.5 pokazała przykładowy plik DESCRIPTION zawierający metadane pakietu. Poniżej rozwiniemy kwestie kolejnych elementów opisu pakietu.\nPackage: mojpakiet\nTitle: Moje Funkcje Robiace Wszystko\nVersion: 0.0.1\nAuthors@R: \n    person(given = \"Imie\",\n           family = \"Nazwisko\",\n           role = c(\"cre\", \"aut\"),\n           email = \"imie.nazwisko@example.com\")\nDescription: Tworzenie, przeliczanie i wyliczanie wszystkiego. \n    Czasami nawet więcej.\nLicense: CC0\nEncoding: UTF-8\nLazyData: true\nRoxygenNote: 7.2.3\n\n4.2.1 Tytuł pakietu\nTytuł pakietu (Title:) w jednym krótkim zdaniu (sloganie) określa do czego służy ten pakiet.2 Składa się on ze słów rozpoczynających się z dużej litery.\n\n\n4.2.2 Wersja pakietu\nWersja pakietu (Version:) pozwala jego użytkownikom na zobaczenie, czy korzystają z aktualnej wersji pakietu. Zalecanym sposobem określania wersji pakietu jest stosowanie trzech liczb pierwsza.druga.trzecia, np. 0.9.1. Zmiana trzeciej liczby służy do pokazania, że zaszła niewielka zmiana w kodzie, zazwyczaj wiążąca się z naprawą małego błędu, np. 0.9.2. Druga liczba jest zmieniana podczas wydania nowej wersji pakietu, która zawiera większe zmiany w kodzie, jak naprawy poważnych błędów, czy dodanie nowych możliwości, np. 0.10.0. Zmiana pierwszej liczby sugeruje poważne zmiany w kodzie, które ale też sugeruje pewną stabilizację działania, np. 1.0.0.\n\n\n\n\n\n\nKomentarz\n\n\n\nWięcej o innych sposobach określania wersji pakietu można znaleźć pod adresami https://semver.org/, https://www.x.org/releases/X11R7.7/doc/xorg-docs/Versions.html, https://r-pkgs.org/lifecycle.html#sec-lifecycle-version-number.\n\n\n\n\n4.2.3 Autorzy\nAuthors@R: określa kolejne osoby zaangażowane w budowę tego pakietu. W powyższym przykładzie mamy wymienioną jedną osobę \"Imie\" \"Nazwisko\", której adres mailowy to \"imie.nazwisko@example.com\". Dodatkowo ta osoba posiada dwie role przy tworzeniu tego pakietu \"cre\" oraz \"aut\". Pierwsza rola, \"cre\", informuje że ta osoba jest twórcą i konserwatorem tego pakietu. Ona jest odpowiedzialna za pracę pakietu. Druga rola, \"aut\", jest nadawana osom, które wniosły bardzo duży wkład w kod zawarty w pakiecie. Inne często używane role to \"ctb\" określająca osoby, które wniosły mniejszy wkład w kod (np. drobne zmiany) oraz \"cph\" określająca osoby czy instytucje będące posiadaczami praw autorskich (np. firma zatrudniająca autora kodu albo autor biblioteki, która została wewnętrznie użyta).3 Dodanie kolejnych osób odbywa się poprzez łączenie ich funkcją c().\nAuthors@R: c(\n    person(\"Imie\", \"Nazwisko\", role = c(\"cre\", \"aut\"), \n           email = \"email1@example.com\"),\n    person(\"Imie2\", \"Nazwisko2\", role = \"aut\", email = \"email2@example.com\")\n)\n\n\n4.2.4 Opis pakietu\nOpis pakietu (Description:) jest dłuższym (co najmniej dwuzdaniowym) opisem tego do czego służy pakiet. Powinien on też, jeżeli to możliwe, odnosić się do publikacji naukowej, która opisuje metodę używaną w pakiecie.\nPrzykładowy opis pakietu:\nDescription: Creates superpixels based on input spatial data. \n    This package works on spatial data with one variable\n    (e.g., continuous raster), many variables (e.g., RGB rasters), \n    and spatial patterns (e.g., areas in categorical rasters). \n    It is based on the SLIC algorithm (Achanta et al. (2012) \n    &lt;doi:10.1109/TPAMI.2012.120&gt;), and readapts it to work with arbitrary\n    dissimilarity measures. \n\n\n4.2.5 Licencja\nLicencja (License:) określa warunki korzystania z pakietu przez inne osoby. W bardzo dużym skrócie licencje oprogramowania można podzielić na licencje otwarte (open-source) oraz zamknięte (proprietary). Najpopularniejsze licencje otwarte używane w pakietach R to licencja CC0, MIT oraz GPL. Pierwsza z nich, CC0 oznacza przekazanie zawartości pakietu do domeny publicznej i najczęściej stosowana jest do pakietów zawierających tylko zbiory danych. Licencja MIT daje nieograniczone prawo do używania, modyfikowania i rozpowszechniania kodu, pod warunkiem zachowania informacji o autorze. Dodanie licencji MIT do pakietu R można wykonać podając swoje imię i nazwisko w funkcji usethis::use_mit_license(\"Imie Nazwisko\"). W ten sposób informacja o tej licencji zostanie dodana do pliku DESCRIPTION (License: MIT + file LICENSE) oraz zostaną utworzone specjalne pliki z treścią licencji. Trzecia z licencji otwartych, GPL (ang. GNU General Public License) pozwala użytkownikom na uruchamianie, dostosowywanie, rozpowszechnianie i udoskonalanie kodu. Ważną cechą tej licencji jest wymaganie, że wszelkie prace oparte o kod w licencji GPL również muszą mieć licencję GPL Oprogramowanie zamknięte może również przyjmować wiele form (np. freeware czy też oprogramowanie komercyjne). Określenie pakietu jako oprogramowania zamkniętego odbywa się poprzez dodanie informacji, że licencja znajduje się w pliku LICENSE (License: file LICENSE), a następnie stworzenie pliku tekstowego o tej nazwie zawierającego odpowiednią modyfikację poniższego tekstu:\nProprietary \n\nDo not distribute outside of NAZWA MOJEJ FIRMY.\n\n\n\n\n\n\nKomentarz\n\n\n\nWięcej o licencjach można przeczytać na stronach http://choosealicense.com/licenses/ oraz https://tldrlegal.com/.\n\n\n\n\n\n4.2.6 Inne pola\nW pliku DESCRIPTION można również określić inne pola, np. LazyData czy SystemRequirements. Możliwe jest nawet dodawanie własnych pól. Więcej na ten temat można przeczytać pod adresem https://r-pkgs.org/description.html#other-fields.\n\n\n\n\n\n\nZADANIA\n\n\n\n\nUzupełnij opis swojego pakietu poprzez dodanie informacji o tytule, wersji, autorach, opisie i licencji w pliku DESCRIPTION.\nPrześlij zmiany do repozytorium na GitHubie.",
+    "crumbs": [
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>Tworzenie pakietów R (2)</span>"
+    ]
+  },
+  {
+    "objectID": "pakiety2.html#dokumentacja-pakietu",
+    "href": "pakiety2.html#dokumentacja-pakietu",
+    "title": "4  Tworzenie pakietów R (2)",
+    "section": "4.3 Dokumentacja pakietu",
+    "text": "4.3 Dokumentacja pakietu\nPo wykonaniu poprzednich kroków posiadamy działający pakiet, którego funkcje posiadają odpowiednią dokumentację. Teraz konieczne jest stworzenie dokumentacji pakietu - ma ona na celu poinformować potencjalnych użytkowników do czego pakiet służy, jak go zainstalować, czy też pokazać przykłady jego użycia. Pakiety mogą być dokumentowane używając kilku różnych rodzajów plików, np. za pomocą pliku README.Rmd, tzw. winiety (ang. vignette), czy pliku NEWS.md. Każdy z nich ma swój cel.\n\n4.3.1 README\nPlik README.Rmd można stworzyć za pomocą funkcji usethis::use_readme_rmd(). W efekcie będzie się on znajdować się w głównym folderze pakietu. Ten plik powinien zawierać:4\n\nNazwę pakietu\nOpis do czego pakiet służy\nInstrukcje jak go zainstalować\nProsty przykład użycia\nOdnośniki do podobnych prac, programów, czy artykułów naukowych\n\nWarto tutaj zrozumieć różnicę między plikami README.md i README.Rmd. README.md jest plikiem w formacie Markdown, który jest automatycznie wyświetlany na stronie repozytorium na GitHubie. README.Rmd jest plikiem w formacie RMarkdown, który może być przetworzony do formatu .md. Użycie RMarkdown pozwala na dodanie kodu R, który zostanie automatycznie przetworzony do wyników jego działania – w efekcie konwersji pliku .Rmd otrzymamy plik .md. Typowe użycie pliku README.Rmd polega na dodaniu do niego zmian, a następnie przetworzeniu go do formatu .md (ikona knit) i przesłaniu na GitHuba.\n\n\n\n\n\n\nKomentarz\n\n\n\nMarkdown to prosty język znaczników służący do formatowania tekstu. Jego idea polega na tym, że w dokumencie tekstowym używamy specjalnych znaków, które po przetworzeniu dokumentu wyświetlają się w odpowiedni sposób. Przykładowo jedna gwiazdka przed tekstem i jedna po tekście oznacza pochylony tekst (*pochylony tekst*), a dwie gwiazdki przed i po oznaczają pogrubiony tekst (**pogrubiony tekst**). Innym przykładem są nagłówki określane poprzez jeden lub więcej symboli kratki.\n# Nagłówek\n\n## Nagłówek drugiego poziomu (mniejsza czcionka)\nZestawienie pokazujące podstawy składni RMarkdown jest wbudowane w RStudio i można je wyświetlić za pomocą Help -&gt; Markdown Quick Reference lub pod adresem https://rmarkdown.rstudio.com/authoring_basics.html.\n\n\n\n\n4.3.2 Winiety\nWiniety mają na celu pokazanie bardziej złożonego przykładu użycia pakietu. Nową winietę można stworzyć za pomocą funkcji usethis::use_vignette(\"nazwa-winiety\"). W tym momencie zostanie stworzony nowy plik nazwa-winiety.Rmd w folderze vignettes. Teraz możliwe jest jego edytowanie i dodawanie nowej treści. Pakiety mogą posiadać wiele różnych winiet, zawierających coraz bardziej zaawansowane przykłady lub też opis różnych grup funkcji z pakietu.\n\n\n\n\n\n\nKomentarz\n\n\n\nPliki RMarkdown mogą być przetworzone (ang. render) do wielu różnych formatów plików, między innymi html, pdf, czy word w zależności od określonych opcji w nagłówku pliku. To przetworzenie może odbyć się używając ikony “Knit” w RStudio lub funkcji rmarkdown::render().\n\n\n\n\n4.3.3 NEWS\nElementem dokumentowania pakietu jest również informowanie o tym jakie nowe zmiany zaszły wraz z kolejnymi wersjami pakietu. W pakietach R może mieć to miejsce używając pliku NEWS.md tworzonego poprzez usethis::use_news_md(). Taki plik może zawierać informacje o nowych funkcjach, zmianach istniejących funkcji, naprawionych błędach, itd. Przykład szablonu pliku NEWS.md można znaleźć pod adresem https://ropensci.github.io/dev_guide/newstemplate.html.\n\n\n\n\n\n\nZADANIA\n\n\n\n\nStwórz plik README.Rmd zawierający opis swojego pakietu, instrukcje instalacji i przykładowe jego użycie.\nPrzetwórz ten plik do formatu .md i prześlij go do repozytorium na GitHubie. Obejrzyj go na stronie internetowej repozytorium.\nStwórz prostą winietę zawierającą jeden przykład użycia swojego pakietu.\nDodaj pierwsze informacje o zmianach w pakiecie do pliku NEWS.md.\nWyślij nowe pliki do repozytorium na GitHubie.",
+    "crumbs": [
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>Tworzenie pakietów R (2)</span>"
+    ]
+  },
+  {
+    "objectID": "pakiety2.html#footnotes",
+    "href": "pakiety2.html#footnotes",
+    "title": "4  Tworzenie pakietów R (2)",
+    "section": "",
+    "text": "Wymaga to jednak wygenerowania tokena - opis jak to zrobić można znaleźć pod adresem https://debruine.github.io/tutorials/packages.html#github-access-token↩︎\nTytuły pakietów można znaleźć, np. w panelu “Packages” w RStudio.↩︎\nPełną listę dostępnych ról można znaleźć pod adresem http://www.loc.gov/marc/relators/relaterm.html.↩︎\nDodatkowe elementy to oznaki (ang. badges) pokazujące, np. status pakietu, liczbę jego pobrań i wiele innych.↩︎",
+    "crumbs": [
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>Tworzenie pakietów R (2)</span>"
+    ]
+  },
+  {
+    "objectID": "git2.html",
+    "href": "git2.html",
+    "title": "5  Kontrola wersji (2)",
+    "section": "",
+    "text": "5.1 Git\nDo tej pory używaliśmy systemu kontroli wersji Git z poziomu RStudio. Każda z ikon na pasku narzędziowym RStudio odpowiada jednej z komend systemu Git. W rzeczywistości, system Git jest niezależny od RStudio i może być używany z poziomu konsoli systemowej. Git składa się z kilkudziesięciu komend, których działanie jest dalej uzależnione od podanych argumentów. Tutaj przedstawiony zostanie tylko podzbiór najczęściej używanych. Pełniejszy opis komend systemu Git można znaleźć pod adresem https://education.github.com/git-cheat-sheet-education.pdf lub http://rogerdudler.github.io/git-guide/index.pl.html.",
+    "crumbs": [
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>Kontrola wersji (2)</span>"
+    ]
+  },
+  {
+    "objectID": "git2.html#repozytorium",
+    "href": "git2.html#repozytorium",
+    "title": "5  Kontrola wersji (2)",
+    "section": "5.2 Repozytorium",
+    "text": "5.2 Repozytorium\nPodstawowym elementem systemu Git jest repozytorium (ang. repository, często określane skrótowo jako repo). Jest to folder, który przechowuje wszystkie pliki i foldery w ramach jednego projektu.1 Dodatkowo wewnątrz repozytorium znajduje się ukryty folder .git, który zawiera informację o historii i zmianach każdego z naszych plików. Repozytorium może znajdować się na dysku naszego komputera (wtedy jest nazywane repozytorium lokalnym) lub też na serwerze w internecie (określane jako repozytorium zdalne (ang. remote)).\n# określenie obecnego katalogu jako repozytorium Git\ngit init",
+    "crumbs": [
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>Kontrola wersji (2)</span>"
+    ]
+  },
+  {
+    "objectID": "git2.html#dodawanie-zmian",
+    "href": "git2.html#dodawanie-zmian",
+    "title": "5  Kontrola wersji (2)",
+    "section": "5.3 Dodawanie zmian",
+    "text": "5.3 Dodawanie zmian\nW nowo utworzonym repozytorium możemy tworzyć nowe pliki oraz edytować już istniejące. Po pewnym czasie możemy stwierdzić, że dodaliśmy nową funkcjonalność do funkcji lub naprawiliśmy błąd w kodzie. Wtedy należy, po zapisaniu również pliku na dysku, dodać te zmiany do systemu Git. Po dodaniu zmian są one przechowywane w miejscu określanym jako Index. Działa ono jak poczekalnia - w tym momencie zmiany jeszcze nie są potwierdzone, ale możemy sprawdzić co zmieniło się od ostatniego zatwierdzenia zmian.\n# dodanie pojedynczego pliku\ngit add sciezka_do_pliku  \n# dodanie wszystkich plików \ngit add --all",
+    "crumbs": [
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>Kontrola wersji (2)</span>"
+    ]
+  },
+  {
+    "objectID": "git2.html#sprawdzanie-zmian",
+    "href": "git2.html#sprawdzanie-zmian",
+    "title": "5  Kontrola wersji (2)",
+    "section": "5.4 Sprawdzanie zmian",
+    "text": "5.4 Sprawdzanie zmian\nZanim zatwierdzimy zmiany można je sprawdzić. W ten sposób dla każdej linii tekstu (kodu) otrzymuje się informacje co zostało dodane lub usunięte.\n# sprawdzenie dodanych zmian\ngit diff",
+    "crumbs": [
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>Kontrola wersji (2)</span>"
+    ]
+  },
+  {
+    "objectID": "git2.html#zatwierdzanie-zmian",
+    "href": "git2.html#zatwierdzanie-zmian",
+    "title": "5  Kontrola wersji (2)",
+    "section": "5.5 Zatwierdzanie zmian",
+    "text": "5.5 Zatwierdzanie zmian\nZatwierdzanie zmian (ang. commit) powoduje ich zapisanie na stałe w systemie Git. Wymaga to dodania wiadomości, która opisuje wprowadzone zmiany.\n# zatwierdzenie dodanych zmian\ngit commit -m \"opis wprowadzonych zmian\"",
+    "crumbs": [
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>Kontrola wersji (2)</span>"
+    ]
+  },
+  {
+    "objectID": "git2.html#branches",
+    "href": "git2.html#branches",
+    "title": "5  Kontrola wersji (2)",
+    "section": "5.6 Rozgałęzienia",
+    "text": "5.6 Rozgałęzienia\nCzęstą sytuacją jest posiadanie stabilnego, działającego kodu, ale co do którego mamy pomysły jak go ulepszyć, np. zwiększyć jego wydajność. Wtedy edycja poprawnego kodu może nie przynieść najlepszych wyników - co jeżeli nasz pomysł się jednak nie sprawdzi? Lepszą możliwością jest użycie rozgałęzień (ang. branches) w systemie Git. Domyślnie nowe repozytorium posiada już jedną gałąź nazwaną main.\n# wypisanie wszystkich rozgałęzień\ngit branch\nKolejnym krokiem jest utworzenie nowego rozgałęzienia. W efekcie tego działania nowa gałąź staje się odniesieniem do istniejącego stanu obecnej gałęzi. \n# utworzenie nowego rozgałęzienia\ngit branch nazwa_nowej_galezi\nCo ważne utworzenie nowego rozgałęzienia nie powoduje przejście do niego - należy to samodzielnie wykonać.\n# przejście do innego rozgałęzienia\ngit checkout nazwa_nowej_galezi\nW tym momencie możliwe jest testowanie różnych możliwości ulepszenia istniejącego kodu bez obawy, że wpłynie to na jego działającą wersję. Po stwierdzeniu, że nasze zmiany są odpowiednie należy je dodać i zatwierdzić. Teraz można powrócić do głównej gałęzi (main) i dołączyć zmiany stworzone w innej gałęzi.\n# powrót do głównej gałęzi\ngit checkout main\n# połączenie wybranego rozgałęzienia z obecnym\ngit merge nazwa_nowej_galezi\n\n\n\n\n\n\nKomentarz\n\n\n\nTworzenie nowych gałęzi i przechodzenie między nimi jest też możliwe w RStudio. W tym celu należy wybrać ikonę z napisem “New branch” albo nazwę obecnej gałęzi.",
+    "crumbs": [
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>Kontrola wersji (2)</span>"
+    ]
+  },
+  {
+    "objectID": "git2.html#repozytorium-zdalne",
+    "href": "git2.html#repozytorium-zdalne",
+    "title": "5  Kontrola wersji (2)",
+    "section": "5.7 Repozytorium zdalne",
+    "text": "5.7 Repozytorium zdalne\nSystem Git ma wiele zalet w przypadku samodzielnej pracy na własnym komputerze, zyski z jego używania są jednak znacznie większe, gdy nasze repozytoria mają też zdalne odpowiedniki.\nŁączenie się ze zdalnymi repozytoriami może nastąpić na dwa sposoby. W pierwszym z nich repozytorium zdane już istnieje, a my chcemy się do niego podłączyć i je pobrać.\n# pobranie kopii istniejącego zdalnego repo\ngit clone sciezka_do_zdalnego_repo\nDrugim sposobem jest posiadanie istniejącego, lokalnego repozytorium, a następnie dodanie do niego adresu zdalnego repozytorium. \n# dodanie ścieżki do zdalnego repo\ngit remote add origin sciezka_do_zdalnego_repo",
+    "crumbs": [
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>Kontrola wersji (2)</span>"
+    ]
+  },
+  {
+    "objectID": "git2.html#wysylanie-zmian",
+    "href": "git2.html#wysylanie-zmian",
+    "title": "5  Kontrola wersji (2)",
+    "section": "5.8 Wysyłanie zmian",
+    "text": "5.8 Wysyłanie zmian\nObecne dodane i zatwierdzone zmiany znajdują się jedynie w repozytorium lokalnym. Konieczne jest ich wysłanie do zdalnego repozytorium.\n# wysyłanie zmian do zdalnego repo\ngit push",
+    "crumbs": [
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>Kontrola wersji (2)</span>"
+    ]
+  },
+  {
+    "objectID": "git2.html#aktualizowanie-zmian",
+    "href": "git2.html#aktualizowanie-zmian",
+    "title": "5  Kontrola wersji (2)",
+    "section": "5.9 Aktualizowanie zmian",
+    "text": "5.9 Aktualizowanie zmian\nZdalne repozytoria mogą pozwalać na nadawanie różnych uprawnień użytkownikom. Możliwe jest określenie, że inne osoby mogą nanosić zmiany w zdalnych repozytoriach. Dodatkowo, jedna osoba może zmieniać zdalne repozytoria używając różnych komputerów. Konieczne jest więc aktualizowanie zmian, które zaszły w zdalnym repozytorium na lokalnym komputerze.\n# aktualizowanie zmian ze zdalnego repo\ngit pull\n\n\n\n\n\n\n\n\nZADANIA\n\n\n\n\nDobierzcie się w dwuosobowe grupy: każda z osób będzie pracowała na repozytorium pakietu drugiej osoby.\nUżywając linii komend, sklonujcie repozytorium pakietu drugiej osoby.\nStwórzcie nową gałąź w repozytorium i przejdźcie do niej.\nDodajcie do repozytorium plik z kodem R, który będzie zawierał funkcję, która zwraca sumę dwóch liczb.\nSprawdźcie czy pakiet spełnia wszystkie wymagania i działa poprawnie.\nPrześlijcie nowe zmiany do zdalnego repozytorium używając linii komend. Co ważne – nie łączcie ich z główną gałęzią! (W razie problemów upewnijcie się, że druga osoba ma uprawnienia do wprowadzania zmian w repozytorium.)\nObejrzyjcie zmiany w repozytorium zdalnym.",
+    "crumbs": [
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>Kontrola wersji (2)</span>"
+    ]
+  },
+  {
+    "objectID": "git2.html#footnotes",
+    "href": "git2.html#footnotes",
+    "title": "5  Kontrola wersji (2)",
+    "section": "",
+    "text": "W kontekście R, warto o tym myśleć jako o projekcie RStudio.↩︎",
+    "crumbs": [
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>Kontrola wersji (2)</span>"
+    ]
+  },
+  {
+    "objectID": "pakiety3.html",
+    "href": "pakiety3.html",
+    "title": "6  Tworzenie pakietów R (3)",
+    "section": "",
+    "text": "6.1 Dane w pakietach R\nPakiety R mogą również zawierać dane. Zazwyczaj takie dane służą do trzech celów: (1) do przechowywania danych, które są używane wewnątrz pakietu, (2) do użycia w przykładach i innych formach dokumentacji, oraz (3) do testowania funkcji.\nIstnieje kilka mechanizmów do przechowywania danych w pakietach R:\nKażdy z nich ma swoje wady i zalety, szczególnie widoczne w przypadku wykorzystywania danych przestrzennych.",
+    "crumbs": [
+      "<span class='chapter-number'>6</span>  <span class='chapter-title'>Tworzenie pakietów R (3)</span>"
+    ]
+  },
+  {
+    "objectID": "pakiety3.html#dane-w-pakietach-r",
+    "href": "pakiety3.html#dane-w-pakietach-r",
+    "title": "6  Tworzenie pakietów R (3)",
+    "section": "",
+    "text": "Dane w postaci binarnej w folderze data/\nDane w postaci oryginalnej w podfolderze folderu inst/\nDane w postaci binarnej w pliku R/sysdata.rda\nDane stworzone wewnątrz kodu R, np. kodu przykładu czy kodu testu\n\n\n\n\n\n\n\n\nKomentarz\n\n\n\nCRAN z reguły nie pozwala na umieszczanie w pakietach danych o rozmiarze większym niż ok. 5 MB. W związku z tym, jeżeli dane są większe niż 5 MB, to należy je umieścić w innym miejscu, np. na GitHubie, a wewnątrz pakietu umieścić tylko kod do ich pobrania.\n\n\n\n6.1.1 Dane w postaci binarnej w folderze data/\nNiemal każdy obiekt R można zapisać wewnątrz pakietu jako plik binarny (.rda) w folderze data/. Najprościej dodać taki obiekt używając funkcji usethis::use_data():\n\nmoj_df = data.frame(x = 1:10, y = 11:20)\nusethis::use_data(moj_df, overwrite = TRUE)\n\nPowyższy kod stworzy plik data/moj_df.rda zawierający obiekt moj_df. Teraz ten obiekt jest dostępny wewnątrz pakietu i można go użyć wewnątrz funkcji, przykładów, czy testów jednostkowych.\n\n\n\n\n\n\nKomentarz\n\n\n\nJeden z możliwych elementów opisu pakietu w pliku DESCRIPTION to LazyData. Przyjmuje on wartość true lub false i określa czy dane w folderze data/ są ładowane do pamięci podczas ładowania pakietu. W przypadku LazyData: true dane są ładowane do środowiska pracy podczas ładowania pakietu i są od razu dostępne. W przypadku LazyData: false dane są ładowane do środowiska pracy dopiero w momencie ich wywołania, np. poprzez funkcję data().\n\n\nWarto kod R użyty do stworzenia takich danych umieścić w folderze data-raw/. A sam folder data-raw/ należy dodać do pliku .Rbuildignore.1 Dzięki temu możliwe będzie odtworzenie budowy takich danych w przyszłości, jeżeli zajdzie taka konieczność.\nDane załączone w ten sposób muszą być udokumentowane. Taka dokumentacja to plik o rozszerzeniu .R w folderze R/ zawierający funkcję roxygen2 z odpowiednimi tagami. Przykładowo, dla obiektu moj_df można stworzyć plik R/moj_df.R zawierający:\n\n#' Example data\n#' \n#' Example data created manually for the purpose of this package.\n#' \n#' @format ## `moj_df`\n#' A data frame with 10 observations on 2 variables.\n#' \\describe{\n#'  \\item{x}{numeric vector}\n#'  \\item{y}{numeric vector}\n#' }\n#' @source Manually created.\n\"moj_df\"\n\n\n\n6.1.2 Dane w postaci oryginalnej w podfolderze folderu inst/\nWewnątrz podfolderu folderu inst/ (np. inst/data/) można umieścić dowolne pliki, które będą dostępne po zainstalowaniu pakietu. Dotyczy to, np., plików .csv ale także różnorodnych formatów GIS, .gpkg czy .tif.\nPo instalacji pakietu, folder inst/ nie jest dostępny, a jego zawartość znajduje się bezpośrednio w folderze instalacyjnym pakietu. Dostępne foldery można sprawdzić używając funkcji system.file() oraz dir().\n\nsystem.file(package = \"spData\") |&gt; dir()\n\n [1] \"data\"        \"DESCRIPTION\" \"help\"        \"html\"        \"INDEX\"      \n [6] \"Meta\"        \"misc\"        \"NAMESPACE\"   \"R\"           \"raster\"     \n[11] \"README\"      \"shapes\"      \"weights\"    \n\n\nW tym przypadku mamy kilka folderów z danymi: data/, misc/, raster/, shapes/, oraz weights/. Sprawdzenie zawartości danego folderu jest możliwe poprzez podanie jego nazwy jako argumentu funkcji system.file().\n\nsystem.file(\"raster\", package = \"spData\") |&gt; dir()\n\n[1] \"elev.tif\"          \"grain.tif\"         \"grain.tif.aux.xml\"\n\n\nNastępnie można użyć funkcji system.file() do określenia ścieżki do wybranego pliku na danym komputerze.\n\nsystem.file(\"raster/elev.tif\", package = \"spData\")\n\n[1] \"/home/jn/R/x86_64-redhat-linux-gnu-library/4.4/spData/raster/elev.tif\"\n\n\nZnajomość tej ścieżki pozwala na wczytanie pliku do R.\n\nlibrary(terra)\nelev = rast(system.file(\"raster/elev.tif\", package = \"spData\"))\nplot(elev)\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nKomentarz\n\n\n\nPrzechowywanie danych w postaci binarnej jest szczególnie dobrym rozwiązaniem w przypadku, gdy przechowywane obiekty mają jedną z klas wbudowanych w język R (np. ramka danych czy macierz).\nPodejście oparte na przechowywaniu danych w postaci oryginalnej jest szczególnie dobre w kontekście danych przestrzennych:\n\nInterpretacja elementów obiektów przestrzennych (np. układu współrzędnych przez bibliotekę PROJ) zmienia się w czasie. W związku z tym, dane przestrzenne zapisane w postaci binarnej mogą być niepoprawne w przyszłości.\nGłówna klasa obiektów w pakiecie terra nie przechowuje wartości, ale tylko wskaźnik (ang. pointer) C++ do pliku na dysku. W związku z tym, obiekty terra zapisane w postaci binarnej mogą nie być poprawie załadowane do pamięci podczas ładowania pakietu.\nDane są dostępne w oryginalnym formacie, co umożliwia ich użycie poza R.\n\n\n\n\n\n6.1.3 Dane w postaci binarnej w pliku R/sysdata.rda\nWewnątrz pakietu można umieścić dane w postaci binarnej w pliku R/sysdata.rda. Takie dane są dostępne tylko wewnątrz pakietu i nie są ładowane do środowiska pracy. Nie wymagają też dodatkowej dokumentacji.\nDo stworzenia takiego pliku użyć funkcji usethis::use_data() z argumentem internal = TRUE. Należy tylko pamiętać, że plik R/sysdata.rda może zawierać więcej niż jeden obiekt i wówczas te obiekty należy zapisać w poniższy sposób.\n\nmoj_df = data.frame(x = 1:10, y = 11:20)\nmoj_df2 = data.frame(x = 1:10, y = 11:20)\nusethis::use_data(moj_df, moj_df2, internal = TRUE)\n\n\n\n6.1.4 Dane stworzone wewnątrz kodu R\nMałe dane można stworzyć bezpośrednio wewnątrz kodu R. Może to mieć miejsce przed przykładem użycia danej funkcji czy też przed testem jednostkowym.\n\n\n\n\n\n\nZADANIA\n\n\n\n\nStwórz nowy obiekt zawierający dane przykładowe, które będzie można użyć w przykładach twojego pakietu.\nZapisz kod tworzący ten obiekt do folderu data-raw/.\nDodaj ten obiekt do folderu data/ używając funkcji usethis::use_data().\nDodaj dokumentację dla tego obiektu do folderu R/.\nZapisz ten obiekt do zewnętrznego formatu (np. .csv) i umieść go wewnątrz podfolderu folderu inst/.\nUżyj zarówno wewnętrznych jak i zewnętrznych danych wewnątrz przykładu jakieś funkcji z twojego pakietu.\nUruchom devtools::document() a następnie devtools::check() i sprawdź czy wszystko działa poprawnie.",
+    "crumbs": [
+      "<span class='chapter-number'>6</span>  <span class='chapter-title'>Tworzenie pakietów R (3)</span>"
+    ]
+  },
+  {
+    "objectID": "pakiety3.html#sec-testy-jednostkowe",
+    "href": "pakiety3.html#sec-testy-jednostkowe",
+    "title": "6  Tworzenie pakietów R (3)",
+    "section": "6.2 Testy jednostkowe",
+    "text": "6.2 Testy jednostkowe\nTesty jednostkowe (ang. unit tests) to sposób sprawdzania czy stworzona przez nas funkcja działa w sposób jaki oczekujemy. Tworzenie takich testów wymusza także myślenie na temat odpowiedniego działania funkcji i jej API. Testy jednostkowe są najczęściej stosowane w przypadku budowania pakietów, gdzie możliwe jest automatyczne sprawdzenie wielu testów na raz. Przykładowo, napisaliśmy nową funkcję, która wykonuje złożone operacje i, po wielu sprawdzeniach, wiemy, że daje poprawne wyniki. Po kilku miesiącach wpadliśmy na pomysł jak zwiększyć wydajność naszej funkcji. W tym momencie wystarczy już tylko stworzyć nową implementację i użyć wcześniej zbudowanych testów. Dadzą one informację, czy efekt działania jest taki jaki oczekujemy, a w przeciwnym razie wskażą gdzie pojawił się błąd. Istnieje też dodatkowa reguła - jeżeli znajdziesz błąd w kodzie od razu napisz test jednostkowy.\nZobaczmy jak działają testy jednostkowe na przykładzie funkcji powierzchnia(), która oblicza powierzchnię prostokąta na podstawie macierzy zawierającej współrzędne jego wierzchołków.\n\npowierzchnia = function(x){\n  a = x[1, 2] - x[1, 1]\n  b = x[2, 2] - x[2, 1]\n  a * b\n}\n\nJednym z możliwych narzędzi do testów jednostkowych w R jest pakiet testthat (Wickham 2020).\n\nlibrary(testthat)\n\nZawiera on szereg funkcji sprawdzających czy działanie naszych funkcji jest zgodne z oczekiwaniem. Funkcje w tym pakiecie rozpoczynają się od prefiksu expect_ (oczekuj).\nW przypadku funkcji powierzchnia() oczekujemy, że wynik będzie zawierał tylko jeden element. Możemy to sprawdzić za pomocą funkcji expect_length().\n\nnowy_p = matrix(c(0, 0, 6, 5), ncol = 2)\nexpect_length(powierzchnia(nowy_p), 1)\n\nJeżeli wynik ma długość jeden to wówczas nic się nie stane. W przeciwnym razie pojawi się komunikat błędu.\nWiemy, że powierzchnia naszego przykładowego obiektu nowy_p to 30. Do sprawdzenia, czy nasza funkcja daje na tym obiekcie dokładnie taki wynik możemy użyć expect_equal().\n\nexpect_equal(powierzchnia(nowy_p), 30)\n\nW momencie, gdy wynik jest zgodny to nie nastąpi żadna reakcja, a w przeciwnym razie wystąpi błąd. W pakiecie testthat istnieją inne funkcje podobne do expect_equal(). Przykładowo, funkcja expect_identical() sprawdza nie tylko podobieństwo wartości, ale też to czy klasa wyników jest taka sama.\nAby sprawdzić czy nasza funkcja na pewno zwróci błąd w przypadku podania niepoprawnych danych wejściowych możemy użyć funkcji expect_error(). Jej działanie jest przedstawione poniżej.\n\nexpect_error(powierzchnia(3, 5, 2, \"a\"))\nexpect_error(powierzchnia(matrix(c(0, 0, 6, 5), ncol = 2)))\n\nError: `powierzchnia(matrix(c(0, 0, 6, 5), ncol = 2))` did not throw an error.\n\n\nW przypadku, gdy wywołanie funkcji zwróci błąd, expect_error() nic nie zwróci. Natomiast, jeżeli wywołania funkcji nie zwróci błędu, expect_error() zatrzyma swoje działanie i zwróci komunikat. Odpowiednikami expect_error() dla ostrzeżeń jest expect_warning(), a dla wiadomości expect_message().\nPozostałe funkcje z tego pakietu są wymienione i opisane na stronie https://testthat.r-lib.org/reference/index.html.\n\n\n\n\n\n\nZADANIA\n\n\n\n\nStwórz nowy plik temp.R.\nWewnątrz tego pliku dodaj kilka testów sprawdzających funkcję ze swojego pakietu.\nUpewnij się, że wszystkie testy działają poprawnie (nie zwracają błędów).",
+    "crumbs": [
+      "<span class='chapter-number'>6</span>  <span class='chapter-title'>Tworzenie pakietów R (3)</span>"
+    ]
+  },
+  {
+    "objectID": "pakiety3.html#wbudowane-testy",
+    "href": "pakiety3.html#wbudowane-testy",
+    "title": "6  Tworzenie pakietów R (3)",
+    "section": "6.3 Wbudowane testy",
+    "text": "6.3 Wbudowane testy\nTesty jednostkowe można również wbudować wewnątrz pakietu - w efekcie, gdy naniesiemy w nim jakieś zmiany możemy sprawdzić czy otrzymujemy takie same wyniki.\nPierwszym krokiem do używania wbudowanych testów jest ustawienie odpowiedniej infrastruktury używając funkcji use_testthat(). Powoduje ona dodanie pakietu testthat do wpisu Suggests:, stworzenie folderów tests/ i tests/testthat/ oraz pliku tests/testthat.R.\nuse_testthat()\n#&gt; ✔ Adding 'testthat' to Suggests field in DESCRIPTION\n#&gt; ✔ Creating 'tests/testthat/'\n#&gt; ✔ Writing 'tests/testthat.R'\nTeraz możliwe jest napisanie testów jednostkowych. Zazwyczaj polega to na stworzeniu oddzielnego pliku dla każdej funkcji z naszego pakietu. Przykładowo, nasz pakiet zawiera funkcję powierzchnia(), dlatego też do jego testowania możemy stworzyć nowy plik tests/testthat/test-powierzchnia.R. Wewnątrz tego pliku należy sprawdzać kolejne aspekty działania kodu używając funkcji test_that(), gdzie należy podać (1) opis tego co jest sprawdzane i (2) testy wewnątrz nawiasów klamrowych. Przykładowy plik tests/testthat/test-powierzchnia.R może wyglądać w ten sposób:\nnowy_p = matrix(c(0, 0, 6, 5), ncol = 2)\n\ntest_that(\"struktura wyniku jest poprawna\", {\n  expect_length(powierzchnia(nowy_p), 1)\n})\n\ntest_that(\"wartosc wyniku jest poprawna\", {\n  expect_equal(powierzchnia(nowy_p), 30)\n})\n\ntest_that(\"wystepuja odpowiednie bledy\", {\n  expect_error(powierzchnia(3, 5, 2, \"a\"))\n})\nPo napisaniu testów można sprawdzić czy wszystkie z nich dają odpowiedni wynik używając devtools::test()2. W efekcie wyświetlone zostaną wszystkie testy i zostanie wskazane, które z nich się nie powiodły i należy je poprawić.",
+    "crumbs": [
+      "<span class='chapter-number'>6</span>  <span class='chapter-title'>Tworzenie pakietów R (3)</span>"
+    ]
+  },
+  {
+    "objectID": "pakiety3.html#pokrycie-kodu-testami-jednostkowymi",
+    "href": "pakiety3.html#pokrycie-kodu-testami-jednostkowymi",
+    "title": "6  Tworzenie pakietów R (3)",
+    "section": "6.4 Pokrycie kodu testami jednostkowymi",
+    "text": "6.4 Pokrycie kodu testami jednostkowymi\nW przypadku testów jednostkowych możliwe jest sprawdzenie pokrycia kodu testami. Pokrycie kodu to procent kodu, który jest wykonywany podczas uruchamiania testów. W przypadku, gdy pokrycie kodu jest niskie, oznacza to, że testy nie sprawdzają wszystkich możliwych przypadków działania funkcji. Inaczej mówiąc, może to oznaczać, że pewne części kodu nie są testowane i mogą zawierać błędy lub działać niepoprawnie.\nPokrycie kodu testami można sprawdzić lokalnie używając funkcji devtools::test_coverage() lub też można użyć systemu CI/CD (o tym później), żeby sprawdzić pokrycie testami na zewnętrznym serwerze.\n\n\n\n\n\n\nZADANIA\n\n\n\n\nPrzenieś testy z pliku temp.R do odpowiedniego pliku wewnątrz folderu tests/testthat/.\nUsuń plik temp.R.\nUruchom testy używając devtools::test(). Czy wszystkie z nich działają poprawnie?\nSpróbuj użyć danych wbudowanych w pakiet do testów.\nUruchom devtools::test_coverage() i sprawdź pokrycie kodu testami.",
+    "crumbs": [
+      "<span class='chapter-number'>6</span>  <span class='chapter-title'>Tworzenie pakietów R (3)</span>"
+    ]
+  },
+  {
+    "objectID": "pakiety3.html#strona-internetowa-pakietu",
+    "href": "pakiety3.html#strona-internetowa-pakietu",
+    "title": "6  Tworzenie pakietów R (3)",
+    "section": "6.5 Strona internetowa pakietu",
+    "text": "6.5 Strona internetowa pakietu\nDodatkowo w R istnieje możliwość prostego stworzenia stron internetowych dla wybranego pakietu używając pakietu pkgdown (Wickham i Hesselberth 2020). Przykład takiej strony można zobaczyć pod adresem https://pkgdown.r-lib.org/index.html.\nStworzenie strony pakietu wymaga jedynie wywołania funkcji usethis::use_pkgdown() oraz pkgdown::build_site() wewnątrz pakietu R. W efekcie działania tych funkcji zostanie utworzony folder docs/ zawierający stronę internetową reprezentującą pakiet i jego dokumentację. W przypadku, gdy pakiet znajduje się na GitHubie możliwe jest wyświetlenie tej strony pod adresem https://&lt;nazwauzytkownika&gt;.github.io/&lt;nazwapakietu&gt;/. Aby ta strona była dostępna w internecie należy na platformie GitHub wejść w zakładkę Settings, następnie znaleźć część określoną jako Pages, i określić Source jako “main branch /docs folder”.\nAlternatywą dla powyższej funkcji jest usethis::use_pkgdown_github_pages(). Wykonuje ona więcej kroków automatycznie: tworzy nową gałąź Git oraz dodaje nowy plik konfiguracji GitHub Action (więcej o tym w kolejnej sekcji), który będzie starał się automatycznie budować stronę internetową pakietu w chmurze po każdej zmianie w kodzie.",
+    "crumbs": [
+      "<span class='chapter-number'>6</span>  <span class='chapter-title'>Tworzenie pakietów R (3)</span>"
+    ]
+  },
+  {
+    "objectID": "pakiety3.html#cicd",
+    "href": "pakiety3.html#cicd",
+    "title": "6  Tworzenie pakietów R (3)",
+    "section": "6.6 CI/CD",
+    "text": "6.6 CI/CD\nCiągła integracja i wdrażanie (ang. continuous integration and deployment, CI/CD) to podejście do tworzenia oprogramowania, które polega na łączeniu zmian w kodzie, a następnie automatycznym testowaniu tych zmian. Jest to szerokie podejście, które może być realizowane na wiele sposobów.\nTutaj skupimy się na paru przykładach CI/CD powiązanych z pracą nad pakietami R. Ten temat jest również mocno powiązany z kontrolą wersji oraz platformami do hostowania kodu, takimi jak GitHub, GitLab, czy Bitbucket.\nPlatforma GitHub oferuje CI/CD poprzez system o nazwie GitHub Actions. Przykłady działania GitHub Actions można znaleźć w zakładce Actions na stronie każdego repozytorium. W dużym skrócie, GitHub Actions pozwala na uruchamianie kodu w chmurze po przesłaniu zmiany w kodzie na platformę GitHub.3 Najprościej można wyobrazić sobie ten proces jako przesłanie kodu na chmurę należącą do GitHuba, gdzie zostaje on uruchomiony i przetestowany.4\nW przypadku pakietów R, GitHub Actions może być używany do automatycznego budowania i sprawdzania pakietu (na różnych systemach operacyjnych), wykonywania testów jednostkowych, sprawdzania pokrycia kodu testami, oraz do automatycznego budowania strony internetowej pakietu. Samo używanie GitHub Actions jest możliwe poprzez dodanie pliku konfiguracyjnego do repozytorium. Taki plik (lub pliki) musi znajdować się w folderze .github/workflows/ i mieć rozszerzenie .yaml.\nPrzykładowy plik konfiguracyjny dla GitHub Actions może wyglądać w ten sposób:\non:\n  push:\n    branches: [main]\n\nname: R-CMD-check\n\njobs:\n  R-CMD-check:\n    runs-on: ubuntu-latest\n\n    name: ubuntu-latest release\n\n    env:\n      GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}\n      R_KEEP_PKG_SOURCE: yes\n\n    steps:\n      - uses: actions/checkout@v3\n\n      - uses: r-lib/actions/setup-pandoc@v2\n\n      - uses: r-lib/actions/setup-r@v2\n        with:\n          r-version: release\n          http-user-agent: ubuntu-latest\n          use-public-rspm: true\n\n      - uses: r-lib/actions/setup-r-dependencies@v2\n        with:\n          extra-packages: any::rcmdcheck\n          needs: check\n\n      - uses: r-lib/actions/check-r-package@v2\n        with:\n          upload-snapshots: true\nDodania pliku konfiguracyjnego można wykonać ręcznie lub przy pomocy funkcji usethis::use_github_action(), która pozwala na wybranie jednego z kilku szablonów. Warto zacząć od wyboru jednego z szablonów i dostosowania go do własnych potrzeb.\nPowyższy plik konfiguracyjny ma na celu sprawdzenie pakietu na systemie Ubuntu. Możliwe jest także użycie systemu GitHub Actions do, np. określenia pokrycia kodu testami czy też automatycznego budowania strony internetowej pakietu. Przykłady różnych plików konfiguracyjnych związanych z pakietami R można znaleźć w repozytorium https://github.com/r-lib/actions/tree/v2/examples. W kontekście tworzenia pakietów R związanych z danymi przestrzennymi, warto sprawdzić pliki konfiguracyjne GitHub Actions już istniejących pakietów R opartych o biblioteki GDAL czy PROJ.\n\n\n\n\n\n\n\nZADANIA\n\n\n\n\nDodaj do swojego pakietu plik konfiguracyjny dla GitHub Actions, który będzie sprawdzał pakiet na systemie Ubuntu.\nPrześlij zmiany na GitHuba i sprawdź czy GitHub Actions działa poprawnie.\nDodaj do swojego pakietu plik konfiguracyjny dla GitHub Actions, który będzie sprawdzał pokrycie kodu testami. Możesz to zrobić albo rozszerzając plik konfiguracyjny z poprzedniego zadania, albo tworząc nowy plik konfiguracyjny.\nPrześlij zmiany na GitHuba i sprawdź czy GitHub Actions działa poprawnie.\nDodaj do swojego pakietu plik konfiguracyjny dla GitHub Actions, który będzie budował stronę internetową pakietu. Możesz to zrobić albo rozszerzając plik konfiguracyjny z poprzedniego zadania, albo tworząc nowy plik konfiguracyjny.\nPrześlij zmiany na GitHuba i sprawdź czy GitHub Actions działa poprawnie oraz czy strona internetowa pakietu istnieje.\nW przypadku, gdy wszystko działa poprawnie, dodaj dwie nowe linie do pliku DESCRIPTION zawierające linki do strony internetowej pakietu oraz do repozytorium pakietu:\n\nURL: https://ja.github.io/mojpakiet/\nBugReports: https://github.com/ja/mojpakiet/issues",
+    "crumbs": [
+      "<span class='chapter-number'>6</span>  <span class='chapter-title'>Tworzenie pakietów R (3)</span>"
+    ]
+  },
+  {
+    "objectID": "pakiety3.html#cran",
+    "href": "pakiety3.html#cran",
+    "title": "6  Tworzenie pakietów R (3)",
+    "section": "6.7 CRAN",
+    "text": "6.7 CRAN\nCRAN (Comprehensive R Archive Network) to repozytorium zawierające pakiety R. Wszystkie pakiety znajdujące się w tym repozytorium są sprawdzane pod kątem zgodności z wymaganiami na kilku systemach operacyjnych. Wymagania można znaleźć pod adresami https://cran.r-project.org/web/packages/policies.html oraz https://cran.r-project.org/web/packages/submission_checklist.html. Co ważne, wymagania te zmieniają się w czasie.5\n\n\n\n\n\n\nKomentarz\n\n\n\nTworzenie nowych narzędzi daje często satysfakcję. Należy jednak pamiętać, że narzędzia komputerowe są zależne od innych narzędzi, które mogą się zmieniać w czasie. W związku z tym, narzędzia komputerowe wymagają stałej uwagi oraz konserwacji (ang. maintenance).\n\n\nPodejście stosowane przez CRAN kładzie odpowiedzialność za poprawność działania pakietu na jego autorach. W zamian, potencjalni użytkownicy mogą mieć pewność, że pakiet jest zgodny z wymaganiami CRAN, działa poprawnie i jest możliwy do zainstalowania na różnych systemach operacyjnych. Dodatkowo, CRAN tworzy wersje binarne pakietów dla systemów Windows i Mac OS, co znacznie ułatwia i przyspiesza ich instalację.\n\n\n\n\n\n\nKomentarz\n\n\n\nWcześniej przedstawiona funkcja devtools::check() sprawdza pakiet pod kątem różnych testów, ale nie sprawdza czy jest on w pełni zgodny z wymaganiami CRAN. Wynika to z kilku kwestii. Trzy najważniejsze to: 1. Niektóre z wymagań są sprawdzane manualnie przez CRAN team. 2. Niektóre z wymagań nie są w pełni znane. 3. CRAN sprawdza pakiety na różnych systemach operacyjnych, a devtools::check() sprawdza pakiet tylko na systemie, na którym jest uruchomiony.\n\n\nW momencie gdy uważam, że pakiet jest w wersji stabilnej i gotowy do wysłania na CRAN, wykonuję następujące kroki:\n\n# 1 dodaję dokumentację\ndevtools::document()\n# 2 testuję pakiet\ndevtools::check()\n# 3 sprawdzam czy pakiet jest zgodny z wymaganiami CRAN\nrcmdcheck::rcmdcheck(args = c(\"--no-manual\", \"--as-cran\"))\n# 4 sprawdzam czy wszystkie linki w dokumentacji działają\n# install.packages(\"urlchecker\", repos = \"https://r-lib.r-universe.dev\")\nurlchecker::url_check()\nurlchecker::url_update()\n# 5 aktualizuję NEWS i wersję pakietu\n# 6 wysyłam pakiet do CRAN\ndevtools::submit_cran()\n\nBardziej złożone (i kompletne) podejście do przygotowania pakietu do CRAN jest opisane na stronie https://github.com/ThinkR-open/prepare-for-cran. \nPo wywołaniu ostatniej z funkcji należy potwierdzić swój adres email, a następnie kliknąć w otrzymany mailowo link. W efekcie pakiet zostanie wysłany do CRAN, gdzie zostanie sprawdzony przez automatyczne narzędzia.\nW przypadku wysłania pakietu do CRAN po raz pierwszy, jest on sprawdzony manualnie przez jedną z osób w tzw. CRAN team. Taka osoba może albo zaakceptować pakiet, albo poprosić o poprawienie błędów i przesłanie pakietu ponownie.\nAktualizowanie pakietu przebiega w ten sam sposób – poprzez wywołanie devtools::submit_cran().6 Wtedy pakiet zostanie sprawdzony przez automatyczne narzędzia. W przypadku, gdy automatyczne testy zwrócą jakieś problemy (ostrzeżenia lub notatki), zostanie on również obejrzany przez CRAN team. Warto pamiętać, że nie należy aktualizować wersji CRAN pakietu częściej niż raz na miesiąc.\n\n\n\n\n\n\n\nKomentarz\n\n\n\nMożliwe jest sprawdzenie statusu pakietu przesłanego na CRAN na stronie https://r-hub.github.io/cransays/articles/dashboard.html.\n\n\nGdy pakiet jest już na CRAN, ale nie jest zgodny z nowymi wymaganiami, otrzyma się prośbę o jego naprawę, a w przypadku nie naniesienie poprawek, zostanie on usunięty z CRAN (archived).\n\n\n\n\n\n\nKomentarz\n\n\n\nWysyłanie pakietu na CRAN nie jest jedynym sposobem na jego udostępnienie. W różnych sytuacjach możliwe jest też udostępnienie pakietu na innych repozytoriach, np. na GitHubie, GitLabie, Bitbucket, lub na własnym serwerze. Inne możliwości to np. użycie systemu drat lub r-universe. Powyższe rozwiązania nie mają takich samych wymagań jak CRAN, ale wymagają więcej od potencjalnego użytkownika. Dodatkowo, bioconductor to repozytorium zawierające pakiety R związane z bioinformatyką.\n\n\n\n\n\n\nWickham, Hadley. 2020. testthat: Unit Testing for R. https://CRAN.R-project.org/package=testthat.\n\n\nWickham, Hadley, i Jay Hesselberth. 2020. pkgdown: Make Static HTML Documentation for a Package. https://CRAN.R-project.org/package=pkgdown.",
+    "crumbs": [
+      "<span class='chapter-number'>6</span>  <span class='chapter-title'>Tworzenie pakietów R (3)</span>"
+    ]
+  },
+  {
+    "objectID": "pakiety3.html#footnotes",
+    "href": "pakiety3.html#footnotes",
+    "title": "6  Tworzenie pakietów R (3)",
+    "section": "",
+    "text": "Można też użyć funkcji usethis::use_data_raw().↩︎\nTesty są też automatycznie uruchamiane podczas sprawdzania pakietu↩︎\nMożliwe jest też uruchamianie kodu co zadany czas.↩︎\nNależy pamiętać, że GitHub Actions nie jest w pełni darmowy.↩︎\nNiektóre zasady działania CRAN są krytykowane, co można przeczytać pod adresem https://github.com/cranchange/cran_change.org.↩︎\nMożliwe jest też wysłanie pakietu do CRAN za pomocą strony https://cran.r-project.org/submit.html.↩︎",
+    "crumbs": [
+      "<span class='chapter-number'>6</span>  <span class='chapter-title'>Tworzenie pakietów R (3)</span>"
+    ]
+  },
+  {
+    "objectID": "git3.html",
+    "href": "git3.html",
+    "title": "7  Kontrola wersji (3)",
+    "section": "",
+    "text": "7.1 GitHub issues\nSprawy (ang. issues) to miejsce, gdzie twórcy mogą zapisywać swoje listy zadań dotyczące danej aplikacji, a użytkownicy mogą zgłaszać błędy czy propozycje ulepszeń. To miejsce można znaleźć na stronie głównej repozytorium, w zakładce Issues. Sprawy, po ich utworzeniu, mogą być przypisane do konkretnych osób, które są odpowiedzialne za ich rozwiązanie, a także mogą być oznaczone etykietami, które pomagają w ich kategoryzacji. Sprawy można również komentować, a po ich rozwiązaniu można je zamknąć. Każda sprawa otrzymuje unikalny numer, który może być użyty do odwołania się do niej w innych miejscach.",
+    "crumbs": [
+      "<span class='chapter-number'>7</span>  <span class='chapter-title'>Kontrola wersji (3)</span>"
+    ]
+  },
+  {
+    "objectID": "git3.html#github-issues",
+    "href": "git3.html#github-issues",
+    "title": "7  Kontrola wersji (3)",
+    "section": "",
+    "text": "Komentarz\n\n\n\nJako osoba zgłaszająca sprawę należy podać jak najwięcej informacji pomagających odtworzyć problem. Najlepiej w takiej sytuacji jest przygotować tzw. powtarzalny przykład (ang. reprex), który zawiera minimalny kod potrzebny do odtworzenia problemu. Krótki opis działania powtarzalnych przykładów można znaleźć pod adresem https://jakubnowosad.com/elp/debugging.html#reprex.",
+    "crumbs": [
+      "<span class='chapter-number'>7</span>  <span class='chapter-title'>Kontrola wersji (3)</span>"
+    ]
+  },
+  {
+    "objectID": "git3.html#pull-requests",
+    "href": "git3.html#pull-requests",
+    "title": "7  Kontrola wersji (3)",
+    "section": "7.2 Pull requests",
+    "text": "7.2 Pull requests\nZapytania aktualizacyjne (ang. pull requests) to sposób na zaproponowanie zmian w repozytorium. Co warte podkreślenia, takie zapytania można nanieść zarówno na swoje własne repozytorium, jak i repozytorium innych użytkowników.\nZapytanie aktualizacyjne we własnym repozytorium wiąże się zazwyczaj z (1) stworzeniem nowej gałęzi, (2) naniesieniem zmian, np. w kodzie, (3) zatwierdzeniem zmian, (4) przesłaniem zmian do zdalnego repozytorium, (5) otworzeniem zapytania aktualizacyjnego do głównej gałęzi repozytorium. Następnie można takie zmiany zaakceptować lub odrzucić.1\nZapytanie aktualizacyjne przydaje się również w przypadku, gdy chcemy zaproponować zmiany w repozytorium innego użytkownika. Może to być zarówno dodanie nowej możliwości, naprawienie błędu w kodzie, czy nawet poprawienie literówki w dokumentacji. W takiej sytuacji często opiera się to o (1) stworzenie rozwidlenia (ang. fork), (2) pobranie rozwidlenia jako lokalne repozytorium, (3) edycja lokalnego repozytorium, (4) zatwierdzenie zmian i wysłanie ich do zdalnego repozytorium (rozwidlenia), (5) zaproponowanie zapytania aktualizacyjnego.",
+    "crumbs": [
+      "<span class='chapter-number'>7</span>  <span class='chapter-title'>Kontrola wersji (3)</span>"
+    ]
+  },
+  {
+    "objectID": "git3.html#model-pracy",
+    "href": "git3.html#model-pracy",
+    "title": "7  Kontrola wersji (3)",
+    "section": "7.3 Model pracy",
+    "text": "7.3 Model pracy\nDo tej pory omówiliśmy wiele aspektów pracy z systemem Git i serwisem GitHub. Teraz pora na to, aby zastanowić się, jak to wszystko może wyglądać w praktyce pracy nad projektem.\nIstnieje szereg możliwych modeli pracy z systemem Git i serwisem GitHub. Ich wybór zależy od tego ile osób pracuje nad projektem, skali tego projektu (czy jest to projekt jednorazowy, czy też projekt, który będzie rozwijany przez dłuższy czas), czy projekt jest otwarty na zewnętrzne kontrybucje, czy też od preferencji czy zwyczajów osób pracujących nad projektem. \nW przypadku pracy jednej osoby nad krótkim projektem, model pracy może być bardzo prosty. Wystarczy, że osoba ta będzie pracować na głównej gałęzi (ang. main) i będzie regularnie wysyłać lokalne zmiany do zdalnego repozytorium.\nTaki model może jednak nie działać za dobrze w przypadku pracy wielu osób nad projektem. Wiele równoległych zmian wprowadzanych przez różnych twórców może prowadzić do konfliktów2, a także powoduje, że trudno jest zrozumieć i planować zmiany wprowadzane do projektu. Wraz ze wzrostem liczby osób pracujących nad projektem, a także wraz ze wzrostem skali projektu, warto zastanowić się nad bardziej złożonym modelem pracy.\nJednym z takich modeli jest model Feature branch. Polega on na tym, że każda potencjalna zmiana wprowadzana do projektu jest tworzona w osobnej gałęzi (ang. branch). Wszystkie gałęzie są tworzone na bazie głównej gałęzi (ang. main). Po zakończeniu pracy nad zmianą tworzone jest zapytanie aktualizacyjne do głównej gałęzi, a następnie (po recenzji i zatwierdzeniu zmian przez inną osobę) zmiany z tej gałęzi są łączone z główną gałęzią. \n\n\n\n\n\n\nKomentarz\n\n\n\nIstnieją też różne inne modele pracy, np. Gitflow w którym główna gałąź zawiera stabilną wersję projektu, a nowe funkcjonalności są dodawane do gałęzi develop.\n\n\nW przypadku stosowania modelu pracy Feature branch warto stosować systemy CI/CD, które pozwalają na automatyczne sprawdzenie czy nowe zmiany nie powodują błędów w kodzie.\n\n\n\n\n\n\n\n\n\nZADANIA\n\n\n\n\nDobierzcie się w dwuosobowe grupy: każda z osób będzie pracowała na repozytorium pakietu drugiej osoby.\nNiech każda z osób otworzy sprawę w repozytorium pakietu drugiej osoby. Sprawa powinna zawierać powtarzalny przykład użycia pakietu.\nNiech każda z osób otworzy zapytanie aktualizacyjne do repozytorium pakietu drugiej osoby poprzez stworzenie rozwidlenia.\nRolą osoby, która jest właścicielem repozytorium, jest zaakceptowanie zapytania aktualizacyjnego i zamknięcie sprawy.",
+    "crumbs": [
+      "<span class='chapter-number'>7</span>  <span class='chapter-title'>Kontrola wersji (3)</span>"
+    ]
+  },
+  {
+    "objectID": "git3.html#konflikty-git",
+    "href": "git3.html#konflikty-git",
+    "title": "7  Kontrola wersji (3)",
+    "section": "7.4 Konflikty Git",
+    "text": "7.4 Konflikty Git\nKonflikt Git to sytuacja, w której Git nie jest w stanie samodzielnie rozwiązać konfliktu pomiędzy dwoma wersjami pliku/ów. Może to mieć miejsce w przypadku, gdy dwie osoby pracujące nad tym samym projektem wprowadziły zmiany w tym samym miejscu w pliku. Pierwsza z osób przesłała swoje zmiany do zdalnego repozytorium, a druga próbuje przesłać swoje zmiany do tego samego zdalnego repozytorium (Sekcja 3.6).\nZawsze warto zacząć od sprawdzenia, które pliki są konfliktowe. Można to zrobić oglądając okno Git w RStudio lub używając polecenia git status w terminalu. Dalej należy otworzyć problematyczny plik i znaleźć miejsce konfliktu. Będzie ono oznaczone specjalnymi znacznikami &lt;&lt;&lt;&lt;&lt;&lt;&lt;, =======, &gt;&gt;&gt;&gt;&gt;&gt;&gt;.\n&lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD:plik.R\nx = 1 + 2\n=======\ny = 1 + 2\n&gt;&gt;&gt;&gt;&gt;&gt;&gt; zmiana:plik.R\nPierwszy znacznik, &lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD:, oznacza treść, która jest w lokalnym repozytorium. Drugi znacznik, =======, oznacza miejsce, w którym następuje rozdzielenie pomiędzy lokalnym repozytorium a zdalnym repozytorium. Po nim jest nowa treść, która jest w zdalnym repozytorium. Trzeci znacznik, &gt;&gt;&gt;&gt;&gt;&gt;&gt; zmiana:, oznacza koniec konfliktu.\nTakie konflikty (ang. merge conflicts) mogą być rozwiązywane na różne sposoby. Najczęściej w takiej sytuacji można ręcznie edytować plik, stworzyć spójną wersję, usunąć znaczniki konfliktu, a następnie zatwierdzić zmiany (git add plik.R oraz git commit).\n\n\n\n\n\n\nKomentarz\n\n\n\nUżywając komendy git merge --abort można anulować łączenie zmian i wrócić do poprzedniego stanu przed rozpoczęciem scalania.\n\n\nInna możliwość to zaakceptowanie tylko przychodzących lub obecnych zmian.\n\n\n\n\n\n\nKomentarz\n\n\n\nCzasem może się zdarzyć, że pracując nad projektem zapędzimy się w szereg problematycznych zmian, które nie pozwalają nam na proste zatwierdzenie zmian i wysłanie ich do zdalnego repozytorium. W takiej sytuacji popularnym podejście to zrobienie kopii naszych lokalnych zmian w innym folderze komputera, usunięcie lokalnego repozytorium, ponowne sklonowanie zdalnego repozytorium, a następnie wklejenie naszych zmian do sklonowanego (czystego) repozytorium.\n\n\n\nhttps://xkcd.com/1597/\n\n\n\n\nWięcej porad na temat rozwiązywania konfliktów można znaleźć pod łatwym do zapamiętania adresem https://ohshitgit.com/.",
+    "crumbs": [
+      "<span class='chapter-number'>7</span>  <span class='chapter-title'>Kontrola wersji (3)</span>"
+    ]
+  },
+  {
+    "objectID": "git3.html#inne-kwestie-związane-z-systemem-git-i-serwisem-github",
+    "href": "git3.html#inne-kwestie-związane-z-systemem-git-i-serwisem-github",
+    "title": "7  Kontrola wersji (3)",
+    "section": "7.5 Inne kwestie związane z systemem Git i serwisem GitHub",
+    "text": "7.5 Inne kwestie związane z systemem Git i serwisem GitHub\n\n7.5.1 Identyfikatory\nZ Gitem czy GitHubem powiązanych jest wiele różnych identyfikatorów, które mogą być przydatne w różnych sytuacjach. Pierwsze z nich to grupa identyfikatorów nazywanych zbiorczo ref, np.:\n\nHEAD – wskaźnik na aktualną wersję; HEAD~1 – wskaźnik na poprzednią wersję (poprzednie zatwierdzenie zmian)\nNazwa gałęzi, np. main – wskaźnik na główną gałąź\nTag, np. v1.0.0 – wskaźnik na konkretną wersję projektu\nIdentyfikator zatwierdzenia zmian, np. a1b2c3d – wskaźnik na konkretny commit3\n\nKolejnym identyfikatorem jest nazwa użytkownika lub nazwa organizacji, która jest właścicielem repozytorium: github.com/&lt;nazwa_użytkownika&gt; lub github.com/&lt;nazwa_organizacji&gt;. Dalej po nazwie użytkownika lub organizacji podawana jest nazwa repozytorium: github.com/&lt;nazwa_użytkownika&gt;/&lt;nazwa_repozytorium&gt; lub github.com/&lt;nazwa_organizacji&gt;/&lt;nazwa_repozytorium&gt;.\nWewnątrz każdego repozytorium można tworzyć sprawy oraz zapytania aktualizacyjne. Każda sprawa i zapytanie aktualizacyjne ma swój unikalny identyfikator, który jest wyliczeniem: github.com/&lt;nazwa_użytkownika&gt;/&lt;nazwa_repozytorium&gt;/issues/&lt;numer_sprawy&gt; lub github.com/&lt;nazwa_użytkownika&gt;/&lt;nazwa_repozytorium&gt;/pull/&lt;numer_zapytania&gt;.4 Takie identyfikatory pozwalają na odwoływanie się do konkretnych spraw i zapytań aktualizacyjnych w różnych miejscach za pomocą znaku # i numeru identyfikatora, np. #1 lub #2.\nMój komentarz dotyczy sprawy #1.\nDo danej sprawy można odnieść się w tekście innej sprawy, w zapytaniu aktualizacyjnym, w komentarzu, w kodzie, w dokumentacji, a nawet w tekście zatwierdzenia zmian.\n\n\n\n\n\n\nKomentarz\n\n\n\nW tekście zatwierdzenia zmian czy zapytaniu aktualizacyjnym można nawet użyć jednego ze słów kluczowych, które automatycznie zamknie sprawę, takich jak closes, fixes, resolves\nNaprawiono błąd, closes #1.\n\n\n\n\n7.5.2 Szablony\nGitHub pozwala także na tworzenie, a następnie korzystanie z różnych szablonów. Możliwe przykładowo jest stworzenie szablonu całego repozytorium. Polega to tylko na zbudowaniu repozytorium z odpowiednimi plikami, które będą stanowić szablon, a następnie wybranie w opcjach repozytorium. Następnie każde nowe repozytorium będzie można utworzyć na podstawie tego szablonu.\nMożliwe jest również stworzenie szablonu sprawy (często stosowane do pokazania użytkownikom w jaki sposób zgłaszać błędy czy problemy) lub zapytania aktualizacyjnego.\n\n\n7.5.3 Ograniczenia wielkości plików\nGłównym celem systemu Git jest przechowywanie kodu źródłowego, a nie dużych plików. GitHub pozwala na przechowywanie plików o maksymalnej wielkości 100 MB, ale zaleca, aby pliki były mniejsze niż 50 MB. Dodatkowo, wielokrotne nadpisywanie dużych plików w repozytorium może prowadzić do jego nadmiernego rozrostu.5\nCo zrobić w przypadku, gdy nasz kod używa dużych plików, np. plików z danymi? Pierwsza strategia to kompresja takich plików oraz unikanie ich częstej aktualizacji. Drugą strategią jest przechowywanie takich plików w innym miejscu, np. na własnym serwerze lub w serwisie Zenodo, a następnie w kodzie wewnątrz repozytorium umieszczenie jedynie odnośnika do takiego pliku. Kolejna strategia to użycie Git LFS (ang. Large File Storage), który pozwala na przechowywanie dużych plików w innym miejscu, a następnie w repozytorium umieszczenie jedynie odnośnika do takiego pliku. Więcej o tej ostatniej strategii można przeczytać pod adresem https://docs.github.com/en/repositories/working-with-files/managing-large-files.\n\n\n7.5.4 GitHub Pages\nGitHub, jak już wcześniej wspomnieliśmy, nie tylko pozwala na przechowywanie i dzielenie się kodem, ale również na wiele innych rzeczy, takich jak dzielenie się małymi danymi czy przechowywanie (statycznych) stron internetowych. Każde repozytorium może mieć przypisaną stronę internetową, która jest dostępna pod adresem https://&lt;nazwa_użytkownika&gt;.github.io/&lt;nazwa_repozytorium&gt; – taka strona może być nawet prostym dokumentem HTML. Co więcej, możliwe jest również posiadanie głównej strony internetowej użytkownika, która jest dostępna pod adresem https://&lt;nazwa_użytkownika&gt;.github.io.6 Taka strona jest tworzona w oparciu o repozytorium o nazwie &lt;nazwa_użytkownika&gt;.github.io. Więcej na temat tworzenia różnorodnych dokumentów HTML w oparciu o język R można znaleźć na stronie https://quarto.org/, a na temat tworzenia stron internetowych w serwisie GitHub można znaleźć na stronie GitHub Pages.",
+    "crumbs": [
+      "<span class='chapter-number'>7</span>  <span class='chapter-title'>Kontrola wersji (3)</span>"
+    ]
+  },
+  {
+    "objectID": "git3.html#dodatkowe-materiały",
+    "href": "git3.html#dodatkowe-materiały",
+    "title": "7  Kontrola wersji (3)",
+    "section": "7.6 Dodatkowe materiały",
+    "text": "7.6 Dodatkowe materiały\n\n\n\nhttps://social.jvns.ca/@b0rk/111460966674032287\n\n\nZ racji popularności (i złożoności) systemu Git istnieje ogromna liczba materiałów pomagających w jego nauce i zrozumieniu oraz wiele stron zawierających pytania i odpowiedzi dotyczące napotkanych problemów. W przypadku łączenia możliwości języka R z systemem Git warto poczytać materiały zawarte na stronie https://happygitwithr.com/ (Bryan, the STAT 545 TAs, i Hester 2019) oraz rozdział Software development practices książki R packages (Wickham 2015). Do ogólnego wprowadzenia do systemu Git może posłużyć darmowa książka online Pro Git (Chacon 2014), której kilka pierwszych rozdziałów jest również dostępna w języku polskim czy też dokument System kontroli wersji Git. Git jest również bardzo popularnym tematem na serwisie stackoverflow, gdzie można znaleźć pytania i odpowiedzi na różnorodne tematy z nim związane. Więcej odnośników do materiałów związanych z systemem Git i serwisem GitHub można znaleźć na stronach pomocy GitHub.\n\n\n\n\nBryan, Jenny, the STAT 545 TAs, i Jim Hester. 2019. Happy Git and GitHub for the useR.\n\n\nChacon, Scott. 2014. Pro Git. Apress.\n\n\nWickham, Hadley. 2015. R Packages: Organize, Test, Document, and Share Your Code. \" O’Reilly Media, Inc.\".",
+    "crumbs": [
+      "<span class='chapter-number'>7</span>  <span class='chapter-title'>Kontrola wersji (3)</span>"
+    ]
+  },
+  {
+    "objectID": "git3.html#footnotes",
+    "href": "git3.html#footnotes",
+    "title": "7  Kontrola wersji (3)",
+    "section": "",
+    "text": "Lub zignorować…↩︎\ntechnicznych i nie tylko↩︎\nTo jest skrótowy identyfikator, pełny identyfikator to 40-znakowy ciąg znaków.↩︎\nTraktowane są one łącznie, więc przykładowo po sprawie numer jeden będzie zapytanie aktualizacyjne numer dwa.↩︎\nMożliwe jest usunięcie dużych plików z historii zmian Git.↩︎\nMożliwe jest powiązanie jej z własną domeną.↩︎",
+    "crumbs": [
+      "<span class='chapter-number'>7</span>  <span class='chapter-title'>Kontrola wersji (3)</span>"
+    ]
+  },
+  {
+    "objectID": "pakiety4.html",
+    "href": "pakiety4.html",
+    "title": "8  Tworzenie pakietów R (4)",
+    "section": "",
+    "text": "8.1 Zaawansowane dokumentowanie funkcji\nSekcje 2.5 oraz 4.2 omawiały plik DESCRIPTION oraz jego zawartość. Jedną z kwestii, która nie została tam poruszona jest dodanie do pakietu możliwości dokumentowania funkcji używając języka Markdown.  W tym celu należy w pliku DESCRIPTION dodać linię Roxygen: list(markdown = TRUE).\nTeraz możliwe jest stosowanie znaczników Markdown w dokumentacji funkcji. Poniżej pokażę ich użycie oraz inne, wcześniej nie omówione, możliwości pakietu roxygen2 (Sekcja 2.7).\n#' Konwersja odleglosci\n#'\n#' @description Funkcja sluzaca do konwersji odleglosci z mil na kilometry\n#'\n#' @param mil wektor zawierajacy wartosci odleglosci w milach\n#' \n#' @details Funkcja `konwersja_odl()` konwertuje odleglosci z \n#'     [mil](https://en.wikipedia.org/wiki/Mile) na kilometry używając wzoru\n#'     przelicznika: 1 mila = 1.609344 km\n#' \n#' Ta funkcja jest:\n#' * Niezwykle przydatna\n#' * Bardzo prosta\n#'\n#' @return wektor numeryczny\n#' @export\n#' \n#' @references Tobler, W. R. (1970). \"A Computer Movie Simulating Urban Growth \n#'     in the Detroit Region\". Economic Geography. 46: 234–240\n#' \n#' @seealso [konwersja_temp()], [units::set_units()]\n#'\n#' @examples\n#' konwersja_odl(75)\n#' konwersja_odl(110)\n#' konwersja_odl(0)\n#' \\dontrun{\n#' konwersja_odl(c(0, 75, 110))\n#' }\nkonwersja_odl = function(mil){\n    mil * 1.609344\n}\nJęzyk Markdown ma kilka zastosowań w dokumentacji funkcji. Po pierwsze pozwala na stylizowanie tekstu, np. pogrubienie, pochylenie, itp. Przykładowo,\nzamieni się w konwersja_odl(). Po drugie, Markdown pozwala na dodanie linków do innych stron internetowych, które mogą być przydatne w kontekście funkcji. Używa się wtedy składni [mil](https://en.wikipedia.org/wiki/Mile), gdzie mil to tekst, który będzie wyświetlany, a https://en.wikipedia.org/wiki/Mile to link do strony internetowej.\nMarkdown pozwala również na odnoszenie się do dokumentacji innych funkcji, zarówno wewnątrz pakietu, jak i zewnętrznych. Wewnętrzne funkcje odwołuje się za pomocą [konwersja_temp()], gdzie konwersja_temp() to nazwa funkcji, do której chcemy się odwołać, a zewnętrzne za pomocą [units::set_units()], gdzie set_units() to nazwa funkcji, do której chcemy się odwołać, a units to nazwa pakietu, w którym ta funkcja się znajduje. Kolejną możliwością jest proste wstawianie list używając znacznika *.1\nDokumentacja funkcji może zawierać także inne znaczniki, które nie zostały omówione w poprzednich sekcjach. Obejmuje to takie znaczniki jak:\nZnacznik @examples pozwala na dodanie przykładów użycia funkcji. Część z tych przykładów można powstrzymać przed uruchomieniem używając znacznika \\dontrun{}. Może się to przydać w kwestii, np. gdy chcemy pokazać przykład wystąpienia błędu.\nWięcej informacji na temat dokumentowania funkcji można znaleźć na stronie https://r-pkgs.org/man.html#roxygen2-basics.",
+    "crumbs": [
+      "<span class='chapter-number'>8</span>  <span class='chapter-title'>Tworzenie pakietów R (4)</span>"
+    ]
+  },
+  {
+    "objectID": "pakiety4.html#zaawansowane-dokumentowanie-funkcji",
+    "href": "pakiety4.html#zaawansowane-dokumentowanie-funkcji",
+    "title": "8  Tworzenie pakietów R (4)",
+    "section": "",
+    "text": "Package: mojpakiet\nTitle: Moje Funkcje Robiace Wszystko\nVersion: 0.0.1\nAuthors@R: \n    person(given = \"Imie\",\n           family = \"Nazwisko\",\n           role = c(\"cre\", \"aut\"),\n           email = \"imie.nazwisko@example.com\")\nDescription: Tworzenie, przeliczanie i wyliczanie wszystkiego. \n    Czasami nawet więcej.\nLicense: CC0\nEncoding: UTF-8\nLazyData: true\nRoxygenNote: 7.2.3\nRoxygen: list(markdown = TRUE)\n\n\n\n\n`konwersja_odl()` \n\n\n\n\n@details: dodatkowe informacje o funkcji, w tym jej zastosowanie, ograniczenia, specjalne przypadki, itp.\n@seealso: odnośniki do innych funkcji, które mogą być podobne lub powiązane z funkcją, której dokumentacja jest tworzona\n@references: odnośniki do literatury (np. artykułu naukowego), na podstawie której powstała funkcja",
+    "crumbs": [
+      "<span class='chapter-number'>8</span>  <span class='chapter-title'>Tworzenie pakietów R (4)</span>"
+    ]
+  },
+  {
+    "objectID": "pakiety4.html#dodatkowe-możliwości-pakietu-usethis",
+    "href": "pakiety4.html#dodatkowe-możliwości-pakietu-usethis",
+    "title": "8  Tworzenie pakietów R (4)",
+    "section": "8.2 Dodatkowe możliwości pakietu usethis",
+    "text": "8.2 Dodatkowe możliwości pakietu usethis\nPakiet usethis także oferuje inne możliwości, które nie zostały omówione w poprzednich sekcjach. Nie są one niezbędne do tworzenia pakietów, ale mogą być przydatne w niektórych przypadkach. Tutaj pokrótce omówię kilka z nich:\n\nuse_citation(): dodaje plik inst/CITATION do pakietu, który zawiera informacje w jaki sposób cytować dany pakiet. Zazwyczaj warto dodać ten plik, gdy dany pakiet powiązany jest z publikacją naukową.\nuse_package_doc(): tworzy on plik R/{nazwapakietu}-package.R, który jest ogólną dokumentacją pakietu. Można go później wywołać poprzez ?{nazwapakietu}.\nuse_cran_badge(): dodaje plakietkę (ang. badge) z odnośnikiem do strony pakietu na CRAN do pliku README. Możliwe jest także dodanie innych plakietek używając funkcji use_badge(), w której należy podać nazwę i odnośnik do plakietki.2\n\nDodatkowo, pakiet usethis pozwala na dodawanie informacji do pakietu z poziomu R, np. przy użyciu funkcji use_author() czy use_version().\n\n\n\n\n\n\nZADANIA\n\n\n\n\nDodaj do swojego pakietu możliwość dokumentowania funkcji używając Markdown.\nDodaj do jednej z funkcji dodatkowe informacje używając znaczników Markdown: odnośniki do innych funkcji, odnośniki do literatury, listę, itp.\nDodaj do swojego pakietu plik inst/CITATION używając funkcji use_citation().\nDodaj do swojego pakietu plik R/{nazwapakietu}-package.R używając funkcji use_package_doc().\nDodaj do swojego pakietu plakietkę z odnośnikiem do strony pakietu na CRAN używając funkcji use_cran_badge().\nZaktualizuj dokumentację używając funkcji devtools::document(), a następnie załaduj pakiet używając funkcji devtools::load_all(). Sprawdź jakie zaszły zmiany w dokumentacji.\nPrześlij wszystkie zmiany do repozytorium zdalnego na GitHubie.",
+    "crumbs": [
+      "<span class='chapter-number'>8</span>  <span class='chapter-title'>Tworzenie pakietów R (4)</span>"
+    ]
+  },
+  {
+    "objectID": "pakiety4.html#inne-kwestie-związane-z-tworzeniem-pakietów-r",
+    "href": "pakiety4.html#inne-kwestie-związane-z-tworzeniem-pakietów-r",
+    "title": "8  Tworzenie pakietów R (4)",
+    "section": "8.3 Inne kwestie związane z tworzeniem pakietów R",
+    "text": "8.3 Inne kwestie związane z tworzeniem pakietów R\nDo tej pory omówiliśmy najważniejsze kwestie związane z tworzeniem pakietów R. Jednakże, istnieje wiele innych aspektów, które nie zostały tutaj poruszone, ale warto zdawać sobie z nich sprawę.\nJednym z nich jest plik NAMESPACE, który jest generowany automatycznie przez pakiet roxygen2. Plik ten zawiera informacje o funkcjach, które są eksportowane z pakietu, a także o funkcjach, które są importowane z innych pakietów. Tego pliku nie należy edytować ręcznie.\nInnym aspektem jest plik .Rbuildignore, który zawiera informacje o plikach, które mają być ignorowane podczas budowania pakietu. Warto dodać do tego pliku pliki, które nie są niezbędne do działania pakietu, ale są powiązane z jego tworzeniem. Przykładowo, obejmuje to plik projektu RStudio ^{nazwapakietu}.Rproj$, pliki czt folder związane z CI/CD (np. ^\\.github$), czy folder z surowymi danymi i kodem (np. ^data-raw$).\nKolejnym aspektem są zależności pakietów (ang. dependencies). Z jednej strony, nasz pakiet może wymagać innych pakietów do działania, a z drugiej natomiast, nasz pakiet może być wymagany przez inne pakiety. Obie te kwestie są złożone i decyzje o nich mają różne konsekwencje.\nW przypadku zależności naszego pakietu od innych pakietów, możemy określić je w pliku DESCRIPTION w sekcji Imports lub Suggests. W efekcie, nasz pakiet staje się zależny od innych pakietów, które są wymienione w tych sekcjach. Zmiany w tych pakietach (i ich zależnościach) mogą mieć wpływ na nasz pakiet. Pełne drzewo zależności pakietu można wyświetlić używając funkcji pak::pkg_deps_tree().\nIstnieją różne podejścia do określania tego jakie pakiety powinny być wymagane przez nasz pakiet. Jednym z podejść jest używanie minimalnej liczby zależności, inne natomiast obejmuje stosowanie zależności co do autorów których mamy zaufanie. Jakiekolwiek założenie jest przyjęte, nie warto przesadzać z liczbą zależności, gdyż może to mieć negatywny wpływ na czas budowania pakietu, a także na jago stabilność.\nNasz pakiet R może być również wymagany przez inne pakiety—taka sytuacja nazywana jest zależnością wsteczną (ang. reverse dependency). W tym przypadku, zmiany w naszym pakiecie mogą mieć wpływ na inne pakiety. Chcemy, aby wprowadzane przez nas zmiany nie powodowały szerokich konsekwencji w innych pakietach. Wykonanie sprawdzenia wpływu zmian na zależności wsteczne może być wykonane używając funkcji usethis::use_revdep().",
+    "crumbs": [
+      "<span class='chapter-number'>8</span>  <span class='chapter-title'>Tworzenie pakietów R (4)</span>"
+    ]
+  },
+  {
+    "objectID": "pakiety4.html#dodatkowe-materiały",
+    "href": "pakiety4.html#dodatkowe-materiały",
+    "title": "8  Tworzenie pakietów R (4)",
+    "section": "8.4 Dodatkowe materiały",
+    "text": "8.4 Dodatkowe materiały\nW celu poznania i zrozumienia złożonych aspektów tworzenia pakietów R cennymi źródłami wiedzy może być książki R packages (Wickham 2015) oraz rOpenSci Packages: Development, Maintenance, and Peer Review (rOpenSci i in. 2019). Dodatkowo, w niektórych przypadkach pomocna może być oficjalna dokumentacja Writing R Extensions (R Core Team 2019). Niezastąpione jest także czytanie kodu źródłowego innych pakietów R na GitHubie.\n\n\n\n\nR Core Team. 2019. Writing R Extensions. R Foundation for Statistical Computing.\n\n\nrOpenSci, Brooke Anderson, Scott Chamberlain, Anna Krystalli, Lincoln Mullen, Karthik Ram, Noam Ross, Maëlle Salmon, i Melina Vidoni. 2019. „rOpenSci Packages: Development, Maintenance, and Peer Review”, styczeń. https://doi.org/10.5281/zenodo.2554759.\n\n\nWickham, Hadley. 2015. R Packages: Organize, Test, Document, and Share Your Code. \" O’Reilly Media, Inc.\".",
+    "crumbs": [
+      "<span class='chapter-number'>8</span>  <span class='chapter-title'>Tworzenie pakietów R (4)</span>"
+    ]
+  },
+  {
+    "objectID": "pakiety4.html#footnotes",
+    "href": "pakiety4.html#footnotes",
+    "title": "8  Tworzenie pakietów R (4)",
+    "section": "",
+    "text": "Markdown umożliwia także inne kwestie, takie jak wstawianie obrazków, tabel, itp.↩︎\nPolecam obejrzeć repozytoria GitHub innych pakietów po inspiracje.↩︎",
+    "crumbs": [
+      "<span class='chapter-number'>8</span>  <span class='chapter-title'>Tworzenie pakietów R (4)</span>"
+    ]
+  },
+  {
+    "objectID": "references.html",
+    "href": "references.html",
+    "title": "Bibliografia",
+    "section": "",
+    "text": "Bryan, Jenny, the STAT 545 TAs, and Jim Hester. 2019. Happy\nGit and GitHub for the useR.\n\n\nChacon, Scott. 2014. Pro Git. Apress.\n\n\nGanz, Carl, Gábor Csárdi, Jim Hester, Molly Lewis, and Rachael Tatman.\n2019. Available: Check If the Title of a Package Is Available,\nAppropriate and Interesting. https://CRAN.R-project.org/package=available.\n\n\nHester, Jim, Gábor Csárdi, Hadley Wickham, Winston Chang, Martin Morgan,\nand Dan Tenenbaum. 2020. Remotes: R Package Installation from Remote\nRepositories, Including ’GitHub’. https://CRAN.R-project.org/package=remotes.\n\n\nR Core Team. 2019. Writing R Extensions. R\nFoundation for Statistical Computing.\n\n\nrOpenSci, Brooke Anderson, Scott Chamberlain, Anna Krystalli, Lincoln\nMullen, Karthik Ram, Noam Ross, Maëlle Salmon, and Melina Vidoni. 2019.\n“rOpenSci Packages:\nDevelopment, Maintenance, and Peer\nReview,” January. https://doi.org/10.5281/zenodo.2554759.\n\n\nWickham, Hadley. 2015. R Packages: Organize, Test, Document, and\nShare Your Code. \" O’Reilly Media, Inc.\".\n\n\n———. 2020. Testthat: Unit Testing for r. https://CRAN.R-project.org/package=testthat.\n\n\nWickham, Hadley, and Jennifer Bryan. 2020. Usethis: Automate Package\nand Project Setup. https://CRAN.R-project.org/package=usethis.\n\n\nWickham, Hadley, and Jay Hesselberth. 2020. Pkgdown: Make Static\nHTML Documentation for a Package. https://CRAN.R-project.org/package=pkgdown.",
+    "crumbs": [
+      "Bibliografia"
+    ]
+  }
+]
