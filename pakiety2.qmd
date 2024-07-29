@@ -1,0 +1,213 @@
+# Tworzenie pakietów R (2)
+
+## Publikowanie pakietów
+
+Nowo utworzony pakiet w R można od razu umieścić na wybranym serwisie internetowym wspierającym kontrolę wersji takim jak GitHub, GitLab, czy BitBucket, gdzie nazwa repozytorium będzie identyczna jak nazwa pakietu.
+
+Można to zrobić na kilka sposobów, na przykład:
+
+1. Poprzez stworzenie nowego, pustego repozytorium na wybranym serwisie internetowym i sklonowanie go na swój komputer, a następnie przesłanie plików pakietu do tego repozytorium (zobacz @sec-nowy-projekt)
+2. Poprzez zainicjowanie repozytorium Git używając `usethis::use_git()`, a następnie wysłanie pakietu do repozytorium GitHub poprzez `usethis::use_github()`^[Wymaga to jednak wygenerowania tokena - opis jak to zrobić można znaleźć pod adresem <https://debruine.github.io/tutorials/packages.html#github-access-token>].
+
+::: {.callout-note appearance="simple"}
+
+## ZADANIA
+
+1. Opublikuj wcześniej stworzony pakiet na platformie GitHub używając jednej z powyższych metod.
+2. Z poziomu RStudio stwórz nowy plik `README.md` zawierający nazwę oraz krótki opis tego pakietu.
+3. Dodaj nowy plik `README.md` do repozytorium i opublikuj go na GitHubie.
+
+:::
+
+<!-- Dodatkowo, gdy napisaliśmy plik `README.md` użytkownicy mogą dowiedzieć się do czego ten pakiet służy, jak go zainstalować i użyć w podstawowy sposób.
+Teraz konieczna jest promocja tego pakietu w sytuacji, gdy chcemy zainteresować inne osoby jego użyciem. 
+Taka promocja może odbywać się poprzez ogłoszenie stworzenia tego pakietu na Twitterze używając hasztagu `#rstats`, czy też napisaniu wpisu na blogu opisującego ten pakiet. -->
+<!-- https://ropensci.github.io/dev_guide/marketing.html -->
+
+## Metadane pakietu {#sec-metadane-pakietu}
+
+@sec-opis-pakietu pokazała przykładowy plik `DESCRIPTION` zawierający metadane pakietu.
+Poniżej rozwiniemy kwestie kolejnych elementów opisu pakietu.
+
+```yaml
+Package: mojpakiet
+Title: Moje Funkcje Robiace Wszystko
+Version: 0.0.1
+Authors@R: 
+    person(given = "Imie",
+           family = "Nazwisko",
+           role = c("cre", "aut"),
+           email = "imie.nazwisko@example.com")
+Description: Tworzenie, przeliczanie i wyliczanie wszystkiego. 
+    Czasami nawet więcej.
+License: CC0
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 7.2.3
+```
+
+### Tytuł pakietu
+
+Tytuł pakietu (`Title:`) w jednym krótkim zdaniu (sloganie) określa do czego służy ten pakiet.^[Tytuły pakietów można znaleźć, np. w panelu "Packages" w RStudio.]
+Składa się on ze słów rozpoczynających się z dużej litery.
+
+### Wersja pakietu
+
+Wersja pakietu (`Version:`) pozwala jego użytkownikom na zobaczenie, czy korzystają z aktualnej wersji pakietu. 
+Zalecanym sposobem określania wersji pakietu jest stosowanie trzech liczb `pierwsza.druga.trzecia`, np. `0.9.1`.
+Zmiana trzeciej liczby służy do pokazania, że zaszła niewielka zmiana w kodzie, zazwyczaj wiążąca się z naprawą małego błędu, np. `0.9.2`.
+Druga liczba jest zmieniana podczas wydania nowej wersji pakietu, która zawiera większe zmiany w kodzie, jak naprawy poważnych błędów, czy dodanie nowych możliwości, np. `0.10.0`.
+Zmiana pierwszej liczby sugeruje poważne zmiany w kodzie, które ale też sugeruje pewną stabilizację działania, np. `1.0.0`.
+
+::: {.callout-note}
+Więcej o innych sposobach określania wersji pakietu można znaleźć pod adresami <https://semver.org/>, <https://www.x.org/releases/X11R7.7/doc/xorg-docs/Versions.html>, <https://r-pkgs.org/lifecycle.html#sec-lifecycle-version-number>.
+:::
+
+### Autorzy
+
+`Authors@R: ` określa kolejne osoby zaangażowane w budowę tego pakietu.
+W powyższym przykładzie mamy wymienioną jedną osobę `"Imie"` `"Nazwisko"`, której adres mailowy to `"imie.nazwisko@example.com"`. 
+Dodatkowo ta osoba posiada dwie role przy tworzeniu tego pakietu `"cre"` oraz `"aut"`. 
+Pierwsza rola, `"cre"`, informuje że ta osoba jest twórcą i konserwatorem tego pakietu. 
+Ona jest odpowiedzialna za pracę pakietu.
+Druga rola, `"aut"`, jest nadawana osom, które wniosły bardzo duży wkład w kod zawarty w pakiecie.
+Inne często używane role to `"ctb"` określająca osoby, które wniosły mniejszy wkład w kod (np. drobne zmiany) oraz `"cph"` określająca osoby czy instytucje będące posiadaczami praw autorskich (np. firma zatrudniająca autora kodu albo autor biblioteki, która została wewnętrznie użyta).^[Pełną listę dostępnych ról można znaleźć pod adresem <http://www.loc.gov/marc/relators/relaterm.html>.]
+Dodanie kolejnych osób odbywa się poprzez łączenie ich funkcją `c()`.
+
+```yaml
+Authors@R: c(
+    person("Imie", "Nazwisko", role = c("cre", "aut"), 
+           email = "email1@example.com"),
+    person("Imie2", "Nazwisko2", role = "aut", email = "email2@example.com")
+)
+```
+
+### Opis pakietu
+
+Opis pakietu (`Description:`) jest dłuższym (co najmniej dwuzdaniowym) opisem tego do czego służy pakiet.
+Powinien on też, jeżeli to możliwe, odnosić się do publikacji naukowej, która opisuje metodę używaną w pakiecie.
+
+Przykładowy [opis pakietu](https://cran.r-project.org/package=supercells):
+
+```yaml
+Description: Creates superpixels based on input spatial data. 
+    This package works on spatial data with one variable
+    (e.g., continuous raster), many variables (e.g., RGB rasters), 
+    and spatial patterns (e.g., areas in categorical rasters). 
+    It is based on the SLIC algorithm (Achanta et al. (2012) 
+    <doi:10.1109/TPAMI.2012.120>), and readapts it to work with arbitrary
+    dissimilarity measures. 
+```
+
+### Licencja
+
+Licencja (`License: `) określa warunki korzystania z pakietu przez inne osoby.
+W bardzo dużym skrócie licencje oprogramowania można podzielić na licencje otwarte (*open-source*) oraz zamknięte (*proprietary*).
+Najpopularniejsze licencje otwarte używane w pakietach R to licencja `CC0`, `MIT` oraz `GPL`.
+Pierwsza z nich, `CC0` oznacza przekazanie [zawartości pakietu do domeny publicznej](https://creativecommons.org/publicdomain/zero/1.0/deed.pl) i najczęściej stosowana jest do pakietów zawierających tylko zbiory danych.
+Licencja `MIT` daje nieograniczone prawo do używania, modyfikowania i rozpowszechniania kodu, pod warunkiem zachowania informacji o autorze.
+Dodanie licencji `MIT` do pakietu R można wykonać podając swoje imię i nazwisko w funkcji `usethis::use_mit_license("Imie Nazwisko")`. 
+W ten sposób informacja o tej licencji zostanie dodana do pliku `DESCRIPTION` (`License: MIT + file LICENSE`) oraz zostaną utworzone specjalne pliki z treścią licencji.
+Trzecia z licencji otwartych, `GPL` (ang. *GNU General Public License*) pozwala użytkownikom na uruchamianie, dostosowywanie, rozpowszechnianie i udoskonalanie kodu.
+Ważną cechą tej licencji jest wymaganie, że wszelkie prace oparte o kod w licencji `GPL` również muszą mieć licencję `GPL`
+Oprogramowanie zamknięte może również przyjmować wiele form (np. freeware czy też oprogramowanie komercyjne).
+Określenie pakietu jako oprogramowania zamkniętego odbywa się poprzez dodanie informacji, że licencja znajduje się w pliku `LICENSE` (`License: file LICENSE`), a następnie stworzenie pliku tekstowego o tej nazwie zawierającego odpowiednią modyfikację poniższego tekstu:
+
+```yaml
+Proprietary 
+
+Do not distribute outside of NAZWA MOJEJ FIRMY.
+```
+
+
+::: {.callout-note}
+Więcej o licencjach można przeczytać na stronach <http://choosealicense.com/licenses/> oraz <https://tldrlegal.com/>.
+:::
+
+<!-- http://cran.r-project.org/doc/manuals/R-exts.html#The-DESCRIPTION-file -->
+
+### Inne pola
+
+W pliku `DESCRIPTION` można również określić inne pola, np. `LazyData` czy `SystemRequirements`.
+Możliwe jest nawet dodawanie własnych pól.
+Więcej na ten temat można przeczytać pod adresem <https://r-pkgs.org/description.html#other-fields>.
+
+::: {.callout-note appearance="simple"}
+
+## ZADANIA
+
+1. Uzupełnij opis swojego pakietu poprzez dodanie informacji o tytule, wersji, autorach, opisie i licencji w pliku `DESCRIPTION`.
+2. Prześlij zmiany do repozytorium na GitHubie.
+:::
+
+## Dokumentacja pakietu
+
+Po wykonaniu poprzednich kroków posiadamy działający pakiet, którego funkcje posiadają odpowiednią dokumentację.
+Teraz konieczne jest stworzenie dokumentacji pakietu - ma ona na celu poinformować potencjalnych użytkowników do czego pakiet służy, jak go zainstalować, czy też pokazać przykłady jego użycia.
+Pakiety mogą być dokumentowane używając kilku różnych rodzajów plików, np. za pomocą pliku `README.Rmd`, tzw. winiety (ang. *vignette*), czy pliku `NEWS.md`.
+Każdy z nich ma swój cel.
+
+### README
+
+Plik `README.Rmd` można stworzyć za pomocą funkcji `usethis::use_readme_rmd()`.
+W efekcie będzie się on znajdować się w głównym folderze pakietu.
+Ten plik powinien zawierać:^[Dodatkowe elementy to oznaki (ang. *badges*) pokazujące, np. status pakietu, liczbę jego pobrań i wiele innych.]
+
+1. Nazwę pakietu
+1. Opis do czego pakiet służy
+1. Instrukcje jak go zainstalować
+1. Prosty przykład użycia
+1. Odnośniki do podobnych prac, programów, czy artykułów naukowych
+
+Warto tutaj zrozumieć różnicę między plikami `README.md` i `README.Rmd`.
+`README.md` jest plikiem w formacie Markdown, który jest automatycznie wyświetlany na stronie repozytorium na GitHubie.
+`README.Rmd` jest plikiem w formacie RMarkdown, który może być przetworzony do formatu `.md`. 
+Użycie RMarkdown pozwala na dodanie kodu R, który zostanie automatycznie przetworzony do wyników jego działania -- w efekcie konwersji pliku `.Rmd` otrzymamy plik `.md`.
+Typowe użycie pliku `README.Rmd` polega na dodaniu do niego zmian, a następnie przetworzeniu go do formatu `.md` (ikona `knit`) i przesłaniu na GitHuba.
+
+::: {.callout-note}
+Markdown to prosty język znaczników służący do formatowania tekstu. 
+Jego idea polega na tym, że w dokumencie tekstowym używamy specjalnych znaków, które po przetworzeniu dokumentu wyświetlają się w odpowiedni sposób.
+Przykładowo jedna gwiazdka przed tekstem i jedna po tekście oznacza pochylony tekst (`*pochylony tekst*`), a dwie gwiazdki przed i po oznaczają pogrubiony tekst (`**pogrubiony tekst**`).
+Innym przykładem są nagłówki określane poprzez jeden lub więcej symboli kratki.
+
+```
+# Nagłówek
+
+## Nagłówek drugiego poziomu (mniejsza czcionka)
+```
+
+Zestawienie pokazujące podstawy składni RMarkdown jest wbudowane w RStudio i można je wyświetlić za pomocą `Help -> Markdown Quick Reference` lub pod adresem <https://rmarkdown.rstudio.com/authoring_basics.html>.
+:::
+
+### Winiety
+
+Winiety mają na celu pokazanie bardziej złożonego przykładu użycia pakietu.
+Nową winietę można stworzyć za pomocą funkcji `usethis::use_vignette("nazwa-winiety")`. 
+W tym momencie zostanie stworzony nowy plik `nazwa-winiety.Rmd` w folderze `vignettes`.
+Teraz możliwe jest jego edytowanie i dodawanie nowej treści.
+Pakiety mogą posiadać wiele różnych winiet, zawierających coraz bardziej zaawansowane przykłady lub też opis różnych grup funkcji z pakietu.
+
+::: {.callout-note}
+Pliki RMarkdown mogą być przetworzone (ang. *render*) do wielu różnych formatów plików, między innymi html, pdf, czy word w zależności od określonych opcji w nagłówku pliku.
+To przetworzenie może odbyć się używając ikony "Knit" w RStudio lub funkcji `rmarkdown::render()`.
+:::
+
+### NEWS
+
+Elementem dokumentowania pakietu jest również informowanie o tym jakie nowe zmiany zaszły wraz z kolejnymi wersjami pakietu.
+W pakietach R może mieć to miejsce używając pliku `NEWS.md` tworzonego poprzez `usethis::use_news_md()`.
+Taki plik może zawierać informacje o nowych funkcjach, zmianach istniejących funkcji, naprawionych błędach, itd.
+Przykład szablonu pliku `NEWS.md` można znaleźć pod adresem <https://ropensci.github.io/dev_guide/newstemplate.html>.
+
+::: {.callout-note appearance="simple"}
+
+## ZADANIA
+
+1. Stwórz plik `README.Rmd` zawierający opis swojego pakietu, instrukcje instalacji i przykładowe jego użycie.
+2. Przetwórz ten plik do formatu `.md` i prześlij go do repozytorium na GitHubie.
+Obejrzyj go na stronie internetowej repozytorium.
+3. Stwórz prostą winietę zawierającą jeden przykład użycia swojego pakietu.
+4. Dodaj pierwsze informacje o zmianach w pakiecie do pliku `NEWS.md`.
+5. Wyślij nowe pliki do repozytorium na GitHubie.
+:::

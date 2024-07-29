@@ -1,0 +1,192 @@
+# Kontrola wersji (3)
+
+## GitHub issues
+
+Sprawy (ang. *issues*) to miejsce, gdzie twórcy mogą zapisywać swoje listy zadań dotyczące danej aplikacji, a użytkownicy mogą zgłaszać błędy czy propozycje ulepszeń.
+To miejsce można znaleźć na stronie głównej repozytorium, w zakładce *Issues*.
+Sprawy, po ich utworzeniu, mogą być przypisane do konkretnych osób, które są odpowiedzialne za ich rozwiązanie, a także mogą być oznaczone etykietami, które pomagają w ich kategoryzacji.
+Sprawy można również komentować, a po ich rozwiązaniu można je zamknąć.
+Każda sprawa otrzymuje unikalny numer, który może być użyty do odwołania się do niej w innych miejscach.
+
+::: {.callout-note}
+Jako osoba zgłaszająca sprawę należy podać jak najwięcej informacji pomagających odtworzyć problem. 
+Najlepiej w takiej sytuacji jest przygotować tzw. powtarzalny przykład (ang. *reprex*), który zawiera minimalny kod potrzebny do odtworzenia problemu.
+Krótki opis działania powtarzalnych przykładów można znaleźć pod adresem <https://jakubnowosad.com/elp/debugging.html#reprex>.
+:::
+
+## Pull requests
+
+Zapytania aktualizacyjne (ang. *pull requests*) to sposób na zaproponowanie zmian w repozytorium. 
+Co warte podkreślenia, takie zapytania można nanieść zarówno na swoje własne repozytorium, jak i repozytorium innych użytkowników.
+
+Zapytanie aktualizacyjne we własnym repozytorium wiąże się zazwyczaj z (1) stworzeniem nowej gałęzi, (2) naniesieniem zmian, np. w kodzie, (3) zatwierdzeniem zmian, (4) przesłaniem zmian do zdalnego repozytorium, (5) otworzeniem zapytania aktualizacyjnego do głównej gałęzi repozytorium.
+Następnie można takie zmiany zaakceptować lub odrzucić.^[Lub zignorować...]
+
+Zapytanie aktualizacyjne przydaje się również w przypadku, gdy chcemy zaproponować zmiany w repozytorium innego użytkownika.
+Może to być zarówno dodanie nowej możliwości, naprawienie błędu w kodzie, czy nawet poprawienie literówki w dokumentacji.
+W takiej sytuacji często opiera się to o (1) stworzenie rozwidlenia (ang. *fork*), (2) pobranie rozwidlenia jako lokalne repozytorium, (3) edycja lokalnego repozytorium, (4) zatwierdzenie zmian i wysłanie ich do zdalnego repozytorium (rozwidlenia), (5) zaproponowanie zapytania aktualizacyjnego.
+
+## Model pracy
+
+Do tej pory omówiliśmy wiele aspektów pracy z systemem Git i serwisem GitHub.
+Teraz pora na to, aby zastanowić się, jak to wszystko może wyglądać w praktyce pracy nad projektem.
+
+Istnieje szereg możliwych modeli pracy z systemem Git i serwisem GitHub.
+Ich wybór zależy od tego ile osób pracuje nad projektem, skali tego projektu (czy jest to projekt jednorazowy, czy też projekt, który będzie rozwijany przez dłuższy czas), czy projekt jest otwarty na zewnętrzne kontrybucje, czy też od preferencji czy zwyczajów osób pracujących nad projektem.
+<!-- zewnętrzne kontrybucje: code of conduct, pull requests, issues, templates -->
+
+W przypadku pracy jednej osoby nad krótkim projektem, model pracy może być bardzo prosty.
+Wystarczy, że osoba ta będzie pracować na głównej gałęzi (ang. *main*) i będzie regularnie wysyłać lokalne zmiany do zdalnego repozytorium.
+
+Taki model może jednak nie działać za dobrze w przypadku pracy wielu osób nad projektem.
+Wiele równoległych zmian wprowadzanych przez różnych twórców może prowadzić do konfliktów^[technicznych i nie tylko], a także powoduje, że trudno jest zrozumieć i planować zmiany wprowadzane do projektu.
+Wraz ze wzrostem liczby osób pracujących nad projektem, a także wraz ze wzrostem skali projektu, warto zastanowić się nad bardziej złożonym modelem pracy.
+
+Jednym z takich modeli jest model *Feature branch*.
+Polega on na tym, że każda potencjalna zmiana wprowadzana do projektu jest tworzona w osobnej gałęzi (ang. *branch*).
+Wszystkie gałęzie są tworzone na bazie głównej gałęzi (ang. *main*).
+Po zakończeniu pracy nad zmianą tworzone jest zapytanie aktualizacyjne do głównej gałęzi, a następnie (po recenzji i zatwierdzeniu zmian przez inną osobę) zmiany z tej gałęzi są łączone z główną gałęzią.
+<!-- Należy pamiętać, że zarządzanie wieloma gałęziami funkcji może stać się skomplikowane, łączenie zmian do głównej gałęzi może wymagać rozwiązania konfliktów różnic -->
+
+::: {.callout-note}
+Istnieją też różne inne modele pracy, np. [Gitflow](https://www.atlassian.com/git/tutorials/comparing-workflows/gitflow-workflow) w którym główna gałąź zawiera stabilną wersję projektu, a nowe funkcjonalności są dodawane do gałęzi *develop*.
+:::
+
+W przypadku stosowania modelu pracy *Feature branch* warto stosować systemy CI/CD, które pozwalają na automatyczne sprawdzenie czy nowe zmiany nie powodują błędów w kodzie.
+
+<!-- w przypadku pracy nad projektem otwartym, warto zastanowić się nad dodatkowymi elementami, które mogą pomóc w zarządzaniu projektem: -->
+<!-- issue templates -->
+<!-- [CODEOWNERS File?] -->
+
+::: {.callout-note appearance="simple"}
+
+## ZADANIA
+
+1. Dobierzcie się w dwuosobowe grupy: każda z osób będzie pracowała na repozytorium pakietu drugiej osoby.
+2. Niech każda z osób otworzy sprawę w repozytorium pakietu drugiej osoby. 
+Sprawa powinna zawierać powtarzalny przykład użycia pakietu.
+3. Niech każda z osób otworzy zapytanie aktualizacyjne do repozytorium pakietu drugiej osoby poprzez stworzenie rozwidlenia.
+4. Rolą osoby, która jest właścicielem repozytorium, jest zaakceptowanie zapytania aktualizacyjnego i zamknięcie sprawy.
+:::
+
+## Konflikty Git
+
+Konflikt Git to sytuacja, w której Git nie jest w stanie samodzielnie rozwiązać konfliktu pomiędzy dwoma wersjami pliku/ów.
+Może to mieć miejsce w przypadku, gdy dwie osoby pracujące nad tym samym projektem wprowadziły zmiany w tym samym miejscu w pliku.
+Pierwsza z osób przesłała swoje zmiany do zdalnego repozytorium, a druga próbuje przesłać swoje zmiany do tego samego zdalnego repozytorium (@sec-problemy-git1).
+
+Zawsze warto zacząć od sprawdzenia, które pliki są konfliktowe.
+Można to zrobić oglądając okno Git w RStudio lub używając polecenia `git status` w terminalu.
+Dalej należy otworzyć problematyczny plik i znaleźć miejsce konfliktu.
+Będzie ono oznaczone specjalnymi znacznikami `<<<<<<<`, `=======`, `>>>>>>>`.
+
+```markdown
+<<<<<<< HEAD:plik.R
+x = 1 + 2
+=======
+y = 1 + 2
+>>>>>>> zmiana:plik.R
+```
+
+Pierwszy znacznik, `<<<<<<< HEAD:`, oznacza treść, która jest w lokalnym repozytorium.
+Drugi znacznik, `=======`, oznacza miejsce, w którym następuje rozdzielenie pomiędzy lokalnym repozytorium a zdalnym repozytorium.
+Po nim jest nowa treść, która jest w zdalnym repozytorium.
+Trzeci znacznik, `>>>>>>> zmiana:`, oznacza koniec konfliktu.
+
+Takie konflikty (ang. *merge conflicts*) mogą być rozwiązywane na różne sposoby.
+Najczęściej w takiej sytuacji można ręcznie edytować plik, stworzyć spójną wersję, usunąć znaczniki konfliktu, a następnie zatwierdzić zmiany (`git add plik.R` oraz `git commit`).
+
+::: {.callout-note}
+Używając komendy `git merge --abort` można anulować łączenie zmian i wrócić do poprzedniego stanu przed rozpoczęciem scalania.
+:::
+
+Inna możliwość to [zaakceptowanie tylko przychodzących lub obecnych zmian](https://phoenixnap.com/kb/how-to-resolve-merge-conflicts-in-git#ftoc-heading-3).
+
+::: {.callout-note}
+
+Czasem może się zdarzyć, że pracując nad projektem zapędzimy się w szereg problematycznych zmian, które nie pozwalają nam na proste zatwierdzenie zmian i wysłanie ich do zdalnego repozytorium.
+W takiej sytuacji popularnym podejście to zrobienie kopii naszych lokalnych zmian w innym folderze komputera, usunięcie lokalnego repozytorium, ponowne sklonowanie zdalnego repozytorium, a następnie wklejenie naszych zmian do sklonowanego (czystego) repozytorium.
+
+![<https://xkcd.com/1597/>](figs/git.png)
+
+:::
+
+Więcej porad na temat rozwiązywania konfliktów można znaleźć pod łatwym do zapamiętania adresem <https://ohshitgit.com/>.
+
+## Inne kwestie związane z systemem Git i serwisem GitHub
+
+### Identyfikatory
+
+Z Gitem czy GitHubem powiązanych jest wiele różnych identyfikatorów, które mogą być przydatne w różnych sytuacjach.
+Pierwsze z nich to grupa identyfikatorów nazywanych zbiorczo [*ref*](https://happygitwithr.com/git-refs), np.:
+
+-  `HEAD` -- wskaźnik na aktualną wersję; `HEAD~1` -- wskaźnik na poprzednią wersję (poprzednie zatwierdzenie zmian)
+-  Nazwa gałęzi, np. `main` -- wskaźnik na główną gałąź
+-  Tag, np. `v1.0.0` -- wskaźnik na konkretną wersję projektu
+-  Identyfikator zatwierdzenia zmian, np. `a1b2c3d` -- wskaźnik na konkretny commit^[To jest skrótowy identyfikator, pełny identyfikator to 40-znakowy ciąg znaków.]
+
+Kolejnym identyfikatorem jest nazwa użytkownika lub nazwa organizacji, która jest właścicielem repozytorium: `github.com/<nazwa_użytkownika>` lub `github.com/<nazwa_organizacji>`.
+Dalej po nazwie użytkownika lub organizacji podawana jest nazwa repozytorium: `github.com/<nazwa_użytkownika>/<nazwa_repozytorium>` lub `github.com/<nazwa_organizacji>/<nazwa_repozytorium>`.
+
+Wewnątrz każdego repozytorium można tworzyć sprawy oraz zapytania aktualizacyjne.
+Każda sprawa i zapytanie aktualizacyjne ma swój unikalny identyfikator, który jest wyliczeniem: `github.com/<nazwa_użytkownika>/<nazwa_repozytorium>/issues/<numer_sprawy>` lub `github.com/<nazwa_użytkownika>/<nazwa_repozytorium>/pull/<numer_zapytania>`.^[Traktowane są one łącznie, więc przykładowo po sprawie numer jeden będzie zapytanie aktualizacyjne numer dwa.]
+Takie identyfikatory pozwalają na odwoływanie się do konkretnych spraw i zapytań aktualizacyjnych w różnych miejscach za pomocą znaku `#` i numeru identyfikatora, np. `#1` lub `#2`.
+
+```markdown
+Mój komentarz dotyczy sprawy #1.
+```
+
+Do danej sprawy można odnieść się w tekście innej sprawy, w zapytaniu aktualizacyjnym, w komentarzu, w kodzie, w dokumentacji, a nawet w tekście zatwierdzenia zmian.
+
+::: {.callout-note}
+
+W tekście zatwierdzenia zmian czy zapytaniu aktualizacyjnym można nawet użyć jednego ze słów kluczowych, które automatycznie zamknie sprawę, takich jak [`closes`, `fixes`, `resolves`](https://docs.github.com/en/get-started/writing-on-github/working-with-advanced-formatting/using-keywords-in-issues-and-pull-requests)
+
+```markdown
+Naprawiono błąd, closes #1.
+```
+
+:::
+
+### Szablony
+
+GitHub pozwala także na tworzenie, a następnie korzystanie z różnych szablonów. 
+Możliwe przykładowo jest stworzenie szablonu całego repozytorium.
+Polega to tylko na zbudowaniu repozytorium z odpowiednimi plikami, które będą stanowić szablon, a następnie [wybranie w opcjach repozytorium ](https://docs.github.com/en/repositories/creating-and-managing-repositories/creating-a-template-repository).
+Następnie każde nowe repozytorium będzie można utworzyć na podstawie tego szablonu.
+
+Możliwe jest również stworzenie [szablonu sprawy](https://docs.github.com/en/communities/using-templates-to-encourage-useful-issues-and-pull-requests/configuring-issue-templates-for-your-repository) (często stosowane do pokazania użytkownikom w jaki sposób zgłaszać błędy czy problemy) lub [zapytania aktualizacyjnego](https://docs.github.com/en/communities/using-templates-to-encourage-useful-issues-and-pull-requests/creating-a-pull-request-template-for-your-repository).
+
+### Ograniczenia wielkości plików
+
+Głównym celem systemu Git jest przechowywanie kodu źródłowego, a nie dużych plików.
+GitHub pozwala na przechowywanie plików o maksymalnej wielkości 100 MB, ale zaleca, aby pliki były mniejsze niż 50 MB.
+Dodatkowo, wielokrotne nadpisywanie dużych plików w repozytorium może prowadzić do jego nadmiernego rozrostu.^[Możliwe jest [usunięcie dużych plików z historii zmian Git](https://docs.github.com/en/repositories/working-with-files/managing-large-files/about-large-files-on-github#removing-files-from-a-repositorys-history).]
+
+Co zrobić w przypadku, gdy nasz kod używa dużych plików, np. plików z danymi?
+Pierwsza strategia to kompresja takich plików oraz unikanie ich częstej aktualizacji.
+Drugą strategią jest przechowywanie takich plików w innym miejscu, np. na własnym serwerze lub w serwisie [Zenodo](https://zenodo.org/), a następnie w kodzie wewnątrz repozytorium umieszczenie jedynie odnośnika do takiego pliku.
+Kolejna strategia to użycie Git LFS (ang. *Large File Storage*), który pozwala na przechowywanie dużych plików w innym miejscu, a następnie w repozytorium umieszczenie jedynie odnośnika do takiego pliku.
+Więcej o tej ostatniej strategii można przeczytać pod adresem <https://docs.github.com/en/repositories/working-with-files/managing-large-files>.
+
+### GitHub Pages
+
+GitHub, jak już wcześniej wspomnieliśmy, nie tylko pozwala na przechowywanie i dzielenie się kodem, ale również na wiele innych rzeczy, takich jak dzielenie się małymi danymi czy przechowywanie (statycznych) stron internetowych.
+Każde repozytorium może mieć przypisaną stronę internetową, która jest dostępna pod adresem `https://<nazwa_użytkownika>.github.io/<nazwa_repozytorium>` -- [taka strona może być nawet prostym dokumentem HTML](https://doi.org/10.5446/63363).
+Co więcej, możliwe jest również posiadanie głównej strony internetowej użytkownika, która jest dostępna pod adresem `https://<nazwa_użytkownika>.github.io`.^[Możliwe jest powiązanie jej z własną domeną.]
+Taka strona jest tworzona w oparciu o repozytorium o nazwie `<nazwa_użytkownika>.github.io`.
+Więcej na temat tworzenia różnorodnych dokumentów HTML w oparciu o język R można znaleźć na stronie <https://quarto.org/>, a na temat tworzenia stron internetowych w serwisie GitHub można znaleźć na stronie [GitHub Pages](https://pages.github.com/).
+
+<!-- windows lineending -->
+<!-- one line per sentence -->
+<!-- git user page -->
+
+## Dodatkowe materiały
+
+![<https://social.jvns.ca/@b0rk/111460966674032287>](figs/gitbork.png)
+
+Z racji popularności (i złożoności) systemu Git istnieje ogromna liczba materiałów pomagających w jego nauce i zrozumieniu oraz wiele stron zawierających pytania i odpowiedzi dotyczące napotkanych problemów.
+W przypadku łączenia możliwości języka R z systemem Git warto poczytać materiały zawarte na stronie <https://happygitwithr.com/> [@bryanHappyGitGitHub2019] oraz rozdział [Software development practices](https://r-pkgs.org/git.html) książki R packages [@wickham2015r].
+Do ogólnego wprowadzenia do systemu Git może posłużyć darmowa książka online [Pro Git](https://git-scm.com/book/pl/v2) [@chacon2014pro], której kilka pierwszych rozdziałów jest również dostępna w języku polskim czy też dokument [System kontroli wersji Git](https://randomseed.pl/pub/git-system-kontroli-wersji/01-wprowadzenie).
+Git jest również bardzo popularnym tematem na serwisie stackoverflow, gdzie można znaleźć [pytania i odpowiedzi na różnorodne tematy z nim związane](https://stackoverflow.com/questions/tagged/git).
+Więcej odnośników do materiałów związanych z systemem Git i serwisem GitHub można znaleźć na stronach [pomocy GitHub](https://help.github.com/en/articles/git-and-github-learning-resources).

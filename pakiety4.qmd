@@ -1,0 +1,163 @@
+# Tworzenie pakietów R (4)
+
+## Zaawansowane dokumentowanie funkcji
+
+Sekcje [-@sec-opis-pakietu] oraz [-@sec-metadane-pakietu] omawiały plik `DESCRIPTION` oraz jego zawartość.
+Jedną z kwestii, która nie została tam poruszona jest dodanie do pakietu możliwości dokumentowania funkcji [używając języka Markdown](https://roxygen2.r-lib.org/articles/markdown.html).
+<!-- why? -->
+W tym celu należy w pliku `DESCRIPTION` dodać linię `Roxygen: list(markdown = TRUE)`.
+
+```yaml
+Package: mojpakiet
+Title: Moje Funkcje Robiace Wszystko
+Version: 0.0.1
+Authors@R: 
+    person(given = "Imie",
+           family = "Nazwisko",
+           role = c("cre", "aut"),
+           email = "imie.nazwisko@example.com")
+Description: Tworzenie, przeliczanie i wyliczanie wszystkiego. 
+    Czasami nawet więcej.
+License: CC0
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 7.2.3
+Roxygen: list(markdown = TRUE)
+```
+
+Teraz możliwe jest stosowanie znaczników Markdown w dokumentacji funkcji.
+Poniżej pokażę ich użycie oraz inne, wcześniej nie omówione, możliwości pakietu **roxygen2** (@sec-dok-fun1).
+
+<!-- test this doc!! -->
+
+```{r}
+#| eval=FALSE
+#' Konwersja odleglosci
+#'
+#' @description Funkcja sluzaca do konwersji odleglosci z mil na kilometry
+#'
+#' @param mil wektor zawierajacy wartosci odleglosci w milach
+#' 
+#' @details Funkcja `konwersja_odl()` konwertuje odleglosci z 
+#'     [mil](https://en.wikipedia.org/wiki/Mile) na kilometry używając wzoru
+#'     przelicznika: 1 mila = 1.609344 km
+#' 
+#' Ta funkcja jest:
+#' * Niezwykle przydatna
+#' * Bardzo prosta
+#'
+#' @return wektor numeryczny
+#' @export
+#' 
+#' @references Tobler, W. R. (1970). "A Computer Movie Simulating Urban Growth 
+#'     in the Detroit Region". Economic Geography. 46: 234–240
+#' 
+#' @seealso [konwersja_temp()], [units::set_units()]
+#'
+#' @examples
+#' konwersja_odl(75)
+#' konwersja_odl(110)
+#' konwersja_odl(0)
+#' \dontrun{
+#' konwersja_odl(c(0, 75, 110))
+#' }
+konwersja_odl = function(mil){
+    mil * 1.609344
+}
+```
+
+Język Markdown ma kilka zastosowań w dokumentacji funkcji.
+Po pierwsze pozwala na stylizowanie tekstu, np. pogrubienie, pochylenie, itp.
+Przykładowo, 
+
+``` markdown
+`konwersja_odl()` 
+```
+
+zamieni się w `konwersja_odl()`.
+Po drugie, Markdown pozwala na dodanie linków do innych stron internetowych, które mogą być przydatne w kontekście funkcji.
+Używa się wtedy składni `[mil](https://en.wikipedia.org/wiki/Mile)`, gdzie `mil` to tekst, który będzie wyświetlany, a `https://en.wikipedia.org/wiki/Mile` to link do strony internetowej.
+
+Markdown pozwala również na odnoszenie się do dokumentacji innych funkcji, zarówno wewnątrz pakietu, jak i zewnętrznych.
+Wewnętrzne funkcje odwołuje się za pomocą `[konwersja_temp()]`, gdzie `konwersja_temp()` to nazwa funkcji, do której chcemy się odwołać, a zewnętrzne za pomocą `[units::set_units()]`, gdzie `set_units()` to nazwa funkcji, do której chcemy się odwołać, a `units` to nazwa pakietu, w którym ta funkcja się znajduje.
+Kolejną możliwością jest proste wstawianie list używając znacznika `*`.^[Markdown umożliwia także inne kwestie, takie jak wstawianie obrazków, tabel, itp.]
+
+Dokumentacja funkcji może zawierać także inne znaczniki, które nie zostały omówione w poprzednich sekcjach.
+Obejmuje to takie znaczniki jak:
+
+- `@details`: dodatkowe informacje o funkcji, w tym jej zastosowanie, ograniczenia, specjalne przypadki, itp.
+- `@seealso`: odnośniki do innych funkcji, które mogą być podobne lub powiązane z funkcją, której dokumentacja jest tworzona
+- `@references`: odnośniki do literatury (np. artykułu naukowego), na podstawie której powstała funkcja
+
+Znacznik `@examples` pozwala na dodanie przykładów użycia funkcji.
+Część z tych przykładów można powstrzymać przed uruchomieniem używając znacznika `\dontrun{}`.
+Może się to przydać w kwestii, np. gdy chcemy pokazać przykład wystąpienia błędu. 
+
+Więcej informacji na temat dokumentowania funkcji można znaleźć na stronie <https://r-pkgs.org/man.html#roxygen2-basics>.
+
+## Dodatkowe możliwości pakietu **usethis**
+
+Pakiet **usethis** także oferuje inne możliwości, które nie zostały omówione w poprzednich sekcjach.
+Nie są one niezbędne do tworzenia pakietów, ale mogą być przydatne w niektórych przypadkach.
+Tutaj pokrótce omówię kilka z nich:
+
+- `use_citation()`: dodaje [plik `inst/CITATION`](https://r-pkgs.org/misc.html#sec-misc-inst-citation) do pakietu, który zawiera informacje w jaki sposób cytować dany pakiet. 
+Zazwyczaj warto dodać ten plik, gdy dany pakiet powiązany jest z publikacją naukową.
+- `use_package_doc()`: tworzy on plik `R/{nazwapakietu}-package.R`, który jest ogólną dokumentacją pakietu.
+Można go później wywołać poprzez `?{nazwapakietu}`.
+- `use_cran_badge()`: dodaje plakietkę (ang. *badge*) z odnośnikiem do strony pakietu na CRAN do pliku README.
+Możliwe jest także dodanie innych plakietek używając funkcji `use_badge()`, w której należy podać nazwę i odnośnik do plakietki.^[Polecam obejrzeć repozytoria GitHub innych pakietów po inspiracje.]
+
+Dodatkowo, pakiet **usethis** pozwala na dodawanie informacji do pakietu z poziomu R, np. przy użyciu funkcji `use_author()` czy `use_version()`.
+
+::: {.callout-note appearance="simple"}
+
+## ZADANIA
+
+1. Dodaj do swojego pakietu możliwość dokumentowania funkcji używając Markdown.
+2. Dodaj do jednej z funkcji dodatkowe informacje używając znaczników Markdown: odnośniki do innych funkcji, odnośniki do literatury, listę, itp.
+3. Dodaj do swojego pakietu plik `inst/CITATION` używając funkcji `use_citation()`.
+4. Dodaj do swojego pakietu plik `R/{nazwapakietu}-package.R` używając funkcji `use_package_doc()`.
+5. Dodaj do swojego pakietu plakietkę z odnośnikiem do strony pakietu na CRAN używając funkcji `use_cran_badge()`.
+6. Zaktualizuj dokumentację używając funkcji `devtools::document()`, a następnie załaduj pakiet używając funkcji `devtools::load_all()`.
+Sprawdź jakie zaszły zmiany w dokumentacji.
+7. Prześlij wszystkie zmiany do repozytorium zdalnego na GitHubie.
+
+:::
+
+## Inne kwestie związane z tworzeniem pakietów R
+
+Do tej pory omówiliśmy najważniejsze kwestie związane z tworzeniem pakietów R.
+Jednakże, istnieje wiele innych aspektów, które nie zostały tutaj poruszone, ale warto zdawać sobie z nich sprawę.
+
+Jednym z nich jest plik `NAMESPACE`, który jest generowany automatycznie przez pakiet **roxygen2**.
+Plik ten zawiera informacje o funkcjach, które są eksportowane z pakietu, a także o funkcjach, które są importowane z innych pakietów.
+Tego pliku nie należy edytować ręcznie.
+
+Innym aspektem jest plik `.Rbuildignore`, który zawiera informacje o plikach, które mają być ignorowane podczas budowania pakietu.
+Warto dodać do tego pliku pliki, które nie są niezbędne do działania pakietu, ale są powiązane z jego tworzeniem. 
+Przykładowo, obejmuje to plik projektu RStudio `^{nazwapakietu}.Rproj$`, pliki czt folder związane z CI/CD (np. `^\.github$`), czy folder z surowymi danymi i kodem (np. `^data-raw$`).
+
+Kolejnym aspektem są zależności pakietów (ang. *dependencies*).
+Z jednej strony, nasz pakiet może wymagać innych pakietów do działania, a z drugiej natomiast, nasz pakiet może być wymagany przez inne pakiety.
+Obie te kwestie są złożone i decyzje o nich mają różne konsekwencje.
+
+W przypadku zależności naszego pakietu od innych pakietów, możemy określić je w pliku `DESCRIPTION` w sekcji `Imports` lub `Suggests`.
+W efekcie, nasz pakiet staje się zależny od innych pakietów, które są wymienione w tych sekcjach.
+Zmiany w tych pakietach (i ich zależnościach) mogą mieć wpływ na nasz pakiet.
+Pełne drzewo zależności pakietu można wyświetlić używając funkcji `pak::pkg_deps_tree()`.
+
+Istnieją różne podejścia do określania tego jakie pakiety powinny być wymagane przez nasz pakiet.
+Jednym z podejść jest używanie minimalnej liczby zależności, inne natomiast obejmuje stosowanie zależności co do autorów których mamy zaufanie.
+Jakiekolwiek założenie jest przyjęte, nie warto przesadzać z liczbą zależności, gdyż może to mieć negatywny wpływ na czas budowania pakietu, a także na jago stabilność.
+
+Nasz pakiet R może być również wymagany przez inne pakiety---taka sytuacja nazywana jest zależnością wsteczną (ang. *reverse dependency*).
+W tym przypadku, zmiany w naszym pakiecie mogą mieć wpływ na inne pakiety.
+Chcemy, aby wprowadzane przez nas zmiany nie powodowały szerokich konsekwencji w innych pakietach.
+Wykonanie sprawdzenia wpływu zmian na zależności wsteczne może być wykonane używając funkcji `usethis::use_revdep()`.
+
+## Dodatkowe materiały
+
+W celu poznania i zrozumienia złożonych aspektów tworzenia pakietów R cennymi źródłami wiedzy może być książki [R packages](https://r-pkgs.org) [@wickham2015r] oraz [rOpenSci Packages: Development, Maintenance, and Peer Review](https://ropensci.github.io/dev_guide/) [@ropensci_2019_2554759].
+Dodatkowo, w niektórych przypadkach pomocna może być oficjalna dokumentacja [Writing R Extensions](https://cran.r-project.org/doc/manuals/R-exts.html#Creating-R-packages) [@team1999writing].
+Niezastąpione jest także czytanie kodu źródłowego innych pakietów R na GitHubie.

@@ -1,0 +1,170 @@
+# Kontrola wersji (2)
+
+## Git
+
+Do tej pory używaliśmy systemu kontroli wersji Git z poziomu RStudio.
+Każda z ikon na pasku narzędziowym RStudio odpowiada jednej z komend systemu Git.
+W rzeczywistości, system Git jest niezależny od RStudio i może być używany z poziomu konsoli systemowej.
+Git składa się z kilkudziesięciu komend, których działanie jest dalej uzależnione od podanych argumentów.
+Tutaj przedstawiony zostanie tylko podzbiór najczęściej używanych.
+Pełniejszy opis komend systemu Git można znaleźć pod adresem <https://education.github.com/git-cheat-sheet-education.pdf> lub <http://rogerdudler.github.io/git-guide/index.pl.html>.
+<!-- https://happygitwithr.com/git-commands -->
+
+## Repozytorium
+
+Podstawowym elementem systemu Git jest repozytorium (ang. *repository*, często określane skrótowo jako repo).
+Jest to folder, który przechowuje wszystkie pliki i foldery w ramach jednego projektu.^[W kontekście R, warto o tym myśleć jako o projekcie RStudio.]
+Dodatkowo wewnątrz repozytorium znajduje się ukryty folder `.git`, który zawiera informację o historii i zmianach każdego z naszych plików.
+Repozytorium może znajdować się na dysku naszego komputera (wtedy jest nazywane repozytorium lokalnym) lub też na serwerze w internecie (określane jako repozytorium zdalne (ang. *remote*)).
+
+```bash
+# określenie obecnego katalogu jako repozytorium Git
+git init                  
+```
+
+## Dodawanie zmian
+
+W nowo utworzonym repozytorium możemy tworzyć nowe pliki oraz edytować już istniejące.
+Po pewnym czasie możemy stwierdzić, że dodaliśmy nową funkcjonalność do funkcji lub naprawiliśmy błąd w kodzie.
+Wtedy należy, po zapisaniu również pliku na dysku, dodać te zmiany do systemu Git.
+Po dodaniu zmian są one przechowywane w miejscu określanym jako *Index*.
+Działa ono jak poczekalnia - w tym momencie zmiany jeszcze nie są potwierdzone, ale możemy sprawdzić co zmieniło się od ostatniego zatwierdzenia zmian.
+
+```bash
+# dodanie pojedynczego pliku
+git add sciezka_do_pliku  
+# dodanie wszystkich plików 
+git add --all                    
+```
+
+## Sprawdzanie zmian
+
+Zanim zatwierdzimy zmiany można je sprawdzić.
+W ten sposób dla każdej linii tekstu (kodu) otrzymuje się informacje co zostało dodane lub usunięte.
+
+```bash
+# sprawdzenie dodanych zmian
+git diff                  
+```
+
+## Zatwierdzanie zmian
+
+Zatwierdzanie zmian (ang. **commit**) powoduje ich zapisanie na stałe w systemie Git.
+Wymaga to dodania wiadomości, która opisuje wprowadzone zmiany.
+
+```bash
+# zatwierdzenie dodanych zmian
+git commit -m "opis wprowadzonych zmian"
+```
+
+## Rozgałęzienia {#branches}
+
+Częstą sytuacją jest posiadanie stabilnego, działającego kodu, ale co do którego mamy pomysły jak go ulepszyć, np. zwiększyć jego wydajność.
+Wtedy edycja poprawnego kodu może nie przynieść najlepszych wyników - co jeżeli nasz pomysł się jednak nie sprawdzi?
+Lepszą możliwością jest użycie rozgałęzień (ang. *branches*) w systemie Git.
+Domyślnie nowe repozytorium posiada już jedną gałąź nazwaną `main`.
+
+```bash
+# wypisanie wszystkich rozgałęzień
+git branch
+```
+
+Kolejnym krokiem jest utworzenie nowego rozgałęzienia. 
+W efekcie tego działania nowa gałąź staje się odniesieniem do istniejącego stanu obecnej gałęzi.
+<!-- branch name that describes “the branch’s purpose in multiple words separated by hyphens -->
+
+```bash
+# utworzenie nowego rozgałęzienia
+git branch nazwa_nowej_galezi
+```
+
+Co ważne utworzenie nowego rozgałęzienia nie powoduje przejście do niego - należy to samodzielnie wykonać.
+
+```bash
+# przejście do innego rozgałęzienia
+git checkout nazwa_nowej_galezi
+```
+
+W tym momencie możliwe jest testowanie różnych możliwości ulepszenia istniejącego kodu bez obawy, że wpłynie to na jego działającą wersję. 
+Po stwierdzeniu, że nasze zmiany są odpowiednie należy je dodać i zatwierdzić.
+Teraz można powrócić do głównej gałęzi (`main`) i dołączyć zmiany stworzone w innej gałęzi.
+
+```bash
+# powrót do głównej gałęzi
+git checkout main
+# połączenie wybranego rozgałęzienia z obecnym
+git merge nazwa_nowej_galezi
+```
+
+::: {.callout-note}
+Tworzenie nowych gałęzi i przechodzenie między nimi jest też możliwe w RStudio.
+W tym celu należy wybrać ikonę z napisem "New branch" albo nazwę obecnej gałęzi.
+:::
+
+<!-- block merge conflicts -->
+
+## Repozytorium zdalne
+
+System Git ma wiele zalet w przypadku samodzielnej pracy na własnym komputerze<!--np.-->, zyski z jego używania są jednak znacznie większe, gdy nasze repozytoria mają też zdalne odpowiedniki.
+
+Łączenie się ze zdalnymi repozytoriami może nastąpić na dwa sposoby.
+W pierwszym z nich repozytorium zdane już istnieje, a my chcemy się do niego podłączyć i je pobrać.
+
+```bash
+# pobranie kopii istniejącego zdalnego repo
+git clone sciezka_do_zdalnego_repo
+```
+
+Drugim sposobem jest posiadanie istniejącego, lokalnego repozytorium, a następnie dodanie do niego adresu zdalnego repozytorium.
+<!-- ssh vs https -->
+
+```bash
+# dodanie ścieżki do zdalnego repo
+git remote add origin sciezka_do_zdalnego_repo
+```
+
+<!-- zmiana z git remote set-url origin git@github.com:User/UserRepo.git -->
+
+## Wysyłanie zmian {#wysylanie-zmian}
+
+Obecne dodane i zatwierdzone zmiany znajdują się jedynie w repozytorium lokalnym.
+Konieczne jest ich wysłanie do zdalnego repozytorium.
+
+```bash
+# wysyłanie zmian do zdalnego repo
+git push
+```
+
+<!--skrót od git push origin main -->
+
+## Aktualizowanie zmian
+
+Zdalne repozytoria mogą pozwalać na nadawanie różnych uprawnień użytkownikom.
+Możliwe jest określenie, że inne osoby mogą nanosić zmiany w zdalnych repozytoriach.
+Dodatkowo, jedna osoba może zmieniać zdalne repozytoria używając różnych komputerów.
+Konieczne jest więc aktualizowanie zmian, które zaszły w zdalnym repozytorium na lokalnym komputerze.
+
+```bash
+# aktualizowanie zmian ze zdalnego repo
+git pull
+```
+
+<!-- git pull to inaczej git fetch (pobierz bez modyfikacji lokalnej) + git merge -->
+<!-- można też używać git pull --rebase -->
+
+::: {.callout-note appearance="simple"}
+
+## ZADANIA
+
+1. Dobierzcie się w dwuosobowe grupy: każda z osób będzie pracowała na repozytorium pakietu drugiej osoby.
+2. Używając linii komend, sklonujcie repozytorium pakietu drugiej osoby.
+3. Stwórzcie nową gałąź w repozytorium i przejdźcie do niej.
+4. Dodajcie do repozytorium plik z kodem R, który będzie zawierał funkcję, która zwraca sumę dwóch liczb.
+5. Sprawdźcie czy pakiet spełnia wszystkie wymagania i działa poprawnie.
+6. Prześlijcie nowe zmiany do zdalnego repozytorium używając linii komend.
+Co ważne -- nie łączcie ich z główną gałęzią!
+(W razie problemów upewnijcie się, że druga osoba ma uprawnienia do wprowadzania zmian w repozytorium.)
+7. Obejrzyjcie zmiany w repozytorium zdalnym.
+
+:::
+

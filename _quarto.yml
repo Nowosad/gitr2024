@@ -1,0 +1,48 @@
+project:
+  type: book
+
+lang: pl
+language: _language-pl.yml
+
+book:
+  title: "Tworzenie pakietów R oraz praca z system kontroli wersji Git i platformą GitHub"
+  author: "[Jakub Nowosad](https://jakubnowosad.com/)"
+  date: 2024-07-29
+  license: CC BY 4.0
+  date-format: iso
+  chapters:
+    - index.qmd
+    - pakiety1.qmd
+    - git1.qmd
+    - pakiety2.qmd
+    - git2.qmd
+    - pakiety3.qmd
+    - git3.qmd
+    - pakiety4.qmd
+    - references.qmd
+  cover-image: cover.jpg
+  downloads: pdf
+  search: true
+
+bibliography: 
+  - references.bib
+  - packages.bib
+
+format:
+  html:
+    theme: cosmo
+    knitr: true
+    engine: knitr
+  pdf:
+    documentclass: scrreprt
+    papersize: a4
+    geometry:
+      - heightrounded
+    fontfamily: palatino
+    header-includes: |
+      \titlehead{\includegraphics[width=6in]{cover.jpg}}
+
+execute:
+  freeze: auto 
+
+
