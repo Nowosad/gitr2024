@@ -14,4 +14,5 @@ Zostały one przygotowane z myślą o zapewnieniu wiedzy i praktycznych umiejęt
 
 ## Wsparcie autora
 
-Jeśli znajdujesz te materiały przydatne, rozważ wsparcie autora przez [Ko-fi](https://ko-fi.com/nowosad): [![](https://img.shields.io/badge/Wsprzyj-projekt-yellow.png)](https://ko-fi.com/nowosad).
+Jeśli te materiały są dla Ciebie przydatne, rozważ wsparcie autora przez [Ko-fi](https://ko-fi.com/nowosad): [![](https://img.shields.io/badge/Wsprzyj-projekt-yellow.png)](https://ko-fi.com/nowosad).
+
